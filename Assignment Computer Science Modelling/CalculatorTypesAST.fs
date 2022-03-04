@@ -29,10 +29,13 @@ type boolexpr =
   | RightGreater of (expr * expr)
   | RightGreaterEqual of (expr * expr)
 
-
 //type guardcommands =
-//  | IFTHEN of (boolexpr * commands)
-//  | FATBAR of (guardcommands * guardcommands)
+//  | IfThen of (boolexpr * commands)
+//  | FatBar of (guardcommands * guardcommands)
 
 //type commands =
-//  |
+//  | Assign of (expr * expr)
+//  | Skip
+//  | Order of (commands)
+//  | If of (guardcommands)
+//  | Do of (guardcommands)

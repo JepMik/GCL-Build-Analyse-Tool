@@ -15,7 +15,7 @@ let digit       = ['0'-'9']
 let num         = digit+ ( '.' digit+)?  ('E' ('+'|'-')? digit+ )?
 let whitespace  = [' ' '\t']
 let newline     = "\n\r" | '\n' | '\r'
-let VARIABLE        = char(char|digit)*
+let VARIABLE    = char(char|digit)*
 
 
 // We define now the rules for recognising and building tokens
@@ -44,6 +44,14 @@ rule tokenize = parse
 //gc:
 //| "->”          { IFTHEN }
 //| "[]”          { FATBAR }
+
+//c:
+//| ":="          { ASSIGN }
+//| ';'           { ORDER }
+//| "if"          { IF }
+//| "fi"          { FI }
+//| "do"          { DO }
+//| "od"          { OD }
 
 // a:
 | num           { NUM(Double.Parse(LexBuffer<_>.LexemeString lexbuf)) }

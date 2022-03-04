@@ -11,6 +11,13 @@ type token =
   | EOF
   | LBRAK
   | RBRAK
+  | ASSIGN
+  | SKIP
+  | ORDER
+  | IF
+  | FI
+  | DO
+  | OD
   | IFTHEN
   | FATBAR
   | BITWISEAND
@@ -39,6 +46,13 @@ type tokenId =
     | TOKEN_EOF
     | TOKEN_LBRAK
     | TOKEN_RBRAK
+    | TOKEN_ASSIGN
+    | TOKEN_SKIP
+    | TOKEN_ORDER
+    | TOKEN_IF
+    | TOKEN_FI
+    | TOKEN_DO
+    | TOKEN_OD
     | TOKEN_IFTHEN
     | TOKEN_FATBAR
     | TOKEN_BITWISEAND

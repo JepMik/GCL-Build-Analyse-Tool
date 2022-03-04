@@ -170,62 +170,62 @@ and tokenize  lexbuf =
 # 170 "CalculatorLexer.fs"
           )
   | 13 -> ( 
-# 49 "CalculatorLexer.fsl"
+# 57 "CalculatorLexer.fsl"
                                  NUM(Double.Parse(LexBuffer<_>.LexemeString lexbuf)) 
 # 175 "CalculatorLexer.fs"
           )
   | 14 -> ( 
-# 50 "CalculatorLexer.fsl"
+# 58 "CalculatorLexer.fsl"
                                  let str = LexBuffer<_>.LexemeString lexbuf in VARIABLE(str) 
 # 180 "CalculatorLexer.fs"
           )
   | 15 -> ( 
-# 51 "CalculatorLexer.fsl"
+# 59 "CalculatorLexer.fsl"
                                  TIMES 
 # 185 "CalculatorLexer.fs"
           )
   | 16 -> ( 
-# 52 "CalculatorLexer.fsl"
+# 60 "CalculatorLexer.fsl"
                                  DIV 
 # 190 "CalculatorLexer.fs"
           )
   | 17 -> ( 
-# 53 "CalculatorLexer.fsl"
+# 61 "CalculatorLexer.fsl"
                                  PLUS 
 # 195 "CalculatorLexer.fs"
           )
   | 18 -> ( 
-# 54 "CalculatorLexer.fsl"
+# 62 "CalculatorLexer.fsl"
                                  MINUS 
 # 200 "CalculatorLexer.fs"
           )
   | 19 -> ( 
-# 55 "CalculatorLexer.fsl"
+# 63 "CalculatorLexer.fsl"
                                  POW 
 # 205 "CalculatorLexer.fs"
           )
   | 20 -> ( 
-# 56 "CalculatorLexer.fsl"
+# 64 "CalculatorLexer.fsl"
                                  LPAR 
 # 210 "CalculatorLexer.fs"
           )
   | 21 -> ( 
-# 57 "CalculatorLexer.fsl"
+# 65 "CalculatorLexer.fsl"
                                  RPAR 
 # 215 "CalculatorLexer.fs"
           )
   | 22 -> ( 
-# 58 "CalculatorLexer.fsl"
+# 66 "CalculatorLexer.fsl"
                                  LBRAK 
 # 220 "CalculatorLexer.fs"
           )
   | 23 -> ( 
-# 59 "CalculatorLexer.fsl"
+# 67 "CalculatorLexer.fsl"
                                  RBRAK 
 # 225 "CalculatorLexer.fs"
           )
   | 24 -> ( 
-# 60 "CalculatorLexer.fsl"
+# 68 "CalculatorLexer.fsl"
                                  EOF 
 # 230 "CalculatorLexer.fs"
           )
