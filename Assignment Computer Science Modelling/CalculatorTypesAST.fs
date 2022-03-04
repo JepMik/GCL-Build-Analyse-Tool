@@ -11,3 +11,15 @@ type expr =
   | PowExpr of (expr * expr)
   | UPlusExpr of (expr)
   | UMinusExpr of (expr)
+  | AccessExpr of (expr * expr)
+  | Var of (string)
+
+type boolexpr =
+  |
+
+
+type guardcommands =
+  |
+
+type commands =
+  |
