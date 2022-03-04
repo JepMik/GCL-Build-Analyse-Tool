@@ -27,6 +27,25 @@ rule tokenize = parse
 | whitespace    { tokenize lexbuf }
 | newline       { lexbuf.EndPos <- lexbuf.EndPos.NextLine; tokenize lexbuf; }
 // deal with tokens that need to be built
+
+// b:
+| "true"        { TRUE }
+| "false"       { FALSE }
+| '&'           { BITWISEAND }
+| '|'           { BITWISEOR }
+| "&&"          { AND }
+| "||"          { OR }
+| '!'           { NEG }
+| '>'           { LGREATER }
+| ">="          { LGREATEREQUAL }
+| '<'           { RGREATER }
+| "<="          { RGREATEREQUAL }
+
+//gc:
+//| "->”          { IFTHEN }
+//| "[]”          { FATBAR }
+
+// a:
 | num           { NUM(Double.Parse(LexBuffer<_>.LexemeString lexbuf)) }
 | VARIABLE      { let str = LexBuffer<_>.LexemeString lexbuf in VARIABLE(str) }
 | '*'           { TIMES }
@@ -36,7 +55,6 @@ rule tokenize = parse
 | '^'           { POW }
 | '('           { LPAR }
 | ')'           { RPAR }
-| "true"        { TRUE }
 | '['           { LBRAK }
 | ']'           { RBRAK }
 | eof           { EOF }

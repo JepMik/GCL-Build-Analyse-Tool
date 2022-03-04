@@ -9,7 +9,25 @@ type token =
   | LPAR
   | RPAR
   | EOF
+  | LBRAK
+  | RBRAK
+  | IFTHEN
+  | FATBAR
+  | BITWISEAND
+  | BITWISEOR
+  | AND
+  | OR
+  | NEG
+  | EQUAL
+  | NOTEQUAL
+  | LGREATER
+  | LGREATEREQUAL
+  | RGREATER
+  | RGREATEREQUAL
+  | FALSE
+  | TRUE
   | NUM of (float)
+  | VARIABLE of (string)
 type tokenId = 
     | TOKEN_TIMES
     | TOKEN_DIV
@@ -19,12 +37,31 @@ type tokenId =
     | TOKEN_LPAR
     | TOKEN_RPAR
     | TOKEN_EOF
+    | TOKEN_LBRAK
+    | TOKEN_RBRAK
+    | TOKEN_IFTHEN
+    | TOKEN_FATBAR
+    | TOKEN_BITWISEAND
+    | TOKEN_BITWISEOR
+    | TOKEN_AND
+    | TOKEN_OR
+    | TOKEN_NEG
+    | TOKEN_EQUAL
+    | TOKEN_NOTEQUAL
+    | TOKEN_LGREATER
+    | TOKEN_LGREATEREQUAL
+    | TOKEN_RGREATER
+    | TOKEN_RGREATEREQUAL
+    | TOKEN_FALSE
+    | TOKEN_TRUE
     | TOKEN_NUM
+    | TOKEN_VARIABLE
     | TOKEN_end_of_input
     | TOKEN_error
 type nonTerminalId = 
     | NONTERM__startstart
     | NONTERM_start
+    | NONTERM_booleanexpr
     | NONTERM_expression
 /// This function maps tokens to integer indexes
 val tagOfToken: token -> int

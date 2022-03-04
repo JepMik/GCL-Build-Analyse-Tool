@@ -11,15 +11,28 @@ type expr =
   | PowExpr of (expr * expr)
   | UPlusExpr of (expr)
   | UMinusExpr of (expr)
-  | AccessExpr of (expr * expr)
   | Var of (string)
+  | AccessExpr of (string * expr)
 
 type boolexpr =
-  |
+  | True
+  | False
+  | BitWiseAnd of (boolexpr * boolexpr)
+  | BitWiseOr of (boolexpr * boolexpr)
+  | LogAnd of (boolexpr * boolexpr)
+  | LogOr of (boolexpr * boolexpr)
+  | Neg of (boolexpr)
+  | Equal of (expr * expr)
+  | NotEqual of (expr * expr)
+  | LeftGreater of (expr * expr)
+  | LeftGreaterEqual of (expr * expr)
+  | RightGreater of (expr * expr)
+  | RightGreaterEqual of (expr * expr)
 
 
-type guardcommands =
-  |
+//type guardcommands =
+//  | IFTHEN of (boolexpr * commands)
+//  | FATBAR of (guardcommands * guardcommands)
 
-type commands =
-  |
+//type commands =
+//  |
