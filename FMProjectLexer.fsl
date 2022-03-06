@@ -57,10 +57,10 @@ rule tokenize = parse
 | "false"       { FALSE }
 | '&'           { BITWAND }
 | '|'           { BITWOR }
-| "&&"           { AND }
-| "||"           { OR }
+| "&&"          { AND }
+| "||"          { OR }
 | '!'           { NEG }
 | '>'           { GREATER }
-| ">="            { GREATEREQ }
+| ">="          { GREATEREQ }
 | '<'           { LESS }
 | "<="          { LESSEQ }
