@@ -1,19 +1,22 @@
 // The generated lexer module will start with this code
 {
-module CalculatorLexer
+module FMProjectLexer
 open FSharp.Text.Lexing
 open System
 // open the module that defines the tokens
-open CalculatorParser
+open FMProjectParser
 // Set the language to English such that 4.0 is parsed as 4 and not 40.
 System.Globalization.CultureInfo.CurrentCulture <- new System.Globalization.CultureInfo("en-US")
 }
 
 // We define macros for some regular expressions we will use later
-let digit       = ['0'-'9']
+let digit       = ['0'-'9'] 
 let num         = digit+ ( '.' digit+)?  ('E' ('+'|'-')? digit+ )?
 let whitespace  = [' ' '\t']
 let newline     = "\n\r" | '\n' | '\r'
+let variable    =  char ( char | digit )*
+//digit can also be \d+ 
+//whitespace can also be [\u00A0 \n \r \t]
 
 // We define now the rules for recognising and building tokens
 // for each of the tokens of our language we need a rule
@@ -25,6 +28,7 @@ rule tokenize = parse
 | newline       { lexbuf.EndPos <- lexbuf.EndPos.NextLine; tokenize lexbuf; }
 // deal with tokens that need to be built
 | num           { NUM(Double.Parse(LexBuffer<_>.LexemeString lexbuf)) }
+| variable      { let str = LexBuffer<_>.LexemeString lexbuf in VARIABLE(str) }
 | '*'           { TIMES }
 | '/'           { DIV }
 | '+'           { PLUS }
@@ -33,6 +37,30 @@ rule tokenize = parse
 | '('           { LPAR }
 | ')'           { RPAR }
 | eof           { EOF }
+| '['           { LBRAK }
+| ']'           { RBRAK }
 | 'V'           { ROOT }
 | "log"         { LOG }
-| "ln"          { LN }
+| "ln"          { LN } 
+
+| ":="          { ASSIGN }
+| ';'           { ORDER }
+| "if "         { IF }
+| "fi"          { FI }
+| "do "         { DO }
+| "od"          { OD }
+
+| ":="          { IFTHEN }
+| "[]"          { FATBAR }
+
+| "true"        { TRUE }
+| "false"       { FALSE }
+| '&'           { BITWAND }
+| '|'           { BITWOR }
+| "&&"           { AND }
+| "||"           { OR }
+| '!'           { NEG }
+| '>'           { GREATER }
+| ">="            { GREATEREQ }
+| '<'           { LESS }
+| "<="          { LESSEQ }
