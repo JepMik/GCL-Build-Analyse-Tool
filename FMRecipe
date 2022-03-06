@@ -1,0 +1,86 @@
+(1) Download the calculator example
+
+ 
+
+(2) Rename the names of the files
+
+ 
+
+Calculator.fsx
+CalculatorTypesAST.fs
+CalculatorParser.fsp
+CalculatorLexer.fsl
+
+ 
+
+and modules from "Calculator" into your favourite name, e.g.
+
+ 
+
+FM4FUN.fsx
+FM4FUNTypesAST.fs
+FM4FUNParser.fsp
+FM4FUNLexer.fsl
+
+ 
+
+(3) Consider the grammar of GCL of the assignment
+
+ 
+
+C ::= x := a  | ...
+GC ::= b -> C | ...
+a ::= n | ...
+b ::= true | false | ...
+
+ 
+
+(4) For each syntactic category (C, GC, a, and b) you will have to
+
+ 
+
+- create a corresponding type in file FM4FUNTypesAST.fs
+- declare the syntactic categoy in FM4FUNParser.fsp with the corresponding return type
+- create a set of productions in file FM4FUNParser.fsp (see next step)
+
+ 
+
+(5) Translate each production (e.g. C := C ; C) into a production in FM4FUNParser.fsp. This is likely to introduce new tokens. For example, C := C ; C could become
+
+ 
+
+C :
+| C SEMICOLON C { ... }
+
+ 
+
+add each token to the lexer file
+
+ 
+
+FM4FUNLexer.fsl
+
+ 
+
+The token will also need to be specified in
+
+ 
+
+FM4FUNParser.fsp
+
+ 
+
+(7) Add the code that constructs the abstract syntax in the production (e.g. fill the dots below)
+
+ 
+
+C :
+| C SEMICOLON C { ... }
+
+ 
+
+(8) Pay attention to precedence and associativity rules. This can be done in file FM4FUNParser.fsp in the declaration of tokens or in the grammar (by transforming it as done in class).
+
+ 
+
+(9) Modify the file FM4FUN.fsx. Among other things, you need to replace the function eval by a function to pretty print the parsed programs. 
