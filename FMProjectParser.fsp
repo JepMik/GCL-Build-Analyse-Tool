@@ -28,6 +28,9 @@ open FMProjectTypesAST
 %type <expr> start
 %type <expr> expression
 %type <boolExpr> boolexpression
+%type <guardCommand> guardcom
+%type <command> command
+
 // Grammar productions
 %%
 

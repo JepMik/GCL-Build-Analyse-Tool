@@ -10,7 +10,7 @@ open System
 open FMProjectTypesAST
 #load "FMProjectParser.fs"
 open FMProjectParser
-#load "CalculatorLexer.fs"
+#load "FMProjectLexer.fs"
 open FMProjectLexer
 
 // We define the evaluation function recursively, by induction on the structure
