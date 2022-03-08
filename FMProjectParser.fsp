@@ -89,7 +89,7 @@ guardcom:
 
 //C ::= x := a | A[a] := a | skip | C ; C | if GC fi | do GC od
 command:
-  | VARIABLE ASSIGN expression                        { Assign($1,$3) }
+  | VARIABLE ASSIGN expression                        { Assign(Var($1),$3) }
   | VARIABLE LBRAK expression RBRAK ASSIGN expression { Assign(IndexExpr($1,$3),$6) }
   | SKIP                                              { Skip }
   | command ORDER command                             { Order($1,$3)}

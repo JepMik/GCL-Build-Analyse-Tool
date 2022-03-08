@@ -683,7 +683,7 @@ let _fsyacc_reductions ()  =    [|
                 (
                    (
 # 92 "FMProjectParser.fsp"
-                                                                             Assign(_1,_3) 
+                                                                             Assign(Var(_1),_3) 
                    )
 # 92 "FMProjectParser.fsp"
                  : command));

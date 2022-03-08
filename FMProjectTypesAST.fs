@@ -36,8 +36,8 @@ type guardCommand =
   | IfThen of (boolExpr * command)
   | FatBar of (guardCommand * guardCommand)
 and command = 
-  | Assign of (string * expr)
+  | Assign of (expr * expr) 
   | Skip 
-  | Order of (command)
+  | Order of (command * command)
   | If of (guardCommand)
   | Do of (guardCommand)
