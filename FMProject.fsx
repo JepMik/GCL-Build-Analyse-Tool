@@ -77,7 +77,7 @@ and printC e =
     | If(x) -> " IFFI( "+(printGC x)+" )"
     | Do(x) -> " DOOD( "+(printGC x)+" )"
 
-// We
+// Function that parses a given input
 let parse input =
     // translate string into a buffer of characters
     let lexbuf = LexBuffer<char>.FromString input
@@ -86,7 +86,7 @@ let parse input =
     // return the result of parsing (i.e. value of type "expr")
     res
 
-// We implement here the function that interacts with the user
+// Function that interacts with the user
 let rec compute n =
     if n = 0 then
         printfn "Bye bye"
@@ -104,15 +104,19 @@ let rec compute n =
 
 try
     printfn "Insert your Guarded Commands program to be parsed:"
+    //Read console input
     let input = Console.ReadLine()
+    //Create the lexical buffer
     let lexbuf = LexBuffer<char>.FromString input
     
     try 
+       //Parsed result
        let res = FMProjectParser.start FMProjectLexer.tokenize lexbuf 
        printfn "<---Pretty print:--->"
        printfn "%s" (printC res)
-       
-     with e -> printfn "Parse error at : Line %i, %i, Unexpected char: %s" (lexbuf.EndPos.pos_lnum+ 1) 
+
+    //Undefined string encountered   
+    with e -> printfn "Parse error at : Line %i, %i, Unexpected char: %s" (lexbuf.EndPos.pos_lnum+ 1) 
                     (lexbuf.EndPos.pos_cnum - lexbuf.EndPos.pos_bol) (LexBuffer<_>.LexemeString lexbuf)
 
 with e -> printfn "ERROR: %s" e.Message
