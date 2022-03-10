@@ -106,8 +106,8 @@ let rec compute n =
 
 // Start interacting with the user
 //compute 3
-printfn "%s" (printC (If(IfThen(Bool(true), Assign("x",Num(2))))))
-printfn "%s" (printB (LogAnd(Bool(false),Neg(Bool(true)))))
+//printfn "%s" (printC (If(IfThen(Bool(true), Assign("x",Num(2))))))
+//printfn "%s" (printB (LogAnd(Bool(false),Neg(Bool(true)))))
 
 try
     let input = Console.ReadLine()
@@ -123,6 +123,6 @@ try
 with e -> printfn "ERROR: %s" e.Message
 
 //let str = printC (parse (Console.ReadLine()))
-let str = (printC (parse (File.ReadAllText("test.txt") )))
-printfn "%s" str
+//let str = (printC (parse (File.ReadAllText("test.txt") )))
+//printfn "%s" str
 
