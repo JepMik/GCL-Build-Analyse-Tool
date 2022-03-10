@@ -31,7 +31,6 @@ type token =
   | LPAR
   | RPAR
   | EOF
-  | ROOT
   | LN
   | LOG
   | BOOL of (bool)
@@ -68,7 +67,6 @@ type tokenId =
     | TOKEN_LPAR
     | TOKEN_RPAR
     | TOKEN_EOF
-    | TOKEN_ROOT
     | TOKEN_LN
     | TOKEN_LOG
     | TOKEN_BOOL

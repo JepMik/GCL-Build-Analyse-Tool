@@ -26,10 +26,9 @@ let rec evalA e =
     | PowExpr(x,y) -> evalA(x) ** evalA (y)
     | UPlusExpr(x) -> evalA(x)
     | UMinusExpr(x) -> - evalA(x)
-    | LogExpr(x,y) -> Math.Log(evalA(y), evalA(x))
+    | LogExpr(x) -> Math.Log(evalA(x),2)
     | LnExpr(x) -> Math.Log(evalA(x))
-    | RootExpr(x) -> Math.Sqrt(evalA(x)); 
-    | _ -> 0.0
+    | _ -> 0.0 //#TODO
 
 // "Pretty Printer" for arithmetic expressions to show precedence of the operators
 let rec printA e = 
@@ -44,9 +43,8 @@ let rec printA e =
     | UPlusExpr(x) -> " UPLUS( "+(printA x)+" )"
     | UMinusExpr(x) -> " UMINUS( "+(printA x)+" )"
     | IndexExpr(A,x) -> A+"["+(printA x)+"]"
-    | LogExpr(x,y) -> " LOG( "+(printA x)+","+(printA y)+" )"
+    | LogExpr(x) -> " LOG( "+(printA x)+" )"
     | LnExpr(x) -> " LN( "+(printA x)+" )"
-    | RootExpr(x) -> " ROOT( "+(printA x)+" )" 
 
 // "Pretty Printer" for boolean expressions to show precedence of the operators
 let rec printB e = 
@@ -104,24 +102,25 @@ let rec compute n =
         compute n
         with err -> compute (n-1)
 
-// Start interacting with the user
-//compute 3
-//printfn "%s" (printC (If(IfThen(Bool(true), Assign("x",Num(2))))))
-//printfn "%s" (printB (LogAnd(Bool(false),Neg(Bool(true)))))
-
 try
+    printfn "Insert your Guarded Commands program to be parsed:"
     let input = Console.ReadLine()
     let lexbuf = LexBuffer<char>.FromString input
     
     try 
        let res = FMProjectParser.start FMProjectLexer.tokenize lexbuf 
-       printfn "COMPILED - Pretty print:"
+       printfn "<---Pretty print:--->"
        printfn "%s" (printC res)
        
-     with e -> printfn "Unexpected char: %s Parse error at : Line %i, %i" (LexBuffer<_>.LexemeString lexbuf) (lexbuf.EndPos.pos_lnum+ 1) (lexbuf.EndPos.pos_cnum - lexbuf.EndPos.pos_bol)
+     with e -> printfn "Parse error at : Line %i, %i, Unexpected char: %s" (lexbuf.EndPos.pos_lnum+ 1) 
+                    (lexbuf.EndPos.pos_cnum - lexbuf.EndPos.pos_bol) (LexBuffer<_>.LexemeString lexbuf)
 
 with e -> printfn "ERROR: %s" e.Message
 
+// Start interacting with the user
+//compute 3
+//printfn "%s" (printC (If(IfThen(Bool(true), Assign("x",Num(2))))))
+//printfn "%s" (printB (LogAnd(Bool(false),Neg(Bool(true)))))
 //let str = printC (parse (Console.ReadLine()))
 //let str = (printC (parse (File.ReadAllText("test.txt") )))
 //printfn "%s" str

@@ -13,9 +13,8 @@ type arithExpr =
   | PowExpr of (arithExpr * arithExpr)
   | UPlusExpr of (arithExpr)
   | UMinusExpr of (arithExpr)
-  | LogExpr of (arithExpr * arithExpr)
+  | LogExpr of (arithExpr)
   | LnExpr of (arithExpr)
-  | RootExpr of (arithExpr)
   | IndexExpr of (string * arithExpr)
 
 // type boolExpr does basic bool operations

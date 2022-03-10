@@ -27,16 +27,16 @@ Skip should have two spaces after input  `|skip--|`, hyphens are in these case s
 **These commands should be understood by people following the course Computer Science Modelling cn: 02141 on DTU**
 | Commands | Description |
 | --- | --- | 
-| Arithmetics   a : : |  n \| x \| A[a] \| a + a \| a - a \| a * a \| a / a \| - a \| a ^ a \| (a) |
+| Arithmetics   a : : |  n \| x \| A[a] \| a + a \| a - a \| a * a \| a / a \| - a \| a ^ a \| (a) | ln a | log a
 | Boolean b : : | true \| false \| b & b \| b \| b \| b && b \| b \|\| b \| !b  \| a = a \| a != a \| a > a \| a >= a \| a < a \| a <= a \(b) |
 | Commands C : :| x := a \| A[a] := a \| skip \| C ; C \| if GC fi \| do GC od |
 | Guarded Commands GC : :| b -> C \| GC [] GC |
 
-[If commands not understood "ok" reference can be found here](https://en.wikipedia.org/wiki/Guarded_Command_Language#:~:text=In%20a%20guarded%20command%2C%20just,statement%20will%20not%20be%20executed.)
+[If commands not understood, a reference can be found here](https://en.wikipedia.org/wiki/Guarded_Command_Language#:~:text=In%20a%20guarded%20command%2C%20just,statement%20will%20not%20be%20executed.)
 
 
 
-## How to interpret the outcome
+## How to interpret the outcome of the prettifier
 **The outcome:** 
 Is a *"Pretty Printed"* AST, that shows how the arithmetic, boolean or other commands
 are being treated by the Parser and Lexer.
@@ -52,6 +52,6 @@ are being treated by the Parser and Lexer.
 
 These examples show a clear image of how the AST is formed by the combined work of the Parser and Lexer.
 ## Error
-Error is a natural thing our GCL-parser, and should yield an error if strings not defined by our Lexer is recognised.
+Parse errors are implemented in our GCL-parser, and should yield an error message, if the Lexer recognizes strings that are not defined.
 
-If for some reason a error occurs while running an already defined syntax, then please contact the creators
+If for some reason an error occurs while running an already defined syntax, then please contact the creators.
