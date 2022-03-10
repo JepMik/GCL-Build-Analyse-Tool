@@ -19,10 +19,10 @@ type token =
   | FI
   | DO
   | OD
-  | TRUE
-  | FALSE
   | IFTHEN
   | FATBAR
+  | LBRAK
+  | RBRAK
   | TIMES
   | DIV
   | PLUS
@@ -34,8 +34,7 @@ type token =
   | ROOT
   | LN
   | LOG
-  | LBRAK
-  | RBRAK
+  | BOOL of (bool)
   | VARIABLE of (string)
   | NUM of (float)
 type tokenId = 
@@ -57,10 +56,10 @@ type tokenId =
     | TOKEN_FI
     | TOKEN_DO
     | TOKEN_OD
-    | TOKEN_TRUE
-    | TOKEN_FALSE
     | TOKEN_IFTHEN
     | TOKEN_FATBAR
+    | TOKEN_LBRAK
+    | TOKEN_RBRAK
     | TOKEN_TIMES
     | TOKEN_DIV
     | TOKEN_PLUS
@@ -72,8 +71,7 @@ type tokenId =
     | TOKEN_ROOT
     | TOKEN_LN
     | TOKEN_LOG
-    | TOKEN_LBRAK
-    | TOKEN_RBRAK
+    | TOKEN_BOOL
     | TOKEN_VARIABLE
     | TOKEN_NUM
     | TOKEN_end_of_input
@@ -83,6 +81,7 @@ type nonTerminalId =
     | NONTERM_start
     | NONTERM_expression
     | NONTERM_expression1
+    | NONTERM_str
     | NONTERM_boolexpression
     | NONTERM_guardcom
     | NONTERM_command
@@ -97,4 +96,4 @@ val prodIdxToNonTerminal: int -> nonTerminalId
 
 /// This function gets the name of a token as a string
 val token_to_string: token -> string
-val start : (FSharp.Text.Lexing.LexBuffer<'cty> -> token) -> FSharp.Text.Lexing.LexBuffer<'cty> -> (expr) 
+val start : (FSharp.Text.Lexing.LexBuffer<'cty> -> token) -> FSharp.Text.Lexing.LexBuffer<'cty> -> (command) 

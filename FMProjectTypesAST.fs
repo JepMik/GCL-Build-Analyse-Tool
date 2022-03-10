@@ -1,43 +1,50 @@
-// This file implements a module where we define a data type "expr"
-// to store represent arithmetic expressions
+// This file implements a module where we define multiple data types
+// to store represent boolean, arithmetic, commands and guarded commands from Parser and Lexer.
 module FMProjectTypesAST
 
-type expr =
+// type arithExpr does basic arithmetric operations
+type arithExpr =
   | Num of float
-  | TimesExpr of (expr * expr)
-  | DivExpr of (expr * expr)
-  | PlusExpr of (expr * expr)
-  | MinusExpr of (expr * expr)
-  | PowExpr of (expr * expr)
-  | UPlusExpr of (expr)
-  | UMinusExpr of (expr)
-  | LogExpr of (expr * expr)
-  | LnExpr of (expr)
-  | RootExpr of (expr)
-  | Var of (string)
-  | IndexExpr of (string * expr)
+  | StrA of (string)
+  | TimesExpr of (arithExpr * arithExpr)
+  | DivExpr of (arithExpr * arithExpr)
+  | PlusExpr of (arithExpr * arithExpr)
+  | MinusExpr of (arithExpr * arithExpr)
+  | PowExpr of (arithExpr * arithExpr)
+  | UPlusExpr of (arithExpr)
+  | UMinusExpr of (arithExpr)
+  | LogExpr of (arithExpr * arithExpr)
+  | LnExpr of (arithExpr)
+  | RootExpr of (arithExpr)
+  | IndexExpr of (string * arithExpr)
 
+// type boolExpr does basic bool operations
 type boolExpr = 
-  | True
-  | False
+  | Bool of (bool)
+  | StrB of (string)
   | BitWiseAnd of (boolExpr * boolExpr)
   | BitWiseOr of (boolExpr * boolExpr)
   | LogAnd of (boolExpr * boolExpr)
   | LogOr of (boolExpr * boolExpr)
   | Neg of (boolExpr)
-  | Equal of (expr * expr)
-  | NotEqual of (expr * expr)
-  | Greater of (expr * expr)
-  | GreaterEqual of (expr * expr)
-  | Less of (expr * expr)
-  | LessEqual of (expr * expr)
+  | Equal of (arithExpr * arithExpr)
+  | NotEqual of (arithExpr * arithExpr)
+  | Greater of (arithExpr * arithExpr)
+  | GreaterEqual of (arithExpr * arithExpr)
+  | Less of (arithExpr * arithExpr)
+  | LessEqual of (arithExpr * arithExpr)
 
+// type guardCommand and type command are declared together as they are 
+// mutually recursive types, and they do basic guarded commands and commands
 type guardCommand = 
   | IfThen of (boolExpr * command)
   | FatBar of (guardCommand * guardCommand)
 and command = 
-  | Assign of (expr * expr) 
+  | Assign of (string * arithExpr) 
+  | ArrayAssign of (string * arithExpr * arithExpr)
   | Skip 
   | Order of (command * command)
   | If of (guardCommand)
   | Do of (guardCommand)
+
+
