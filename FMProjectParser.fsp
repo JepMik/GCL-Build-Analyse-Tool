@@ -10,7 +10,7 @@ open FMProjectTypesAST
 %token TIMES DIV PLUS MINUS POW LPAR RPAR EOF LN LOG 
 %token IFTHEN FATBAR LBRAK RBRAK
 %token ASSIGN SKIP ORDER IF FI DO OD
-%token BITWAND BITWOR AND OR NEG EQUAL NOTEQ GREATER LESS GREATEREQ LESSEQ
+%token SAND SOR AND OR NEG EQUAL NOTEQ GREATER LESS GREATEREQ LESSEQ
 //the actual formats of these tokens are defined in the lexer file as regular expressions
 
 // Specify precedence and associativity of operators
@@ -20,8 +20,8 @@ open FMProjectTypesAST
 %left TIMES DIV
 %right POW LOG LN
 
-%left OR BITWOR
-%left AND BITWAND
+%left OR SOR
+%left AND SAND
 %right NEG
 
 %right ORDER FATBAR
@@ -86,8 +86,8 @@ str:
 boolexpression:
   | BOOL                                    { Bool($1) }
   | str                                     { StrB($1) }
-  | boolexpression BITWAND boolexpression   { BitWiseAnd($1,$3) }
-  | boolexpression BITWOR boolexpression    { BitWiseOr($1,$3) }
+  | boolexpression SAND boolexpression      { ShortCircuitAnd($1,$3) }
+  | boolexpression SOR boolexpression       { ShortCircuitOr($1,$3) }
   | boolexpression AND boolexpression       { LogAnd($1,$3) }
   | boolexpression OR boolexpression        { LogOr($1,$3) }
   | NEG boolexpression                      { Neg($2)}

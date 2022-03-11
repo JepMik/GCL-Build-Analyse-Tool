@@ -278,12 +278,12 @@ and tokenize  lexbuf =
           )
   | 26 -> ( 
 # 64 "FMProjectLexer.fsl"
-                                 BITWAND 
+                                 SAND 
 # 282 "FMProjectLexer.fs"
           )
   | 27 -> ( 
 # 65 "FMProjectLexer.fsl"
-                                 BITWOR 
+                                 SOR 
 # 287 "FMProjectLexer.fs"
           )
   | 28 -> ( 
@@ -303,7 +303,7 @@ and tokenize  lexbuf =
           )
   | 31 -> ( 
 # 69 "FMProjectLexer.fsl"
-                               EQUAL 
+                                 EQUAL 
 # 307 "FMProjectLexer.fs"
           )
   | 32 -> ( 

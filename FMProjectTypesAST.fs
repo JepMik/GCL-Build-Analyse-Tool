@@ -4,7 +4,7 @@ module FMProjectTypesAST
 
 // type arithExpr does basic arithmetric operations
 type arithExpr =
-  | Num of float
+  | Num of float        //be aware later, since taking int, store as float
   | StrA of (string)
   | TimesExpr of (arithExpr * arithExpr)
   | DivExpr of (arithExpr * arithExpr)
@@ -21,8 +21,8 @@ type arithExpr =
 type boolExpr = 
   | Bool of (bool)
   | StrB of (string)
-  | BitWiseAnd of (boolExpr * boolExpr)
-  | BitWiseOr of (boolExpr * boolExpr)
+  | ShortCircuitAnd of (boolExpr * boolExpr)
+  | ShortCircuitOr of (boolExpr * boolExpr)
   | LogAnd of (boolExpr * boolExpr)
   | LogOr of (boolExpr * boolExpr)
   | Neg of (boolExpr)
