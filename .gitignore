@@ -1,7 +1,7 @@
 FSharp.Core.4.3.4
 .ionide
-calculator
-hello
+./calculator
+./hello
 FsLexYacc.10.0.0
 FsLexYAcc.Runtime.10.0.0
-Assignment Computer Science Modelling
+./Assignment Computer Science Modelling

@@ -1,5 +1,4 @@
 // This script implements our interactive calculator
-
 // We need to import a couple of modules, including the generated lexer and parser
 
 #r "FsLexYacc.Runtime.10.0.0/lib/net46/FsLexYacc.Runtime.dll"
@@ -13,14 +12,14 @@ open FMProjectTypesAST
 open FMProjectParser
 #load "FMProjectLexer.fs"
 open FMProjectLexer
-//#load "FMCompiler.fsx"
-//open FMCompiler
+#load "FMProgramGraph.fs"
+open FMProgramGraph
 
 // We define the evaluation function recursively, by induction on the structure
 // of arithmetic expressions (AST of type expr)
 let rec evalA e =
   match e with
-    | Num(x) -> x
+    | Num(x) -> x:float
     | TimesExpr(x,y) -> evalA(x) * evalA(y)
     | DivExpr(x,y) -> evalA(x) / evalA (y)
     | PlusExpr(x,y) -> evalA(x) + evalA (y)
@@ -28,7 +27,7 @@ let rec evalA e =
     | PowExpr(x,y) -> evalA(x) ** evalA (y)
     | UPlusExpr(x) -> evalA(x)
     | UMinusExpr(x) -> - evalA(x)
-    | LogExpr(x) -> Math.Log(evalA(x),2.0)
+    | LogExpr(x) -> Math.Log(evalA(x),2)
     | LnExpr(x) -> Math.Log(evalA(x))
     | _ -> 0.0 //#TODO
 
@@ -70,16 +69,17 @@ let rec printB e =
 let rec printGC e = 
     match e with
     | IfThen(x,y) -> (printB x)+" -> "+(printC y)
-    | FatBar(x,y) -> (printGC x)+Environment.NewLine+"[] "+(printGC y)
+    | FatBar(x,y) -> (printGC x)+"\n"+"[] "+(printGC y)
 and printC e =
     match e with
     | ArrayAssign(x,y,z) -> x+"["+(printA y)+"]:="+(printA z)
     | Assign(x,y) -> x+":="+(printA y)
     | Skip -> "skip"
-    | Order(x,y) -> (printC x)+";"+Environment.NewLine+(printC y)
-    | If(x) -> "if "+(printGC x)+Environment.NewLine+"fi"
-    | Do(x) -> "do "+(printGC x)+Environment.NewLine+"od"
+    | Order(x,y) -> (printC x)+";\n"+(printC y)
+    | If(x) -> "if "+(printGC x)+"\n"+"fi"
+    | Do(x) -> "do "+(printGC x)+"\n"+"od"
 // accumulating recursive to be implemented
+//Environment.NewLine changed to '\n'
 
 // Function that parses a given input
 let parse input =
@@ -119,6 +119,12 @@ let prettify =
         let res = FMProjectParser.start FMProjectLexer.tokenize lexbuf 
         printfn "<---Pretty print:--->"
         printfn "%s" (printC res)
+
+        let graphstr = "strict digraph {\n"+
+                        listGraph (genenC res 1 (depthC res))
+                        + "}\n"
+        Console.WriteLine(graphstr)
+        File.WriteAllText("graph.dot",graphstr)
 
         //Undefined string encountered   
         with e -> printfn "Parse error at : Line %i, %i, Unexpected char: %s" (lexbuf.EndPos.pos_lnum+ 1) 

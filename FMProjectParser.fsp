@@ -4,7 +4,7 @@ open FMProjectTypesAST
 %}
 
 // Declare the tokens (terminal symbols)
-%token <float> NUM
+%token <int> NUM
 %token <string> VARIABLE
 %token <bool> BOOL
 %token TIMES DIV PLUS MINUS POW LPAR RPAR EOF LN LOG 

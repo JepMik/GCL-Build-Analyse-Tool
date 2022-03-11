@@ -4,7 +4,7 @@ module FMProjectTypesAST
 
 // type arithExpr does basic arithmetric operations
 type arithExpr =
-  | Num of float        //be aware later, since taking int, store as float
+  | Num of int        //be aware later, since taking int, store as float
   | StrA of (string)
   | TimesExpr of (arithExpr * arithExpr)
   | DivExpr of (arithExpr * arithExpr)
@@ -46,4 +46,9 @@ and command =
   | If of (guardCommand)
   | Do of (guardCommand)
 
-
+// type edge
+type edge = 
+  //| Earith of (int * arithExpr * int)
+  | Ebool of (int * boolExpr * int)
+  | Ecomm of (int * command * int)
+  //| Eguardcom of (int * guardCommand * int)

@@ -44,7 +44,7 @@ type token =
   | LOG
   | BOOL of (bool)
   | VARIABLE of (string)
-  | NUM of (float)
+  | NUM of (int)
 // This type is used to give symbolic names to token indexes, useful for error messages
 type tokenId = 
     | TOKEN_SAND
@@ -449,7 +449,7 @@ let _fsyacc_reductions ()  =    [|
                  : arithExpr));
 # 450 "FMProjectParser.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
-            let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : float)) in
+            let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : int)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (

@@ -35,7 +35,7 @@ type token =
   | LOG
   | BOOL of (bool)
   | VARIABLE of (string)
-  | NUM of (float)
+  | NUM of (int)
 type tokenId = 
     | TOKEN_SAND
     | TOKEN_SOR
