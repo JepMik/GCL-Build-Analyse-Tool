@@ -11,10 +11,12 @@ System.Globalization.CultureInfo.CurrentCulture <- new System.Globalization.Cult
 
 // We define macros for some regular expressions we will use later
 let digit       = ['0'-'9'] 
-let num         = digit+ ( '.' digit+)?  ('E' ('+'|'-')? digit+ )?
-let whitespace  = [' ' '\t']
+let num         = digit+
+let whitespace  = [' ' '\t' '\r' '\n']
 let newline     = "\n\r" | '\n' | '\r'
+let char        = ['a'-'z' 'A'-'Z']
 let variable    =  char ( char | digit )*
+let bool        = "true"|"false"
 //digit can also be \d+ 
 //whitespace can also be [\u00A0 \n \r \t]
 
@@ -28,7 +30,10 @@ rule tokenize = parse
 | newline       { lexbuf.EndPos <- lexbuf.EndPos.NextLine; tokenize lexbuf; }
 // deal with tokens that need to be built
 | num           { NUM(Double.Parse(LexBuffer<_>.LexemeString lexbuf)) }
+| bool          { BOOL(Boolean.Parse(LexBuffer<_>.LexemeString lexbuf)) }
 | variable      { let str = LexBuffer<_>.LexemeString lexbuf in VARIABLE(str) }
+
+// Arithmetic expressions to TOKENs
 | '*'           { TIMES }
 | '/'           { DIV }
 | '+'           { PLUS }
@@ -39,27 +44,30 @@ rule tokenize = parse
 | eof           { EOF }
 | '['           { LBRAK }
 | ']'           { RBRAK }
-| 'V'           { ROOT }
-| "log"         { LOG }
-| "ln"          { LN } 
+| "log"whitespace { LOG }
+| "ln"whitespace  { LN } 
 
-| ":="          { ASSIGN }
-| ';'           { ORDER }
-| "if "         { IF }
-| "fi"          { FI }
-| "do "         { DO }
-| "od"          { OD }
+// Command expressions to TOKENs
+| ":="              { ASSIGN }
+| "skip"whitespace  { SKIP }
+| ';'               { ORDER }
+| "if"whitespace    { IF }
+| whitespace"fi"    { FI }
+| "do"whitespace    { DO }
+| whitespace"od"    { OD }
 
-| ":="          { IFTHEN }
+// Guarded commands expression to TOKENs 
+| "->"          { IFTHEN }
 | "[]"          { FATBAR }
 
-| "true"        { TRUE }
-| "false"       { FALSE }
+// Boolean expression to TOKENs
 | '&'           { BITWAND }
 | '|'           { BITWOR }
 | "&&"          { AND }
 | "||"          { OR }
 | '!'           { NEG }
+| '='         { EQUAL }
+| "!="          { NOTEQ }
 | '>'           { GREATER }
 | ">="          { GREATEREQ }
 | '<'           { LESS }
