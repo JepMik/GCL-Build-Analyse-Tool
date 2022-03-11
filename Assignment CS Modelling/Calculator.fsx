@@ -1,17 +1,16 @@
 // This script implements our interactive calculator
 
 // We need to import a couple of modules, including the generated lexer and parser
-
-#r "FsLexYacc.Runtime.10.0.0/lib/net46/FsLexYacc.Runtime.dll"
-//#r "~/fsharp/FsLexYacc.Runtime.dll"
+//#r "net46/FsLexYacc.Runtime.dll" // JEPPE
+#r "FsLexYacc.Runtime.10.0.0/lib/net46/FsLexYacc.Runtime.dll" // ROSIE
 open FSharp.Text.Lexing
 open System
-#load "FMProjectTypesAST.fs"
-open FMProjectTypesAST
-#load "FMProjectParser.fs"
-open FMProjectParser
+#load "CalculatorTypesAST.fs"
+open CalculatorTypesAST
+#load "CalculatorParser.fs"
+open CalculatorParser
 #load "CalculatorLexer.fs"
-open FMProjectLexer
+open CalculatorLexer
 
 // We define the evaluation function recursively, by induction on the structure
 // of arithmetic expressions (AST of type expr)
@@ -25,17 +24,13 @@ let rec eval e =
     | PowExpr(x,y) -> eval(x) ** eval (y)
     | UPlusExpr(x) -> eval(x)
     | UMinusExpr(x) -> - eval(x)
-    | LogExpr(x,y) -> Math.Log(eval(y), eval(x))
-    | LnExpr(x) -> Math.Log(eval(x))
-    | RootExpr(x) -> Math.Sqrt(eval(x)); 
-
 
 // We
 let parse input =
     // translate string into a buffer of characters
     let lexbuf = LexBuffer<char>.FromString input
     // translate the buffer into a stream of tokens and parse them
-    let res = FMProjectParser.start FMProjectLexer.tokenize lexbuf
+    let res = CalculatorParser.start CalculatorLexer.tokenize lexbuf
     // return the result of parsing (i.e. value of type "expr")
     res
 

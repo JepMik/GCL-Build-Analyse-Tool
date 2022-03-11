@@ -1,1 +1,0 @@
-if x>=y -> z:=x [] y>x -> z:=y fi

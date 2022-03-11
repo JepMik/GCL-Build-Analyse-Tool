@@ -81,6 +81,6 @@ C :
 
 (8) Pay attention to precedence and associativity rules. This can be done in file FM4FUNParser.fsp in the declaration of tokens or in the grammar (by transforming it as done in class).
 
-
+ 
 
 (9) Modify the file FM4FUN.fsx. Among other things, you need to replace the function eval by a function to pretty print the parsed programs. 
