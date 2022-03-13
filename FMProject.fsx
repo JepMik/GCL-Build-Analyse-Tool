@@ -121,7 +121,7 @@ let prettify =
         printfn "%s" (printC res)
 
         let graphstr = "strict digraph {\n"+
-                        listGraph (genenC res 1 (depthC res))
+                        listGraph (genenC res 0 (depthC res))
                         + "}\n"
         Console.WriteLine(graphstr)
         File.WriteAllText("graph.dot",graphstr)

@@ -24,17 +24,17 @@ let rec doneGC egc =
     | FatBar(gc1,gc2) -> LogOr(doneGC gc1, doneGC gc2)
 
 //Compiler that takes GCL AST and converts to list of edges consisting of (node(int), expression(command), node(int))
-let rec genenC e ni nf=
+let rec genenC e ni nf =
     match e with
     | Order(c1,c2) -> (genenC c1 ni (ni+depthC c1)) 
                         @ (genenC c2 (ni+(depthC c1)) nf) 
-    | If (gc) -> (genenGC gc ni nf) 
-    | Do (gc) -> (genenGC gc ni ni) @ [Ebool(ni,doneGC gc,nf)]
+    | If (gc) -> (genenGC gc ni nf 1) 
+    | Do (gc) -> (genenGC gc ni ni 1) @ [Ebool(ni,doneGC gc,nf)]
     | _ -> [Ecomm(ni,e,nf)]
-and genenGC e ni nf =
+and genenGC e ni nf dp =
     match e with
-    | IfThen(b,C) ->  (genenC C (ni+1) nf) @ [Ebool(ni,b,ni+1)]
-    | FatBar(gc1,gc2) -> (genenGC gc1 ni nf) @ (genenGC gc2 ni nf)
+    | IfThen(b,C) ->  (genenC C (ni+dp) nf) @ [Ebool(ni,b,ni+dp)]
+    | FatBar(gc1,gc2) -> (genenGC gc1 ni nf 1) @ (genenGC gc2 ni nf (depthGC gc1))
     
 
 //function generate of a function e
