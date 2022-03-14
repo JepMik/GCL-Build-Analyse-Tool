@@ -1,5 +1,4 @@
 // This script implements our interactive calculator
-
 // We need to import a couple of modules, including the generated lexer and parser
 
 #r "FsLexYacc.Runtime.10.0.0/lib/net46/FsLexYacc.Runtime.dll"
@@ -13,12 +12,14 @@ open FMProjectTypesAST
 open FMProjectParser
 #load "FMProjectLexer.fs"
 open FMProjectLexer
+#load "FMProgramGraph.fs"
+open FMProgramGraph
 
 // We define the evaluation function recursively, by induction on the structure
 // of arithmetic expressions (AST of type expr)
 let rec evalA e =
   match e with
-    | Num(x) -> x
+    | Num(x) -> x:float
     | TimesExpr(x,y) -> evalA(x) * evalA(y)
     | DivExpr(x,y) -> evalA(x) / evalA (y)
     | PlusExpr(x,y) -> evalA(x) + evalA (y)
@@ -31,51 +32,54 @@ let rec evalA e =
     | _ -> 0.0 //#TODO
 
 // "Pretty Printer" for arithmetic expressions to show precedence of the operators
-let rec printA e = 
+let rec printA e =
     match e with
-    | StrA(x) -> " "+x
-    | Num(x) -> " "+x.ToString()
-    | TimesExpr(x,y) -> " TIMES( "+(printA x)+","+(printA y)+" )"
-    | DivExpr(x,y) -> " DIV( "+(printA x)+","+(printA y)+" )"
-    | PlusExpr(x,y) -> " PLUS( "+(printA x)+","+(printA y)+" )"
-    | MinusExpr(x,y) -> " MINUS( "+(printA x)+","+(printA y)+" )"
-    | PowExpr(x,y) -> " POW( "+(printA x)+","+(printA y)+" )"
-    | UPlusExpr(x) -> " UPLUS( "+(printA x)+" )"
-    | UMinusExpr(x) -> " UMINUS( "+(printA x)+" )"
+    | StrA(x) -> x
+    | Num(x) -> x.ToString()
+    | TimesExpr(x,y) -> (printA x)+"*"+(printA y)
+    | DivExpr(x,y) -> (printA x)+"/"+(printA y)
+    | PlusExpr(x,y) -> (printA x)+"+"+(printA y)
+    | MinusExpr(x,y) -> (printA x)+"-"+(printA y)
+    | PowExpr(x,y) -> (printA x)+"^"+(printA y)
+    | UPlusExpr(x) -> "+"+(printA x)
+    | UMinusExpr(x) -> "-"+(printA x)
     | IndexExpr(A,x) -> A+"["+(printA x)+"]"
-    | LogExpr(x) -> " LOG( "+(printA x)+" )"
-    | LnExpr(x) -> " LN( "+(printA x)+" )"
+    | LogExpr(x) -> "log("+(printA x)+")"
+    | LnExpr(x) -> " ln("+(printA x)+")"
+
 
 // "Pretty Printer" for boolean expressions to show precedence of the operators
 let rec printB e = 
     match e with 
-    | Bool(x) -> " "+x.ToString()
-    | StrB(x) -> " "+x
-    | BitWiseAnd(x,y) -> " BITWAND( "+(printB x)+","+(printB y)+" )"
-    | BitWiseOr(x,y) -> " BITWOR( "+(printB x)+","+(printB y)+" )"
-    | LogAnd(x,y) -> " AND( "+(printB x)+","+(printB y)+" )"
-    | LogOr(x,y) -> " OR( "+(printB x)+","+(printB y)+" )"
-    | Neg(x) -> " NEG( "+(printB x)+" )"
-    | Equal(x,y) -> " EQUAL( "+(printA x)+","+(printA y)+" )"
-    | NotEqual(x,y) -> " NOTEQUAL( "+(printA x)+","+(printA y)+" )"
-    | Greater(x,y) -> " GREATER( "+(printA x)+","+(printA y)+" )"
-    | GreaterEqual(x,y) -> " GREATEREQUAL( "+(printA x)+","+(printA y)+" )"
-    | Less(x,y) -> " LESS( "+(printA x)+","+(printA y)+" )"
-    | LessEqual(x,y) -> " LESSQUAL( "+(printA x)+","+(printA y)+" )"
+    | Bool(x) -> x.ToString()
+    | StrB(x) -> x
+    | ShortCircuitAnd(x,y) -> "("+(printB x)+")&("+(printB y)+")"
+    | ShortCircuitOr(x,y) -> "("+(printB x)+")|("+(printB y)+")"
+    | LogAnd(x,y) -> "("+(printB x)+")&&("+(printB y)+")"
+    | LogOr(x,y) -> "("+(printB x)+")||("+(printB y)+")"
+    | Neg(x) -> "!("+(printB x)+")"
+    | Equal(x,y) -> (printA x)+"="+(printA y)
+    | NotEqual(x,y) -> (printA x)+"!="+(printA y)
+    | Greater(x,y) -> (printA x)+">"+(printA y)
+    | GreaterEqual(x,y) -> (printA x)+">="+(printA y)
+    | Less(x,y) -> (printA x)+"<"+(printA y)
+    | LessEqual(x,y) -> (printA x)+"<="+(printA y)
 
 // "Pretty Printer" for guarded commands and commands to show precedence of the operators
 let rec printGC e = 
     match e with
     | IfThen(x,y) -> (printB x)+" -> "+(printC y)
-    | FatBar(x,y) -> (printGC x)+" [] "+(printGC y)
+    | FatBar(x,y) -> (printGC x)+"\n"+"[] "+(printGC y)
 and printC e =
     match e with
     | ArrayAssign(x,y,z) -> x+"["+(printA y)+"]:="+(printA z)
-    | Assign(x,y) -> x+" := "+(printA y)
-    | Skip -> " SKIP "
-    | Order(x,y) -> (printC x)+" ; "+(printC y)
-    | If(x) -> " IFFI( "+(printGC x)+" )"
-    | Do(x) -> " DOOD( "+(printGC x)+" )"
+    | Assign(x,y) -> x+":="+(printA y)
+    | Skip -> "skip"
+    | Order(x,y) -> (printC x)+";\n"+(printC y)
+    | If(x) -> "if "+(printGC x)+"\n"+"fi"
+    | Do(x) -> "do "+(printGC x)+"\n"+"od"
+// accumulating recursive to be implemented
+//Environment.NewLine changed to '\n'
 
 // Function that parses a given input
 let parse input =
@@ -102,24 +106,32 @@ let rec compute n =
         compute n
         with err -> compute (n-1)
 
-try
-    printfn "Insert your Guarded Commands program to be parsed:"
-    //Read console input
-    let input = Console.ReadLine()
-    //Create the lexical buffer
-    let lexbuf = LexBuffer<char>.FromString input
-    
-    try 
-       //Parsed result
-       let res = FMProjectParser.start FMProjectLexer.tokenize lexbuf 
-       printfn "<---Pretty print:--->"
-       printfn "%s" (printC res)
+let prettify =
+    try
+        printfn "Insert your Guarded Commands program to be parsed:"
+        //Read console input
+        let input = Console.ReadLine()
+        //Create the lexical buffer
+        let lexbuf = LexBuffer<char>.FromString input
+        
+        try 
+        //Parsed result
+        let res = FMProjectParser.start FMProjectLexer.tokenize lexbuf 
+        printfn "<---Pretty print:--->"
+        printfn "%s" (printC res)
 
-    //Undefined string encountered   
-    with e -> printfn "Parse error at : Line %i, %i, Unexpected char: %s" (lexbuf.EndPos.pos_lnum+ 1) 
-                    (lexbuf.EndPos.pos_cnum - lexbuf.EndPos.pos_bol) (LexBuffer<_>.LexemeString lexbuf)
+        let graphstr = "strict digraph {\n"+
+                        listGraph (genenC res 0 (depthC res))
+                        + "}\n"
+        Console.WriteLine(graphstr)
+        File.WriteAllText("graph.dot",graphstr)
 
-with e -> printfn "ERROR: %s" e.Message
+        //Undefined string encountered   
+        with e -> printfn "Parse error at : Line %i, %i, Unexpected char: %s" (lexbuf.EndPos.pos_lnum+ 1) 
+                        (lexbuf.EndPos.pos_cnum - lexbuf.EndPos.pos_bol) (LexBuffer<_>.LexemeString lexbuf)
+
+    with e -> printfn "ERROR: %s" e.Message;;
+prettify;;
 
 // Start interacting with the user
 //compute 3
@@ -128,4 +140,3 @@ with e -> printfn "ERROR: %s" e.Message
 //let str = printC (parse (Console.ReadLine()))
 //let str = (printC (parse (File.ReadAllText("test.txt") )))
 //printfn "%s" str
-

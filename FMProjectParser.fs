@@ -10,8 +10,8 @@ open FMProjectTypesAST
 # 10 "FMProjectParser.fs"
 // This type is the type of tokens accepted by the parser
 type token = 
-  | BITWAND
-  | BITWOR
+  | SAND
+  | SOR
   | AND
   | OR
   | NEG
@@ -44,11 +44,11 @@ type token =
   | LOG
   | BOOL of (bool)
   | VARIABLE of (string)
-  | NUM of (float)
+  | NUM of (int)
 // This type is used to give symbolic names to token indexes, useful for error messages
 type tokenId = 
-    | TOKEN_BITWAND
-    | TOKEN_BITWOR
+    | TOKEN_SAND
+    | TOKEN_SOR
     | TOKEN_AND
     | TOKEN_OR
     | TOKEN_NEG
@@ -98,8 +98,8 @@ type nonTerminalId =
 // This function maps tokens to integer indexes
 let tagOfToken (t:token) = 
   match t with
-  | BITWAND  -> 0 
-  | BITWOR  -> 1 
+  | SAND  -> 0 
+  | SOR  -> 1 
   | AND  -> 2 
   | OR  -> 3 
   | NEG  -> 4 
@@ -137,8 +137,8 @@ let tagOfToken (t:token) =
 // This function maps integer indexes to symbolic token ids
 let tokenTagToTokenId (tokenIdx:int) = 
   match tokenIdx with
-  | 0 -> TOKEN_BITWAND 
-  | 1 -> TOKEN_BITWOR 
+  | 0 -> TOKEN_SAND 
+  | 1 -> TOKEN_SOR 
   | 2 -> TOKEN_AND 
   | 3 -> TOKEN_OR 
   | 4 -> TOKEN_NEG 
@@ -226,8 +226,8 @@ let _fsyacc_tagOfErrorTerminal = 35
 // This function gets the name of a token as a string
 let token_to_string (t:token) = 
   match t with 
-  | BITWAND  -> "BITWAND" 
-  | BITWOR  -> "BITWOR" 
+  | SAND  -> "SAND" 
+  | SOR  -> "SOR" 
   | AND  -> "AND" 
   | OR  -> "OR" 
   | NEG  -> "NEG" 
@@ -265,8 +265,8 @@ let token_to_string (t:token) =
 // This function gets the data carried by a token as an object
 let _fsyacc_dataOfToken (t:token) = 
   match t with 
-  | BITWAND  -> (null : System.Object) 
-  | BITWOR  -> (null : System.Object) 
+  | SAND  -> (null : System.Object) 
+  | SOR  -> (null : System.Object) 
   | AND  -> (null : System.Object) 
   | OR  -> (null : System.Object) 
   | NEG  -> (null : System.Object) 
@@ -449,7 +449,7 @@ let _fsyacc_reductions ()  =    [|
                  : arithExpr));
 # 450 "FMProjectParser.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
-            let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : float)) in
+            let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : int)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
@@ -532,7 +532,7 @@ let _fsyacc_reductions ()  =    [|
                 (
                    (
 # 89 "FMProjectParser.fsp"
-                                                                   BitWiseAnd(_1,_3) 
+                                                                   ShortCircuitAnd(_1,_3) 
                    )
 # 89 "FMProjectParser.fsp"
                  : boolExpr));
@@ -544,7 +544,7 @@ let _fsyacc_reductions ()  =    [|
                 (
                    (
 # 90 "FMProjectParser.fsp"
-                                                                   BitWiseOr(_1,_3) 
+                                                                   ShortCircuitOr(_1,_3) 
                    )
 # 90 "FMProjectParser.fsp"
                  : boolExpr));

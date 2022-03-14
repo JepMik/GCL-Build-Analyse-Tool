@@ -1,0 +1,8 @@
+strict digraph {
+q1 -> q0[label="x:=2"];
+q0 -> q1[label="True"];
+q2 -> q3[label="x:=1"];
+q3 -> q0[label="Y:=2"];
+q0 -> q2[label="False"];
+q0 -> q6[label="(!(True))||(!(False))"];
+}

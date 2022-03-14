@@ -1,1 +1,31 @@
+// Factorial function
+y:=1;do x>0 -> y:=x*y;x:=x-1 od
+// CHECKS
+
+// Maximum function
 if x>=y -> z:=x [] y>x -> z:=y fi
+// CHECKS
+
+// Insertion sort
+i:=1;do i<n -> j:=i;do (j>0)&&(A[j-1]>A[j]) -> t:=A[j]; A[j]:=A[j-1]; A[j-1]:=t; j:=j-1 od;i:=i+1 od
+// CHECKS
+
+// Add and count entries of an array
+i:=0; x:=0; y:=0; do i<10 -> if A[i] >= 0 -> x:=x+A[i]; i:=i+1 [] A[i]<0 -> i:=i+1; break fi; y:=y+1 od
+// 'Break' is an unknown entry
+
+// Search for a value in array
+i:=0; try do A[i]=x -> throw yes [] !(A[i]=x) -> if i<9 -> i:=i+1 [] i>=9 -> throw no fi od catch yes: x:=1 [] no: x:=2 yrt
+// 'throw yes', 'throw no', 'catch yes', 'no' and 'yrt' are unknown entries
+
+// Avarage of some entries of an array
+i:=0; x:=0; y:=0; do (n>i)&&(A[i]>=0) -> x:=x+A[i]; y:=y+1; i:=i+1 [] (n>i)&&(0>A[i]) -> i:=i+1 od; x:=x/y
+// CHECKS
+
+// Implicit and explicit flows
+if x<0 -> y:=(-1*z)*z [] x=0 -> y:=0 [] x>0 -> y:=z*z fi
+// CHECKS
+
+// Database
+i:=0; j:=0; do (i<n)&((j=m)|(i<j)) -> A[i]:=A[i]+27; i:=i+1 [] (j<m)&((i=n)|(!(i<j))) -> B[j]:=B[j]+12; j:=j+1 od
+// CHECKS
