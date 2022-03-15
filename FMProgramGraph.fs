@@ -8,18 +8,6 @@ open System.IO
 
 open FMProjectTypesAST
 
-//Function that computes depth and returns depth in int
-let rec depthC expr =
-    match expr with
-    | Order(C1,C2) -> (depthC C2) + (depthC C1)
-    | If(GC) -> depthGC GC 
-    | Do(GC) -> 1+depthGC GC
-    | _ -> 1
-and depthGC expr =
-    match expr with
-    | IfThen(_,C) -> 1 + depthC C
-    | FatBar(gc1, gc2) -> depthGC gc1 + depthGC gc2;
-
 //Function to compute done of a guarded command
 let rec doneGC egc = 
     match egc with
@@ -28,38 +16,50 @@ let rec doneGC egc =
 
 //Compiler that takes GCL AST and converts to list of edges consisting of (node(int), expression(command), node(int))
 //Non-deterministic graphs generator
-let rec genenC e ni nf =
+let rec genenC e init final next = 
     match e with
-    | Order(c1,c2) -> (genenC c1 ni (ni+depthC c1)) 
-                        @ (genenC c2 (ni+(depthC c1)) nf) 
-    | If (gc) -> (genenGC gc ni nf 1) 
-    | Do (gc) -> (genenGC gc ni ni 1) @ [Ebool(ni,doneGC gc,nf)]
-    | _ -> [Ecomm(ni,e,nf)]
-and genenGC e ni nf dp =
-    match e with
-    | IfThen(b,C) ->  (genenC C (ni+dp) nf) @ [Ebool(ni,b,ni+dp)]
-    | FatBar(gc1,gc2) -> (genenGC gc1 ni nf 1) @ (genenGC gc2 ni nf (depthGC gc1))
-    
-
-//Deterministic graphs generator
-let rec detGenenC e ni nf= 
-    match e with
-    | Order(c1,c2) -> (detGenenC c1 ni (ni+depthC c1)) 
-                        @ (detGenenC c2 (ni+(depthC c1)) nf)
-    | If (gc) -> let (E,d) = detGenenGC gc ni nf 1 (Bool(false))
-                 E
-    | Do (gc) -> let (E,d) = detGenenGC gc ni ni 1 (Bool(false)) 
-                 E @ [Ebool(ni,Neg(d),nf)]
-    | _ -> [Ecomm(ni,e,nf)]
-and detGenenGC e ni nf dp d = 
+    | Order(c1,c2) ->let (E1,last) = (genenC c1 init next (next+1)) 
+                     let (E2,last2) = (genenC c2 next final last)
+                     (E1 @ E2, last2) 
+    | If(gc) -> (genenGC gc init final next)
+    | Do(gc) -> let (E,last) = (genenGC gc init init next) 
+                (E @ [Ebool(init,doneGC gc,final)], last)
+    | _ -> ([Ecomm(init,e,final)], next)
+and genenGC e init final next =                   
     match e with 
-    | IfThen(b, c) -> let E = genenC c (ni+dp) nf 
-                      ([Ebool(ni,LogAnd(b,Neg(d)),ni+dp)]) @ E, (LogOr(b,d))
-    | FatBar(gc1,gc2) -> let (E1,d1) = detGenenGC gc1 ni nf 1 d
-                         let (E2,d2) = detGenenGC gc2 ni nf (depthGC gc1) d1
-                         (E1 @ E2, d2)
-//function generate of a function e
-//((If(IfThen(Bool(true), Assign("x",Num(2))))))
+    | IfThen(b,C) -> 
+            let (E,last) = (genenC C next final (next+1))
+            ([Ebool(init,b,next)] @ E, last)
+    | FatBar(gc1,gc2) -> 
+            let (E1,last1) = genenGC gc1 init final next             
+            let (E2,last2) = genenGC gc2 init final last1
+            (E1 @ E2, last2)
+
+
+//Deterministic
+let rec detGenenC e init final next=
+    match e with
+        | Order(c1,c2) -> let (E1,last) = (detGenenC c1 init next (next+1)) 
+                          let (E2,last2) = (detGenenC c2 next final last)
+                          (E1 @ E2, last2) 
+        | If(gc) -> let (E,next,d) = (detGenenGC gc init final next (Bool(false)))
+                    (E, next) 
+        | Do(gc) -> let (E,next,d) = (detGenenGC gc init init next (Bool(false)))
+                    (E @ [Ebool(init,Neg(d),final)], next)
+        | _ -> ([Ecomm(init,e,final)], next)
+and detGenenGC e init final next d =
+    match e with 
+    | IfThen(b,C) -> let (E,last) = (detGenenC C next final (next+1))
+                     ([Ebool(init,LogAnd(b,Neg(d)),next)] @ E, last, (LogOr(b,d)))
+    | FatBar(gc1,gc2) -> let (E1,last1,d1) = detGenenGC gc1 init final next d
+                         let (E2,last2,d2) = detGenenGC gc2 init final last1 d1
+                         (E1 @ E2, last2, d2)
+
+
+
+
+
+
 
 
 
@@ -112,12 +112,24 @@ and printC e =
 // accumulating recursive to be implemented
 //Environment.NewLine changed to '\n'
 
+let convert x y =
+    match (x,y) with
+    | (0,-1) ->("°", "∙")
+    | (0,d) -> ("°",d.ToString())
+    | (d,-1) -> (d.ToString(),"∙")
+    | (d,0) -> (d.ToString(),"°")
+    | (d1,d2) -> (d1.ToString(),d2.ToString())
+
 //Function that takes in list and generates graphviz syntax
 let rec listGraph edgeL= 
     match edgeL with 
-    | Ebool(x,b,y)::tail -> "q"+x.ToString()+" -> q"+y.ToString()+"[label=\""+(printB b)+"\"];\n"  
+    | Ebool(x,b,y)::tail -> 
+                let (a,c) = convert x y
+                "q"+a+" -> q"+c+"[label=\""+(printB b)+"\"];\n"  
                                 + (listGraph tail)
-    | Ecomm(x,com,y)::tail -> "q"+x.ToString()+" -> q"+y.ToString()+"[label=\""+(printC com)+"\"];\n"  
+    | Ecomm(x,com,y)::tail -> 
+                let (a,c) = convert x y
+                "q"+a+" -> q"+c+"[label=\""+(printC com)+"\"];\n"  
                                 + (listGraph tail)
     | [] -> ""
 let graphstr = "strict digraph {\n"+
@@ -125,3 +137,4 @@ let graphstr = "strict digraph {\n"+
                 + "}\n" // Example
 //File.WriteAllText (filename , string output)  
 File.WriteAllText("graph.dot",graphstr);;
+

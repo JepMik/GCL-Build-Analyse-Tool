@@ -126,7 +126,7 @@ let prettify ()=
 
 let determ ()=
     try
-        printfn "Insert your Guarded Commands program to be \n 
+        printfn "Insert your Guarded Commands program to be
                 converted to a deterministic program graph:"
         //Read console input
         let input = Console.ReadLine()
@@ -138,7 +138,8 @@ let determ ()=
         let res = FMProjectParser.start FMProjectLexer.tokenize lexbuf 
         
         let graphstr = "strict digraph {\n"+
-                        listGraph (detGenenC res 0 (depthC res))
+                        let (list,x) = detGenenC res 0 -1 1
+                        listGraph list
                         + "}\n"
         Console.WriteLine(graphstr)
         File.WriteAllText("graph.dot",graphstr)
@@ -151,7 +152,7 @@ let determ ()=
 
 let nondeter ()=
     try
-        printfn "Insert your Guarded Commands program to be \n 
+        printfn "Insert your Guarded Commands program to be 
                 converted to a deterministic program graph:"
         //Read console input
         let input = Console.ReadLine()
@@ -163,7 +164,8 @@ let nondeter ()=
         let res = FMProjectParser.start FMProjectLexer.tokenize lexbuf 
         
         let graphstr = "strict digraph {\n"+
-                        listGraph (genenC res 0 (depthC res))
+                        let (list,x) = genenC res 0 -1 1
+                        listGraph list
                         + "}\n"
         Console.WriteLine(graphstr)
         File.WriteAllText("graph.dot",graphstr)
@@ -205,7 +207,7 @@ let rec menu() =
                 menu()
     | true, 3 -> 
                 determ()
-                menu()    
+                menu()
     | true, 4 -> ()
     | _ -> menu()
 

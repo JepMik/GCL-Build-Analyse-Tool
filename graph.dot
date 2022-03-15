@@ -1,7 +1,7 @@
 strict digraph {
-q0 -> q1[label="(True)&&(!(False))"];
-q1 -> q0[label="x:=1"];
-q0 -> q2[label="(False)&&(!((True)||(False)))"];
-q2 -> q0[label="x:=x-1"];
-q0 -> q5[label="!((False)||((True)||(False)))"];
+q° -> q1[label="(x>2)&&(!(False))"];
+q1 -> q°[label="y:=5"];
+q° -> q2[label="(x>5)&&(!((x>2)||(False)))"];
+q2 -> q°[label="y:=1"];
+q° -> q∙[label="!((x>5)||((x>2)||(False)))"];
 }
