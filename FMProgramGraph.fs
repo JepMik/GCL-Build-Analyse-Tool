@@ -17,13 +17,14 @@ and depthGC expr =
     | IfThen(_,C) -> 1 + depthC C
     | FatBar(gc1, gc2) -> depthGC gc1 + depthGC gc2;
 
-//Function to compute done of a guarded comma
+//Function to compute done of a guarded command
 let rec doneGC egc = 
     match egc with
     | IfThen(b,_) -> Neg(b)
     | FatBar(gc1,gc2) -> LogOr(doneGC gc1, doneGC gc2)
 
 //Compiler that takes GCL AST and converts to list of edges consisting of (node(int), expression(command), node(int))
+//Non-deterministic graphs
 let rec genenC e ni nf =
     match e with
     | Order(c1,c2) -> (genenC c1 ni (ni+depthC c1)) 

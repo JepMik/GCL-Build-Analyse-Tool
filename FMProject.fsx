@@ -131,7 +131,7 @@ let prettify =
                         (lexbuf.EndPos.pos_cnum - lexbuf.EndPos.pos_bol) (LexBuffer<_>.LexemeString lexbuf)
 
     with e -> printfn "ERROR: %s" e.Message;;
-prettify;;
+//prettify;;
 
 // Start interacting with the user
 //compute 3
@@ -140,3 +140,29 @@ prettify;;
 //let str = printC (parse (Console.ReadLine()))
 //let str = (printC (parse (File.ReadAllText("test.txt") )))
 //printfn "%s" str
+
+
+let printMenu() = 
+    printfn "Menu: "
+    printfn "1. Pretty printer"
+    printfn "2. Non-Deterministic Program Graph"
+    printfn "3. Deterministic Program Graph"
+    printfn "4. Exit menu"
+    printf "Enter your choice: "
+
+let getInput () = Int32.TryParse(Console.ReadLine())
+
+let rec menu() = 
+    printMenu()
+    match getInput() with
+    | true, 1 -> 
+                prettify
+                menu()
+    | true, 2 ->
+                //determ()
+                menu()
+    | true, 3 -> 
+                //nondeter()
+                menu()    
+    | true, 4 -> ()
+    | _ -> menu()
