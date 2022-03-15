@@ -15,6 +15,7 @@ let rec doneGC egc =
     | FatBar(gc1,gc2) -> LogOr(doneGC gc1, doneGC gc2)
 
 //Compiler that takes GCL AST and converts to list of edges consisting of (node(int), expression(command), node(int))
+
 //Non-deterministic graphs generator
 let rec genenC e init final next = 
     match e with
@@ -36,7 +37,7 @@ and genenGC e init final next =
             (E1 @ E2, last2)
 
 
-//Deterministic
+//Deterministic graphs generator
 let rec detGenenC e init final next=
     match e with
         | Order(c1,c2) -> let (E1,last) = (detGenenC c1 init next (next+1)) 
@@ -54,14 +55,6 @@ and detGenenGC e init final next d =
     | FatBar(gc1,gc2) -> let (E1,last1,d1) = detGenenGC gc1 init final next d
                          let (E2,last2,d2) = detGenenGC gc2 init final last1 d1
                          (E1 @ E2, last2, d2)
-
-
-
-
-
-
-
-
 
 // "Pretty Printer" for arithmetic expressions to show precedence of the operators
 let rec printA e =
@@ -114,10 +107,10 @@ and printC e =
 
 let convert x y =
     match (x,y) with
-    | (0,-1) ->("°", "∙")
-    | (0,d) -> ("°",d.ToString())
-    | (d,-1) -> (d.ToString(),"∙")
-    | (d,0) -> (d.ToString(),"°")
+    | (0,-1) ->("►", "◄")
+    | (0,d) -> ("►",d.ToString())
+    | (d,-1) -> (d.ToString(),"◄")
+    | (d,0) -> (d.ToString(),"►")
     | (d1,d2) -> (d1.ToString(),d2.ToString())
 
 //Function that takes in list and generates graphviz syntax
