@@ -61,13 +61,13 @@ let rec printA e =
     match e with
     | StrA(x) -> x
     | Num(x) -> x.ToString()
-    | TimesExpr(x,y) -> (printA x)+"*"+(printA y)
-    | DivExpr(x,y) -> (printA x)+"/"+(printA y)
-    | PlusExpr(x,y) -> (printA x)+"+"+(printA y)
-    | MinusExpr(x,y) -> (printA x)+"-"+(printA y)
-    | PowExpr(x,y) -> (printA x)+"^"+(printA y)
-    | UPlusExpr(x) -> "+"+(printA x)
-    | UMinusExpr(x) -> "-"+(printA x)
+    | TimesExpr(x,y) -> "("+(printA x)+"*"+(printA y)+")"
+    | DivExpr(x,y) -> "("+(printA x)+"/"+(printA y)+")"
+    | PlusExpr(x,y) -> "("+(printA x)+"+"+(printA y)+")"
+    | MinusExpr(x,y) -> "("+(printA x)+"-"+(printA y)+")"
+    | PowExpr(x,y) -> "("+(printA x)+"^"+(printA y)+")"
+    | UPlusExpr(x) -> "(+"+(printA x)+")"
+    | UMinusExpr(x) -> "(-"+(printA x)+")"
     | IndexExpr(A,x) -> A+"["+(printA x)+"]"
     | LogExpr(x) -> "log("+(printA x)+")"
     | LnExpr(x) -> " ln("+(printA x)+")"
@@ -90,20 +90,24 @@ let rec printB e =
     | LessEqual(x,y) -> (printA x)+"<="+(printA y)
 
 // "Pretty Printer" for guarded commands and commands to show precedence of the operators
-let rec printGC e = 
+let rec indent n =
+    match n with
+    //| _ -> ""
+    | 0 -> ""
+    | x -> "   "+(indent (x-1))
+
+let rec printGC e n = 
     match e with
-    | IfThen(x,y) -> (printB x)+" -> "+(printC y)
-    | FatBar(x,y) -> (printGC x)+"\n"+"[] "+(printGC y)
-and printC e =
+    | IfThen(x,y) -> (printB x)+" -> \n"+(printC y n)
+    | FatBar(x,y) -> (printGC x n)+"\n"+"[] "+(printGC y n)
+and printC e n=
     match e with
-    | ArrayAssign(x,y,z) -> x+"["+(printA y)+"]:="+(printA z)
-    | Assign(x,y) -> x+":="+(printA y)
-    | Skip -> "skip"
-    | Order(x,y) -> (printC x)+";\n"+(printC y)
-    | If(x) -> "if "+(printGC x)+"\n"+"fi"
-    | Do(x) -> "do "+(printGC x)+"\n"+"od"
-// accumulating recursive to be implemented
-//Environment.NewLine changed to '\n'
+    | ArrayAssign(x,y,z) -> (indent n)+x+"["+(printA y)+"]:="+(printA z)
+    | Assign(x,y) -> (indent n)+x+":="+(printA y)
+    | Skip -> (indent n)+"skip"
+    | Order(x,y) -> (indent n)+(printC x n)+";\n"+(indent n)+(printC y n)
+    | If(x) -> "if "+(printGC x (n+1))+"\n"+"fi"
+    | Do(x) -> "do "+(printGC x (n+1))+"\n"+"od"
 
 let convert x y =
     match (x,y) with
@@ -122,7 +126,7 @@ let rec listGraph edgeL=
                                 + (listGraph tail)
     | Ecomm(x,com,y)::tail -> 
                 let (a,c) = convert x y
-                "q"+a+" -> q"+c+"[label=\""+(printC com)+"\"];\n"  
+                "q"+a+" -> q"+c+"[label=\""+(printC com 0)+"\"];\n"  
                                 + (listGraph tail)
     | [] -> ""
 let graphstr = "strict digraph {\n"+

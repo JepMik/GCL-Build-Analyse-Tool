@@ -31,55 +31,6 @@ let rec evalA e =
     | LnExpr(x) -> Math.Log(evalA(x))
     | _ -> 0.0 //#TODO
 
-// "Pretty Printer" for arithmetic expressions to show precedence of the operators
-let rec printA e =
-    match e with
-    | StrA(x) -> x
-    | Num(x) -> x.ToString()
-    | TimesExpr(x,y) -> (printA x)+"*"+(printA y)
-    | DivExpr(x,y) -> (printA x)+"/"+(printA y)
-    | PlusExpr(x,y) -> (printA x)+"+"+(printA y)
-    | MinusExpr(x,y) -> (printA x)+"-"+(printA y)
-    | PowExpr(x,y) -> (printA x)+"^"+(printA y)
-    | UPlusExpr(x) -> "+"+(printA x)
-    | UMinusExpr(x) -> "-"+(printA x)
-    | IndexExpr(A,x) -> A+"["+(printA x)+"]"
-    | LogExpr(x) -> "log("+(printA x)+")"
-    | LnExpr(x) -> " ln("+(printA x)+")"
-
-
-// "Pretty Printer" for boolean expressions to show precedence of the operators
-let rec printB e = 
-    match e with 
-    | Bool(x) -> x.ToString()
-    | StrB(x) -> x
-    | ShortCircuitAnd(x,y) -> "("+(printB x)+")&("+(printB y)+")"
-    | ShortCircuitOr(x,y) -> "("+(printB x)+")|("+(printB y)+")"
-    | LogAnd(x,y) -> "("+(printB x)+")&&("+(printB y)+")"
-    | LogOr(x,y) -> "("+(printB x)+")||("+(printB y)+")"
-    | Neg(x) -> "!("+(printB x)+")"
-    | Equal(x,y) -> (printA x)+"="+(printA y)
-    | NotEqual(x,y) -> (printA x)+"!="+(printA y)
-    | Greater(x,y) -> (printA x)+">"+(printA y)
-    | GreaterEqual(x,y) -> (printA x)+">="+(printA y)
-    | Less(x,y) -> (printA x)+"<"+(printA y)
-    | LessEqual(x,y) -> (printA x)+"<="+(printA y)
-
-// "Pretty Printer" for guarded commands and commands to show precedence of the operators
-let rec printGC e = 
-    match e with
-    | IfThen(x,y) -> (printB x)+" -> "+(printC y)
-    | FatBar(x,y) -> (printGC x)+"\n"+"[] "+(printGC y)
-and printC e =
-    match e with
-    | ArrayAssign(x,y,z) -> x+"["+(printA y)+"]:="+(printA z)
-    | Assign(x,y) -> x+":="+(printA y)
-    | Skip -> "skip"
-    | Order(x,y) -> (printC x)+";\n"+(printC y)
-    | If(x) -> "if "+(printGC x)+"\n"+"fi"
-    | Do(x) -> "do "+(printGC x)+"\n"+"od"
-// accumulating recursive to be implemented
-//Environment.NewLine changed to '\n'
 
 // Function that parses a given input
 let parse input =
@@ -118,7 +69,7 @@ let prettify ()=
         //Parsed result
         let res = FMProjectParser.start FMProjectLexer.tokenize lexbuf 
         printfn "<---Pretty print:--->"
-        printfn "%s" (printC res)
+        printfn "%s" (printC res 0)
 
 
     with e -> printfn "ERROR: %s" e.Message;;
