@@ -3,6 +3,9 @@ module FMProgramGraph
 open System
 open System.IO
 
+// This file implements a module where we define multiple data types
+// to store represent boolean, arithmetic, commands and guarded commands from Parser and Lexer.
+
 open FMProjectTypesAST
 
 //Function that computes depth and returns depth in int
@@ -24,7 +27,7 @@ let rec doneGC egc =
     | FatBar(gc1,gc2) -> LogOr(doneGC gc1, doneGC gc2)
 
 //Compiler that takes GCL AST and converts to list of edges consisting of (node(int), expression(command), node(int))
-//Non-deterministic graphs
+//Non-deterministic graphs generator
 let rec genenC e ni nf =
     match e with
     | Order(c1,c2) -> (genenC c1 ni (ni+depthC c1)) 
@@ -38,6 +41,23 @@ and genenGC e ni nf dp =
     | FatBar(gc1,gc2) -> (genenGC gc1 ni nf 1) @ (genenGC gc2 ni nf (depthGC gc1))
     
 
+//Deterministic graphs generator
+let rec detGenenC e ni nf= 
+    match e with
+    | Order(c1,c2) -> (detGenenC c1 ni (ni+depthC c1)) 
+                        @ (detGenenC c2 (ni+(depthC c1)) nf)
+    | If (gc) -> let (E,d) = detGenenGC gc ni nf 1 (Bool(false))
+                 E
+    | Do (gc) -> let (E,d) = detGenenGC gc ni ni 1 (Bool(false)) 
+                 E @ [Ebool(ni,Neg(d),nf)]
+    | _ -> [Ecomm(ni,e,nf)]
+and detGenenGC e ni nf dp d = 
+    match e with 
+    | IfThen(b, c) -> let E = genenC c (ni+dp) nf 
+                      ([Ebool(ni,LogAnd(b,Neg(d)),ni+dp)]) @ E, (LogOr(b,d))
+    | FatBar(gc1,gc2) -> let (E1,d1) = detGenenGC gc1 ni nf 1 d
+                         let (E2,d2) = detGenenGC gc2 ni nf (depthGC gc1) d1
+                         (E1 @ E2, d2)
 //function generate of a function e
 //((If(IfThen(Bool(true), Assign("x",Num(2))))))
 
@@ -102,6 +122,6 @@ let rec listGraph edgeL=
     | [] -> ""
 let graphstr = "strict digraph {\n"+
                 listGraph [Ecomm (1, Assign ("x", Num 2), 2); Ebool (0, Bool true, 1)]
-                + "}\n"
+                + "}\n" // Example
 //File.WriteAllText (filename , string output)  
 File.WriteAllText("graph.dot",graphstr);;

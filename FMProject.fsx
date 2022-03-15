@@ -105,10 +105,29 @@ let rec compute n =
         //printfn "%s" str;
         compute n
         with err -> compute (n-1)
+//compute 3
 
-let prettify =
+let prettify ()=
     try
         printfn "Insert your Guarded Commands program to be parsed:"
+        //Read console input
+        let input = Console.ReadLine()
+        //Create the lexical buffer
+        let lexbuf = LexBuffer<char>.FromString input
+        
+        //Parsed result
+        let res = FMProjectParser.start FMProjectLexer.tokenize lexbuf 
+        printfn "<---Pretty print:--->"
+        printfn "%s" (printC res)
+
+
+    with e -> printfn "ERROR: %s" e.Message;;
+//prettify();;
+
+let determ ()=
+    try
+        printfn "Insert your Guarded Commands program to be \n 
+                converted to a deterministic program graph:"
         //Read console input
         let input = Console.ReadLine()
         //Create the lexical buffer
@@ -117,9 +136,32 @@ let prettify =
         try 
         //Parsed result
         let res = FMProjectParser.start FMProjectLexer.tokenize lexbuf 
-        printfn "<---Pretty print:--->"
-        printfn "%s" (printC res)
+        
+        let graphstr = "strict digraph {\n"+
+                        listGraph (detGenenC res 0 (depthC res))
+                        + "}\n"
+        Console.WriteLine(graphstr)
+        File.WriteAllText("graph.dot",graphstr)
 
+        //Undefined string encountered   
+        with e -> printfn "Parse error at : Line %i, %i, Unexpected char: %s" (lexbuf.EndPos.pos_lnum+ 1) 
+                        (lexbuf.EndPos.pos_cnum - lexbuf.EndPos.pos_bol) (LexBuffer<_>.LexemeString lexbuf)
+
+    with e -> printfn "ERROR: %s" e.Message;;
+
+let nondeter ()=
+    try
+        printfn "Insert your Guarded Commands program to be \n 
+                converted to a deterministic program graph:"
+        //Read console input
+        let input = Console.ReadLine()
+        //Create the lexical buffer
+        let lexbuf = LexBuffer<char>.FromString input
+        
+        try 
+        //Parsed result
+        let res = FMProjectParser.start FMProjectLexer.tokenize lexbuf 
+        
         let graphstr = "strict digraph {\n"+
                         listGraph (genenC res 0 (depthC res))
                         + "}\n"
@@ -131,10 +173,10 @@ let prettify =
                         (lexbuf.EndPos.pos_cnum - lexbuf.EndPos.pos_bol) (LexBuffer<_>.LexemeString lexbuf)
 
     with e -> printfn "ERROR: %s" e.Message;;
-//prettify;;
+
 
 // Start interacting with the user
-//compute 3
+
 //printfn "%s" (printC (If(IfThen(Bool(true), Assign("x",Num(2))))))
 //printfn "%s" (printB (LogAnd(Bool(false),Neg(Bool(true)))))
 //let str = printC (parse (Console.ReadLine()))
@@ -156,13 +198,15 @@ let rec menu() =
     printMenu()
     match getInput() with
     | true, 1 -> 
-                prettify
+                prettify()
                 menu()
     | true, 2 ->
-                //determ()
+                nondeter()
                 menu()
     | true, 3 -> 
-                //nondeter()
+                determ()
                 menu()    
     | true, 4 -> ()
     | _ -> menu()
+
+menu()
