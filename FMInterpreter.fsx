@@ -46,7 +46,7 @@ let rec peekCommand com =
         | Assign(var,value) -> (peekArith value).Add(var)
         | _ -> Set.empty ;
 
-//Function that takes list of edges, and scans for variables that needs value. Output is set of variables
+//Function that takes list of edges, and scans for variables that need value. Output is set of variables
 let rec varAFinder edges =
     match edges with
     | Ecomm(_,com,_)::tail -> Set.union (peekCommand com) (varAFinder tail)
@@ -69,26 +69,53 @@ let varBInit item (map:Map<string,bool>) = map.Add(item, false)
 let initAllBVar (set:Set<string>) = Set.foldBack (fun item map ->  varBInit item map) set Map.empty
 // initAllBVar (varBFinder edges)
 
-// let rec evalA e mapA =
-//   match e with
-//     | Num(x) -> x:float
-//     | TimesExpr(x,y) -> (evalA x mapA) * (evalA y mapA)
-//     | DivExpr(x,y) -> evalA(x) / evalA (y)
-//     | PlusExpr(x,y) -> evalA(x) + evalA (y)
-//     | MinusExpr(x,y) -> evalA(x) - evalA (y)
-//     | PowExpr(x,y) -> evalA(x) ** evalA (y)
-//     | UPlusExpr(x) -> evalA(x)
-//     | UMinusExpr(x) -> - evalA(x)
-//     | LogExpr(x) -> Math.Log(evalA(x),2)
-//     | LnExpr(x) -> Math.Log(evalA(x))
-//     | Str
-//     | _ -> 0.0 //#TODO
+// Evaluation of arithmetic expressions using the values held in memory mappings
+let rec evalA e mapA arr =
+  match e with
+    | Num(x) -> x:float
+    | TimesExpr(x,y) -> (evalA x mapA arr) * (evalA y mapA arr)
+    | DivExpr(x,y) -> (evalA x mapA arr) / (evalA y mapA arr)
+    | PlusExpr(x,y) -> (evalA x mapA arr) + (evalA y mapA arr) 
+    | MinusExpr(x,y) -> (evalA x mapA arr) - (evalA y mapA arr)
+    | PowExpr(x,y) -> (evalA x mapA arr) ** (evalA y mapA arr)
+    | UPlusExpr(x) -> (evalA x mapA arr)
+    | UMinusExpr(x) -> - (evalA x mapA arr)
+    | LogExpr(x) -> Math.Log((evalA x mapA arr),2)
+    | LnExpr(x) -> Math.Log((evalA x mapA arr))
+    | StrA(x) ->
+            try 
+                Map.find x mapA
+            with err -> 
+                    printfn "ERROR: Unknown variable %s in expression." x
+                    0.0
+    | IndexExpr(A,x) -> 
+            try 
+                let vl = int (evalA x mapA arr)
+                List.item vl (Map.find A arr)
+            with err ->
+                    printfn "ERROR: Invalid lookup of index %d in array %s" (int (evalA x mapA arr)) A
+                    0.0
 
-// let rec evalB e = 
-//     match e with
-//     | Bool(x) -> x
-//     | 
-
-
+// Evaluation of boolean expressions using the values held in memory mappings
+let rec evalB e mapB mapA arr = 
+    match e with
+    | Bool(x) -> x
+    | ShortCircuitOr(x,y) -> (evalB x mapB mapA arr) || (evalB y mapB mapA arr)
+    | ShortCircuitAnd(x,y) -> (evalB x mapB mapA arr) && (evalB y mapB mapA arr)
+    | LogAnd(x,y) -> (evalB x mapB mapA arr) && (evalB y mapB mapA arr)
+    | LogOr(x,y) -> (evalB x mapB mapA arr) || (evalB y mapB mapA arr)
+    | Neg(x) -> not (evalB x mapB mapA arr)
+    | Equal(x,y) -> (evalA x mapA arr)=(evalA y mapA arr)
+    | NotEqual(x,y) -> not ((evalA x mapA arr)=(evalA y mapA arr))
+    | Greater(x,y) -> (evalA x mapA arr)<(evalA y mapA arr)
+    | GreaterEqual(x,y) -> (evalA x mapA arr)<=(evalA y mapA arr)
+    | Less(x,y) -> (evalA x mapA arr)>(evalA y mapA arr)
+    | LessEqual(x,y) -> (evalA x mapA arr)>=(evalA y mapA arr)
+    | StrB(str) -> 
+            try 
+                Map.find str mapB
+            with err -> 
+                    printfn "ERROR: Unknown variable %s in expression." str
+                    false
 
 
