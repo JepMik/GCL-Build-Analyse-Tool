@@ -8,13 +8,14 @@ open System.IO
 
 open FMProjectTypesAST
 
-//Function to compute done of a guarded command
+// Function to compute done of a guarded command
 let rec doneGC egc = 
     match egc with
     | IfThen(b,_) -> Neg(b)
     | FatBar(gc1,gc2) -> LogOr(doneGC gc1, doneGC gc2)
 
-//Compiler that takes GCL AST and converts to list of edges consisting of (node(int), expression(command), node(int))
+// Compiler that takes GCL AST and converts to list of edges consisting 
+// of (node(int), expression(command), node(int))
 
 //Non-deterministic graphs generator
 let rec genenC e init final next = 

@@ -1,4 +1,4 @@
-// This script implements our interactive calculator
+// This script implements our interactive GCL compiler & interpreter
 // We need to import a couple of modules, including the generated lexer and parser
 
 #r "FsLexYacc.Runtime.10.0.0/lib/net46/FsLexYacc.Runtime.dll"
@@ -68,7 +68,7 @@ let prettify ()=
         
         //Parsed result
         let res = FMProjectParser.start FMProjectLexer.tokenize lexbuf 
-        printfn "<---Pretty print:--->"
+        printfn "<----Pretty print:---->"
         printfn "%s" (printC res 0)
 
 

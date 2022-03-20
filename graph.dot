@@ -1,4 +1,6 @@
 strict digraph {
-q1 -> q2[label="x:=2"];
 q► -> q1[label="True"];
+q1 -> q◄[label="x:=2"];
+q► -> q2[label="False"];
+q2 -> q◄[label="x:=0"];
 }
