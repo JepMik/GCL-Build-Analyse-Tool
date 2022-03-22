@@ -1,10 +1,10 @@
 # 1 "FMInputLexer.fsl"
  
-    module FMInputLexer
-    open FSharp.Text.Lexing
-    open System
-    open FMInputParser
-    System.Globalization.CultureInfo.CurrentCulture <- new System.Globalization.CultureInfo("en-US")
+module FMInputLexer
+open FSharp.Text.Lexing
+open System
+open FMInputParser
+System.Globalization.CultureInfo.CurrentCulture <- new System.Globalization.CultureInfo("en-US")
 
 # 9 "FMInputLexer.fs"
 let trans : uint16[] array = 
@@ -109,152 +109,152 @@ let rec _fslex_dummy () = _fslex_dummy()
 and tokenize  lexbuf =
   match _fslex_tables.Interpret(0,lexbuf) with
   | 0 -> ( 
-# 22 "FMInputLexer.fsl"
+# 21 "FMInputLexer.fsl"
                                      tokenize lexbuf 
 # 114 "FMInputLexer.fs"
           )
   | 1 -> ( 
-# 23 "FMInputLexer.fsl"
+# 22 "FMInputLexer.fsl"
                                      lexbuf.EndPos <- lexbuf.EndPos.NextLine; tokenize lexbuf; 
 # 119 "FMInputLexer.fs"
           )
   | 2 -> ( 
-# 26 "FMInputLexer.fsl"
+# 24 "FMInputLexer.fsl"
                                      NUM(Int32.Parse(LexBuffer<_>.LexemeString lexbuf)) 
 # 124 "FMInputLexer.fs"
           )
   | 3 -> ( 
-# 27 "FMInputLexer.fsl"
+# 25 "FMInputLexer.fsl"
                                      BOOL(Boolean.Parse(LexBuffer<_>.LexemeString lexbuf)) 
 # 129 "FMInputLexer.fs"
           )
   | 4 -> ( 
-# 28 "FMInputLexer.fsl"
+# 26 "FMInputLexer.fsl"
                                      let str = LexBuffer<_>.LexemeString lexbuf in VARIABLE(str) 
 # 134 "FMInputLexer.fs"
           )
   | 5 -> ( 
-# 31 "FMInputLexer.fsl"
+# 29 "FMInputLexer.fsl"
                                      SETR 
 # 139 "FMInputLexer.fs"
           )
   | 6 -> ( 
-# 34 "FMInputLexer.fsl"
+# 32 "FMInputLexer.fsl"
                                      DELIM 
 # 144 "FMInputLexer.fs"
           )
   | 7 -> ( 
-# 37 "FMInputLexer.fsl"
+# 35 "FMInputLexer.fsl"
                                      TIMES 
 # 149 "FMInputLexer.fs"
           )
   | 8 -> ( 
-# 38 "FMInputLexer.fsl"
+# 36 "FMInputLexer.fsl"
                                      DIV 
 # 154 "FMInputLexer.fs"
           )
   | 9 -> ( 
-# 39 "FMInputLexer.fsl"
+# 37 "FMInputLexer.fsl"
                                      PLUS 
 # 159 "FMInputLexer.fs"
           )
   | 10 -> ( 
-# 40 "FMInputLexer.fsl"
+# 38 "FMInputLexer.fsl"
                                      MINUS 
 # 164 "FMInputLexer.fs"
           )
   | 11 -> ( 
-# 41 "FMInputLexer.fsl"
+# 39 "FMInputLexer.fsl"
                                      POW 
 # 169 "FMInputLexer.fs"
           )
   | 12 -> ( 
-# 42 "FMInputLexer.fsl"
+# 40 "FMInputLexer.fsl"
                                      LPAR 
 # 174 "FMInputLexer.fs"
           )
   | 13 -> ( 
-# 43 "FMInputLexer.fsl"
+# 41 "FMInputLexer.fsl"
                                      RPAR 
 # 179 "FMInputLexer.fs"
           )
   | 14 -> ( 
-# 44 "FMInputLexer.fsl"
+# 42 "FMInputLexer.fsl"
                                      EOF 
 # 184 "FMInputLexer.fs"
           )
   | 15 -> ( 
-# 45 "FMInputLexer.fsl"
+# 43 "FMInputLexer.fsl"
                                      LBRAK 
 # 189 "FMInputLexer.fs"
           )
   | 16 -> ( 
-# 46 "FMInputLexer.fsl"
+# 44 "FMInputLexer.fsl"
                                      RBRAK 
 # 194 "FMInputLexer.fs"
           )
   | 17 -> ( 
-# 47 "FMInputLexer.fsl"
+# 45 "FMInputLexer.fsl"
                                      LOG 
 # 199 "FMInputLexer.fs"
           )
   | 18 -> ( 
-# 48 "FMInputLexer.fsl"
+# 46 "FMInputLexer.fsl"
                                      LN 
 # 204 "FMInputLexer.fs"
           )
   | 19 -> ( 
-# 51 "FMInputLexer.fsl"
+# 49 "FMInputLexer.fsl"
                                  SAND 
 # 209 "FMInputLexer.fs"
           )
   | 20 -> ( 
-# 52 "FMInputLexer.fsl"
+# 50 "FMInputLexer.fsl"
                                  SOR 
 # 214 "FMInputLexer.fs"
           )
   | 21 -> ( 
-# 53 "FMInputLexer.fsl"
+# 51 "FMInputLexer.fsl"
                                  AND 
 # 219 "FMInputLexer.fs"
           )
   | 22 -> ( 
-# 54 "FMInputLexer.fsl"
+# 52 "FMInputLexer.fsl"
                                  OR 
 # 224 "FMInputLexer.fs"
           )
   | 23 -> ( 
-# 55 "FMInputLexer.fsl"
+# 53 "FMInputLexer.fsl"
                                  NEG 
 # 229 "FMInputLexer.fs"
           )
   | 24 -> ( 
-# 56 "FMInputLexer.fsl"
+# 54 "FMInputLexer.fsl"
                                  EQUAL 
 # 234 "FMInputLexer.fs"
           )
   | 25 -> ( 
-# 57 "FMInputLexer.fsl"
+# 55 "FMInputLexer.fsl"
                                  NOTEQ 
 # 239 "FMInputLexer.fs"
           )
   | 26 -> ( 
-# 58 "FMInputLexer.fsl"
+# 56 "FMInputLexer.fsl"
                                  GREATER 
 # 244 "FMInputLexer.fs"
           )
   | 27 -> ( 
-# 59 "FMInputLexer.fsl"
+# 57 "FMInputLexer.fsl"
                                  GREATEREQ 
 # 249 "FMInputLexer.fs"
           )
   | 28 -> ( 
-# 60 "FMInputLexer.fsl"
+# 58 "FMInputLexer.fsl"
                                  LESS 
 # 254 "FMInputLexer.fs"
           )
   | 29 -> ( 
-# 61 "FMInputLexer.fsl"
+# 59 "FMInputLexer.fsl"
                                  LESSEQ 
 # 259 "FMInputLexer.fs"
           )

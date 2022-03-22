@@ -14,23 +14,14 @@ open FMProjectParser
 open FMProjectLexer
 #load "FMProgramGraph.fs"
 open FMProgramGraph
-
-// We define the evaluation function recursively, by induction on the structure
-// of arithmetic expressions (AST of type expr)
-let rec evalA e =
-  match e with
-    | Num(x) -> x:float
-    | TimesExpr(x,y) -> evalA(x) * evalA(y)
-    | DivExpr(x,y) -> evalA(x) / evalA (y)
-    | PlusExpr(x,y) -> evalA(x) + evalA (y)
-    | MinusExpr(x,y) -> evalA(x) - evalA (y)
-    | PowExpr(x,y) -> evalA(x) ** evalA (y)
-    | UPlusExpr(x) -> evalA(x)
-    | UMinusExpr(x) -> - evalA(x)
-    | LogExpr(x) -> Math.Log(evalA(x),2)
-    | LnExpr(x) -> Math.Log(evalA(x))
-    | _ -> 0.0 //#TODO
-
+// #load "FMInputAST.fs"
+// open FMInputAST
+#load "FMInputParser.fs"
+open FMInputParser
+#load "FMInputLexer.fs"
+open FMInputLexer
+#load "FMInterpreter.fs"
+open FMInterpreter
 
 // Function that parses a given input
 let parse input =
@@ -41,22 +32,6 @@ let parse input =
     // return the result of parsing (i.e. value of type "expr")
     res
 
-// Function that interacts with the user
-let rec compute n =
-    if n = 0 then
-        printfn "Bye bye"
-    else
-        printf "Enter an arithmetic expression: "
-        try
-        // We parse the input string
-        let e = parse (Console.ReadLine())
-        // and print the result of evaluating it
-        //printfn "Result of evaluation: %f" (eval(e))
-        //let str = (printA e)
-        //printfn "%s" str;
-        compute n
-        with err -> compute (n-1)
-//compute 3
 
 let prettify ()=
     try
@@ -85,15 +60,30 @@ let determ ()=
         let lexbuf = LexBuffer<char>.FromString input
         
         try 
-        //Parsed result
-        let res = FMProjectParser.start FMProjectLexer.tokenize lexbuf 
-        
-        let graphstr = "strict digraph {\n"+
-                        let (list,x) = detGenenC res 0 -1 1
-                        listGraph list
-                        + "}\n"
-        Console.WriteLine(graphstr)
-        File.WriteAllText("graph.dot",graphstr)
+            //Parsed result
+            let res = FMProjectParser.start FMProjectLexer.tokenize lexbuf 
+            
+            let graphstr = "strict digraph {\n"+
+                            let (list,x) = detGenenC res 0 -1 1
+                            listGraph list
+                            + "}\n"
+            Console.WriteLine(graphstr)
+            File.WriteAllText("graph.dot",graphstr)
+
+            printfn "Insert input values for your Guarded Commands program:"
+            //Read console input
+            let input = Console.ReadLine()
+            //Create the lexical buffer
+            let lexbufInp = LexBuffer<char>.FromString input
+
+            try 
+            // Parsed input result
+            let resInp = FMInputParser.start FMInputLexer.tokenize lexbufInp
+            let execStr = printInp resInp
+            File.WriteAllText("execution.txt",execStr)
+            
+            with e -> printfn "Parse error at : Line %i, %i, Unexpected char: %s" (lexbufInp.EndPos.pos_lnum+ 1) 
+                            (lexbufInp.EndPos.pos_cnum - lexbufInp.EndPos.pos_bol) (LexBuffer<_>.LexemeString lexbufInp)
 
         //Undefined string encountered   
         with e -> printfn "Parse error at : Line %i, %i, Unexpected char: %s" (lexbuf.EndPos.pos_lnum+ 1) 
@@ -106,20 +96,42 @@ let nondeter ()=
         printfn "Insert your Guarded Commands program to be 
                 converted to a deterministic program graph:"
         //Read console input
-        let input = Console.ReadLine()
+        let program = Console.ReadLine()
         //Create the lexical buffer
-        let lexbuf = LexBuffer<char>.FromString input
+        let lexbuf = LexBuffer<char>.FromString program
         
         try 
-        //Parsed result
-        let res = FMProjectParser.start FMProjectLexer.tokenize lexbuf 
-        
-        let graphstr = "strict digraph {\n"+
-                        let (list,x) = genenC res 0 -1 1
-                        listGraph list
-                        + "}\n"
-        Console.WriteLine(graphstr)
-        File.WriteAllText("graph.dot",graphstr)
+            //Parsed result
+            let res = FMProjectParser.start FMProjectLexer.tokenize lexbuf 
+            
+            let (edgeList,x) = genenC res 0 -1 1
+            let graphstr = "strict digraph {\n"+
+                            listGraph edgeList
+                            + "}\n"
+            Console.WriteLine(graphstr)
+            File.WriteAllText("graph.dot",graphstr)
+            
+            printfn "Insert input values for your Guarded Commands program:"
+            //Read console input
+            let input = Console.ReadLine()
+            //Create the lexical buffer
+            let lexbufInp = LexBuffer<char>.FromString input
+
+            try 
+                // Parsed input result
+                let resInp = FMInputParser.start FMInputLexer.tokenize lexbufInp
+                let (arithMap, arrayMap) = inputAMemory resInp Map.empty Map.empty
+                let boolMap = inputBMemory resInp Map.empty arithMap arrayMap
+                
+                printfn "%A" boolMap
+                printfn "%A" arithMap
+                printfn "%A" arrayMap
+
+                let execStr = executeGraph edgeList (boolMap, arithMap, arrayMap) 0 30
+                File.WriteAllText("execution.txt",execStr)
+                
+            with e -> printfn "Parse error at : Line %i, %i, Unexpected char: %s" (lexbufInp.EndPos.pos_lnum+ 1) 
+                            (lexbufInp.EndPos.pos_cnum - lexbufInp.EndPos.pos_bol) (LexBuffer<_>.LexemeString lexbufInp)
 
         //Undefined string encountered   
         with e -> printfn "Parse error at : Line %i, %i, Unexpected char: %s" (lexbuf.EndPos.pos_lnum+ 1) 
@@ -145,6 +157,14 @@ let printMenu() =
     printfn "4. Exit menu"
     printf "Enter your choice: "
 
+let printInnerMenu() = 
+    printf "Options: "
+    printfn "1. Build Program Graph"
+    printfn "2. Step-wise Execution with Automatic Input"
+    printfn "3. Step-wise Execution with User Input"
+    printfn "4. Return to main menu"
+    printf "Enter your choice: "
+
 let getInput () = Int32.TryParse(Console.ReadLine())
 
 let rec menu() = 
@@ -154,11 +174,17 @@ let rec menu() =
                 prettify()
                 menu()
     | true, 2 ->
-                nondeter()
-                menu()
+                printInnerMenu()
+                match getInput() with
+                | true, 1 -> nondeter()
+                | true, 2 -> nondeter() //#TODO improved options
+                | _ -> menu()
     | true, 3 -> 
-                determ()
-                menu()
+                printInnerMenu()
+                match getInput() with
+                | true, 1 -> determ()
+                | true, 2 -> determ() //#TODO improved options
+                | _ -> menu()
     | true, 4 -> ()
     | _ -> menu()
 

@@ -1,9 +1,9 @@
 {
-    module FMInputLexer
-    open FSharp.Text.Lexing
-    open System
-    open FMInputParser
-    System.Globalization.CultureInfo.CurrentCulture <- new System.Globalization.CultureInfo("en-US")
+module FMInputLexer
+open FSharp.Text.Lexing
+open System
+open FMInputParser
+System.Globalization.CultureInfo.CurrentCulture <- new System.Globalization.CultureInfo("en-US")
 }
 
 // Defined macros for some needed Regular Expressions:
@@ -17,11 +17,9 @@ let bool        = "true" | "false"
 
 // Rules for recognising and building tokens in top-down
 rule tokenize = parse 
-
 // ignored tokens (skipped)
 | whitespace        { tokenize lexbuf }
 | newline           { lexbuf.EndPos <- lexbuf.EndPos.NextLine; tokenize lexbuf; }
-
 // built tokens
 | num               { NUM(Int32.Parse(LexBuffer<_>.LexemeString lexbuf)) }
 | bool              { BOOL(Boolean.Parse(LexBuffer<_>.LexemeString lexbuf)) }

@@ -46,9 +46,20 @@ and command =
   | If of (guardCommand)
   | Do of (guardCommand)
 
-// type edge
+// Edge types
 type edge = 
   //| Earith of (int * arithExpr * int)
   | Ebool of (int * boolExpr * int)
   | Ecomm of (int * command * int)
   //| Eguardcom of (int * guardCommand * int)
+
+// Input types
+type seqInput = 
+  | Seq of (arithExpr * seqInput)
+  | Singl of (arithExpr)
+  
+type inputVal = 
+  | SetArith of (string * arithExpr)
+  | SetBool of (string * boolExpr)
+  | SetArray of (string * seqInput) 
+  | SetDelim of (inputVal * inputVal)

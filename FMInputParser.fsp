@@ -1,6 +1,6 @@
 // Open the file that defines the different types we shall use as AST in out GCL-parser
 %{
-open FMInputAST
+  open FMProjectTypesAST
 %}
 
 // Declare the tokens (terminal symbols)
@@ -15,7 +15,6 @@ open FMInputAST
 
 // Specify precedence and associativity of operators
 // Precedence is given by the order (from low to high)
-%right SETR
 
 %left PLUS MINUS
 %left TIMES DIV
@@ -25,6 +24,7 @@ open FMInputAST
 %left AND SAND
 %right NEG
 
+%right SETR
 %right DELIM 
 
 %nonassoc LPAR RPAR
@@ -112,5 +112,5 @@ inputvalues:
 
 seqinput:
   | expression DELIM seqinput               { Seq($1,$3) }
-  | expression                              { Seq($1,[]) }
+  | expression                              { Singl($1) }
 %%

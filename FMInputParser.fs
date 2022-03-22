@@ -5,7 +5,7 @@ open FSharp.Text.Lexing
 open FSharp.Text.Parsing.ParseHelpers
 # 2 "FMInputParser.fsp"
 
-open FMInputAST
+  open FMProjectTypesAST
 
 # 10 "FMInputParser.fs"
 // This type is the type of tokens accepted by the parser
@@ -689,7 +689,7 @@ let _fsyacc_reductions ()  =    [|
                 (
                    (
 # 115 "FMInputParser.fsp"
-                                                                   Seq(_1,[]) 
+                                                                   Singl(_1) 
                    )
 # 115 "FMInputParser.fsp"
                  : seqInput));
