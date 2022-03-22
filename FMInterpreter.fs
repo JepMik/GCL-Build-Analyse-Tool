@@ -118,6 +118,7 @@ let rec evalB e mapB mapA arr =
                     printfn "ERROR: Unknown boolean variable %s in expression." str
                     false
 
+// Evaluation of commands
 let rec evalC e mapB (mapA:Map<string,float>) arr =
     match e with
     | Assign(str, vlu) -> (mapB, mapA.Add(str, evalA vlu mapA arr), arr)
@@ -167,7 +168,7 @@ let rec inputBMemory expr (mapB:Map<string,bool>) mapA arr =
 // Function to execute program statements based on edge list 
 let rec executeGraph edgeList memory node steps = 
     match steps with
-    | 0 -> ""
+    | 0 -> "#TERMINATED Program has executed all steps" 
     | _ ->
         let (mapB, mapA, arr) = memory 
         try 
@@ -181,8 +182,8 @@ let rec executeGraph edgeList memory node steps =
                         let message = sprintf "Action: assignment\n Node q%d\n Memory%A\n\n" node memory
                         message + (executeGraph edgeList memory1 next (steps-1))
             | Ebool(node, bol, next) ->
-                        let message = sprintf "Action: boolean branching\n Node q%d\n Memory-> %A \n\n" node memory
+                        let message = sprintf "Action: boolean check\n Node q%d\n Memory-> %A \n\n" node memory
                         message + (executeGraph edgeList memory next (steps-1))
         with err -> 
-                let mes = sprintf "No further edge can be taken. Program is stuck in node q%d after %d steps.\n %A" node steps memory     
+                let mes = sprintf "#STUCK No further edge can be taken. Program is stuck in node q%d after %d steps.\n %A" node steps memory     
                 mes

@@ -1,30 +1,8 @@
-Action: boolean branching Node q0 Memory (map [], map [("x", 0.0)], map []) 
-Action: assignment Node q1 Memory(map [], map [("x", 0.0)], map [])
-Action: boolean branching Node q0 Memory (map [], map [("x", 2.0)], map []) 
-Action: assignment Node q1 Memory(map [], map [("x", 2.0)], map [])
-Action: boolean branching Node q0 Memory (map [], map [("x", 2.0)], map []) 
-Action: assignment Node q1 Memory(map [], map [("x", 2.0)], map [])
-Action: boolean branching Node q0 Memory (map [], map [("x", 2.0)], map []) 
-Action: assignment Node q1 Memory(map [], map [("x", 2.0)], map [])
-Action: boolean branching Node q0 Memory (map [], map [("x", 2.0)], map []) 
-Action: assignment Node q1 Memory(map [], map [("x", 2.0)], map [])
-Action: boolean branching Node q0 Memory (map [], map [("x", 2.0)], map []) 
-Action: assignment Node q1 Memory(map [], map [("x", 2.0)], map [])
-Action: boolean branching Node q0 Memory (map [], map [("x", 2.0)], map []) 
-Action: assignment Node q1 Memory(map [], map [("x", 2.0)], map [])
-Action: boolean branching Node q0 Memory (map [], map [("x", 2.0)], map []) 
-Action: assignment Node q1 Memory(map [], map [("x", 2.0)], map [])
-Action: boolean branching Node q0 Memory (map [], map [("x", 2.0)], map []) 
-Action: assignment Node q1 Memory(map [], map [("x", 2.0)], map [])
-Action: boolean branching Node q0 Memory (map [], map [("x", 2.0)], map []) 
-Action: assignment Node q1 Memory(map [], map [("x", 2.0)], map [])
-Action: boolean branching Node q0 Memory (map [], map [("x", 2.0)], map []) 
-Action: assignment Node q1 Memory(map [], map [("x", 2.0)], map [])
-Action: boolean branching Node q0 Memory (map [], map [("x", 2.0)], map []) 
-Action: assignment Node q1 Memory(map [], map [("x", 2.0)], map [])
-Action: boolean branching Node q0 Memory (map [], map [("x", 2.0)], map []) 
-Action: assignment Node q1 Memory(map [], map [("x", 2.0)], map [])
-Action: boolean branching Node q0 Memory (map [], map [("x", 2.0)], map []) 
-Action: assignment Node q1 Memory(map [], map [("x", 2.0)], map [])
-Action: boolean branching Node q0 Memory (map [], map [("x", 2.0)], map []) 
-Action: assignment Node q1 Memory(map [], map [("x", 2.0)], map [])
+Action: boolean branching
+ Node q0
+ Memory-> (map [("f", false)], map [("x", 0.0)], map [("A", [1.0; 2.0; 3.0; 4.0; 5.0])]) 
+
+Action: assignment
+ Node q1
+ Memory(map [("f", false)], map [("x", 0.0)], map [("A", [1.0; 2.0; 3.0; 4.0; 5.0])])
+

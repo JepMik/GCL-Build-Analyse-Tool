@@ -33,6 +33,9 @@ let parse input =
     res
 
 
+let getInput () = Int32.TryParse(Console.ReadLine())
+
+
 let prettify ()=
     try
         printfn "Insert your Guarded Commands program to be parsed:"
@@ -50,6 +53,77 @@ let prettify ()=
     with e -> printfn "ERROR: %s" e.Message;;
 //prettify();;
 
+
+
+let printInnerMenu () = 
+    printf "Options:\n "
+    printfn "1. Step-wise Execution with Automatic Input"
+    printfn "2. Step-wise Execution with User Input"
+    printfn "3. Return to main menu"
+    printf "Enter your choice: "
+
+
+let memoryAlloc(edges, typ) =
+    match typ with
+    | "auto" -> 
+                let arithMap = initAllAVar (varAFinder edges)
+                let arrayMap = Map.empty
+                let boolMap = initAllBVar (varBFinder edges)
+                printfn "Automatic variable initialization is applied"
+                (boolMap,arithMap,arrayMap)
+    | "user" ->
+                printfn "Insert input values for your Guarded Commands program:"
+                //Read console input
+                let input = Console.ReadLine()
+                //Create the lexical buffer
+                let lexbufInp = LexBuffer<char>.FromString input
+                try 
+                    // Parsed input result
+                    let resInp = FMInputParser.start FMInputLexer.tokenize lexbufInp
+
+                    let (arithMap, arrayMap) = inputAMemory resInp Map.empty Map.empty
+                    let boolMap = inputBMemory resInp Map.empty arithMap arrayMap
+                    printfn "User variable initialization is applied"
+                    (boolMap,arithMap,arrayMap)
+                with e -> 
+                    (printfn "Parse error at : Line %i, %i, Unexpected char: %s" (lexbufInp.EndPos.pos_lnum+ 1) 
+                    (lexbufInp.EndPos.pos_cnum - lexbufInp.EndPos.pos_bol) (LexBuffer<_>.LexemeString lexbufInp))
+                    (Map.empty, Map.empty, Map.empty)
+                
+
+
+    | _ -> (Map.empty, Map.empty, Map.empty)
+
+let rec executeSteps edges = 
+        
+    printInnerMenu()
+    match getInput() with
+    | true, 1 ->  
+                let (boolMap, arithMap, arrayMap) = memoryAlloc( edges, "auto")            
+                printfn "%A" boolMap
+                printfn "%A" arithMap
+                printfn "%A" arrayMap
+
+                let (x,steps) = getInput()
+                let execStr = executeGraph edges (boolMap, arithMap, arrayMap) 0 steps
+                File.WriteAllText("execution.txt",execStr)
+                printfn "Check step-wise execution logs in 'execution.txt'!"
+
+    | true, 2 -> 
+                let (boolMap, arithMap, arrayMap) = memoryAlloc( edges, "user")            
+                printfn "%A" boolMap
+                printfn "%A" arithMap
+                printfn "%A" arrayMap
+
+                printfn "Input maximal number of steps"
+                let (x,steps) = getInput()
+                let execStr = executeGraph edges (boolMap, arithMap, arrayMap) 0 steps
+                File.WriteAllText("execution.txt",execStr)
+                printfn "Check step-wise execution logs in 'execution.txt'!"
+    | true, 3 -> ()
+    | _ -> executeSteps (edges)
+
+
 let determ ()=
     try
         printfn "Insert your Guarded Commands program to be
@@ -58,40 +132,28 @@ let determ ()=
         let input = Console.ReadLine()
         //Create the lexical buffer
         let lexbuf = LexBuffer<char>.FromString input
-        
         try 
+
             //Parsed result
-            let res = FMProjectParser.start FMProjectLexer.tokenize lexbuf 
-            
+            let res = FMProjectParser.start FMProjectLexer.tokenize lexbuf  
+            let (edgeList,x) = detGenenC res 0 -1 1          
             let graphstr = "strict digraph {\n"+
-                            let (list,x) = detGenenC res 0 -1 1
-                            listGraph list
+                            listGraph edgeList
                             + "}\n"
             Console.WriteLine(graphstr)
             File.WriteAllText("graph.dot",graphstr)
 
-            printfn "Insert input values for your Guarded Commands program:"
-            //Read console input
-            let input = Console.ReadLine()
-            //Create the lexical buffer
-            let lexbufInp = LexBuffer<char>.FromString input
+            executeSteps edgeList
 
-            try 
-            // Parsed input result
-            let resInp = FMInputParser.start FMInputLexer.tokenize lexbufInp
-            let execStr = printInp resInp
-            File.WriteAllText("execution.txt",execStr)
-            
-            with e -> printfn "Parse error at : Line %i, %i, Unexpected char: %s" (lexbufInp.EndPos.pos_lnum+ 1) 
-                            (lexbufInp.EndPos.pos_cnum - lexbufInp.EndPos.pos_bol) (LexBuffer<_>.LexemeString lexbufInp)
 
         //Undefined string encountered   
         with e -> printfn "Parse error at : Line %i, %i, Unexpected char: %s" (lexbuf.EndPos.pos_lnum+ 1) 
                         (lexbuf.EndPos.pos_cnum - lexbuf.EndPos.pos_bol) (LexBuffer<_>.LexemeString lexbuf)
-
+    
     with e -> printfn "ERROR: %s" e.Message;;
 
-let nondeter ()=
+
+let nondeter()=
     try
         printfn "Insert your Guarded Commands program to be 
                 converted to a deterministic program graph:"
@@ -99,39 +161,17 @@ let nondeter ()=
         let program = Console.ReadLine()
         //Create the lexical buffer
         let lexbuf = LexBuffer<char>.FromString program
-        
         try 
             //Parsed result
             let res = FMProjectParser.start FMProjectLexer.tokenize lexbuf 
-            
             let (edgeList,x) = genenC res 0 -1 1
             let graphstr = "strict digraph {\n"+
                             listGraph edgeList
                             + "}\n"
             Console.WriteLine(graphstr)
             File.WriteAllText("graph.dot",graphstr)
-            
-            printfn "Insert input values for your Guarded Commands program:"
-            //Read console input
-            let input = Console.ReadLine()
-            //Create the lexical buffer
-            let lexbufInp = LexBuffer<char>.FromString input
 
-            try 
-                // Parsed input result
-                let resInp = FMInputParser.start FMInputLexer.tokenize lexbufInp
-                let (arithMap, arrayMap) = inputAMemory resInp Map.empty Map.empty
-                let boolMap = inputBMemory resInp Map.empty arithMap arrayMap
-                
-                printfn "%A" boolMap
-                printfn "%A" arithMap
-                printfn "%A" arrayMap
-
-                let execStr = executeGraph edgeList (boolMap, arithMap, arrayMap) 0 30
-                File.WriteAllText("execution.txt",execStr)
-                
-            with e -> printfn "Parse error at : Line %i, %i, Unexpected char: %s" (lexbufInp.EndPos.pos_lnum+ 1) 
-                            (lexbufInp.EndPos.pos_cnum - lexbufInp.EndPos.pos_bol) (LexBuffer<_>.LexemeString lexbufInp)
+            executeSteps edgeList
 
         //Undefined string encountered   
         with e -> printfn "Parse error at : Line %i, %i, Unexpected char: %s" (lexbuf.EndPos.pos_lnum+ 1) 
@@ -139,6 +179,29 @@ let nondeter ()=
 
     with e -> printfn "ERROR: %s" e.Message;;
 
+let printMenu () = 
+    printfn "Menu: "
+    printfn "1. Pretty printer"
+    printfn "2. Non-Deterministic Program Graph"
+    printfn "3. Deterministic Program Graph"
+    printfn "4. Exit menu"
+    printf "Enter your choice: "
+
+let rec menu() = 
+    printMenu()
+    match getInput() with
+    | true, 1 -> 
+                prettify()
+                menu()
+    | true, 2 ->
+                nondeter()
+                menu()
+    | true, 3 -> 
+                determ()
+                menu()
+    | true, 4 -> ()
+    | _ -> menu()
+    
 
 // Start interacting with the user
 
@@ -149,43 +212,7 @@ let nondeter ()=
 //printfn "%s" str
 
 
-let printMenu() = 
-    printfn "Menu: "
-    printfn "1. Pretty printer"
-    printfn "2. Non-Deterministic Program Graph"
-    printfn "3. Deterministic Program Graph"
-    printfn "4. Exit menu"
-    printf "Enter your choice: "
 
-let printInnerMenu() = 
-    printf "Options: "
-    printfn "1. Build Program Graph"
-    printfn "2. Step-wise Execution with Automatic Input"
-    printfn "3. Step-wise Execution with User Input"
-    printfn "4. Return to main menu"
-    printf "Enter your choice: "
 
-let getInput () = Int32.TryParse(Console.ReadLine())
-
-let rec menu() = 
-    printMenu()
-    match getInput() with
-    | true, 1 -> 
-                prettify()
-                menu()
-    | true, 2 ->
-                printInnerMenu()
-                match getInput() with
-                | true, 1 -> nondeter()
-                | true, 2 -> nondeter() //#TODO improved options
-                | _ -> menu()
-    | true, 3 -> 
-                printInnerMenu()
-                match getInput() with
-                | true, 1 -> determ()
-                | true, 2 -> determ() //#TODO improved options
-                | _ -> menu()
-    | true, 4 -> ()
-    | _ -> menu()
 
 menu()
