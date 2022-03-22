@@ -25,25 +25,38 @@ let rec peekArith expr =
 //Function looks into bool and generates a set of variables
 let rec peekBool expr =
     match expr with
-    | StrB(x) -> Set.empty.Add(x)
-    | Bool(x) -> Set.empty
-    | ShortCircuitAnd(x,y) -> Set.union (peekBool x) (peekBool y)
-    | ShortCircuitOr(x,y) -> Set.union (peekBool x) (peekBool y)
-    | LogAnd(x,y) -> Set.union (peekBool x) (peekBool y)
-    | LogOr(x,y) -> Set.union (peekBool x) (peekBool y)
+    | StrB(x) -> (Set.empty.Add(x), Set.empty)
+    | Bool(x) -> (Set.empty, Set.empty)
+    | ShortCircuitAnd(x,y) -> 
+                        let (b1,a1) = peekBool x
+                        let (b2,a2) = peekBool y
+                        (Set.union b1 b2 , Set.union a1 a2)
+    | ShortCircuitOr(x,y) -> 
+                        let (b1,a1) = peekBool x
+                        let (b2,a2) = peekBool y
+                        (Set.union b1 b2 , Set.union a1 a2)
+    | LogAnd(x,y) -> 
+                        let (b1,a1) = peekBool x
+                        let (b2,a2) = peekBool y
+                        (Set.union b1 b2 , Set.union a1 a2)
+    | LogOr(x,y) -> 
+                        let (b1,a1) = peekBool x
+                        let (b2,a2) = peekBool y
+                        (Set.union b1 b2 , Set.union a1 a2)
+    
     | Neg(x) -> (peekBool x)
-    | Equal(x,y) -> Set.union (peekArith x) (peekArith y)
-    | NotEqual(x,y) -> Set.union (peekArith x) (peekArith y)
-    | Greater(x,y) -> Set.union (peekArith x) (peekArith y)
-    | GreaterEqual(x,y) -> Set.union (peekArith x) (peekArith y)
-    | Less(x,y) -> Set.union (peekArith x) (peekArith y)
-    | LessEqual(x,y) -> Set.union (peekArith x) (peekArith y)
+    | Equal(x,y) -> (Set.empty, Set.union (peekArith x) (peekArith y))
+    | NotEqual(x,y) -> (Set.empty, Set.union (peekArith x) (peekArith y))
+    | Greater(x,y) -> (Set.empty, Set.union (peekArith x) (peekArith y))
+    | GreaterEqual(x,y) -> (Set.empty, Set.union (peekArith x) (peekArith y))
+    | Less(x,y) -> (Set.empty, Set.union (peekArith x) (peekArith y))
+    | LessEqual(x,y) -> (Set.empty, Set.union (peekArith x) (peekArith y))
     
 
 let rec peekCommand com = 
     match com with
         | ArrayAssign(arr,index,value) -> Set.union ((peekArith index).Add(arr)) (peekArith value)
-        | Assign(var,value) -> (peekArith value).Add(var)
+        | Assign(var,value) -> (peekArith value).Add(var) //Maybe var not need to be included
         | _ -> Set.empty ;
 
 //Function that takes list of edges, and scans for variables that need value. Output is set of variables
@@ -54,8 +67,11 @@ let rec varAFinder edges =
         
 let rec varBFinder edges = 
     match edges with 
-    | Ebool(_,bool,_)::tail -> Set.union (peekBool bool) (varBFinder tail) 
-    | [] | _ -> Set.empty
+    | Ebool(_,bool,_)::tail -> 
+                            let (setB, setA) = peekBool bool
+                            let (setB', setA') = varBFinder tail
+                            (Set.union setB setB', Set.union setA setA') 
+    | [] | _ -> (Set.empty, Set.empty)
 
 // Initialize one arithmetic variable name to value 0 - helper for folding
 let varAInit item (map:Map<string,float>) = map.Add(item, 0.0)
@@ -63,10 +79,10 @@ let varAInit item (map:Map<string,float>) = map.Add(item, 0.0)
 let initAllAVar (set:Set<string>) = Set.foldBack (fun item map ->  varAInit item map) set Map.empty
 // initAllAVar (varAFinder edges)
 
-// Initialize one arithmetic variable name to value false - helper for folding
+// Initialize one boolean variable name to value false - helper for folding
 let varBInit item (map:Map<string,bool>) = map.Add(item, false)
-// Initialize the mapping of all arithmetic variables in given set to false
-let initAllBVar (set:Set<string>) = Set.foldBack (fun item map ->  varBInit item map) set Map.empty
+// Initialize the mapping of all boolean variables in given set to false
+let initAllBVar (set:Set<string> ) = Set.foldBack (fun item map ->  varBInit item map) set Map.empty
 // initAllBVar (varBFinder edges)
 
 // Evaluation of arithmetic expressions using the values held in memory mappings
@@ -86,15 +102,15 @@ let rec evalA e mapA arr =
             try 
                 Map.find x mapA
             with err -> 
-                    printfn "ERROR: Unknown arithmetic variable %s in expression." x
-                    0.0
+                    let mes = sprintf "ERROR: Unknown arithmetic variable %s in expression." x
+                    failwith mes 
     | IndexExpr(A,x) -> 
             try 
                 let vl = int (evalA x mapA arr)
                 List.item vl (Map.find A arr)
             with err ->
-                    printfn "ERROR: Invalid lookup of index %d in array %s" (int (evalA x mapA arr)) A
-                    0.0
+                    let mes = sprintf "ERROR: Invalid lookup of index %d in array %s" (int (evalA x mapA arr)) A
+                    failwith mes
 
 // Evaluation of boolean expressions using the values held in memory mappings
 let rec evalB e mapB mapA arr = 
@@ -115,8 +131,9 @@ let rec evalB e mapB mapA arr =
             try 
                 Map.find str mapB
             with err -> 
-                    printfn "ERROR: Unknown boolean variable %s in expression." str
-                    false
+                    let mes = sprintf "ERROR: Unknown boolean variable %s in expression." str
+                    failwith mes
+                        
 
 // Evaluation of commands
 let rec evalC e mapB (mapA:Map<string,float>) arr =
@@ -172,18 +189,21 @@ let rec executeGraph edgeList memory node steps =
     | _ ->
         let (mapB, mapA, arr) = memory 
         try 
-            let edge = List.find (fun edge -> 
-                match edge with
+            let edge = List.find (fun edg -> 
+                match edg with
                 | Ecomm(ndx,_,_) -> ndx=node
-                | Ebool(ndx,bol,_) -> evalB bol mapB mapA arr && ndx=node) edgeList
+                | Ebool(ndx,bol,_) -> 
+                        (evalB bol mapB mapA arr) && ndx=node) edgeList
+           
             match edge with
             | Ecomm(node, com, next) -> 
                         let memory1 = evalC com mapB mapA arr 
                         let message = sprintf "Action: assignment\n Node q%d\n Memory%A\n\n" node memory
-                        message + (executeGraph edgeList memory1 next (steps-1))
+                        if (next=-1) then message + "#TERMINATED Program has executed all steps" 
+                        else message + (executeGraph edgeList memory1 next (steps-1))
             | Ebool(node, bol, next) ->
                         let message = sprintf "Action: boolean check\n Node q%d\n Memory-> %A \n\n" node memory
                         message + (executeGraph edgeList memory next (steps-1))
         with err -> 
-                let mes = sprintf "#STUCK No further edge can be taken. Program is stuck in node q%d after %d steps.\n %A" node steps memory     
+                let mes = sprintf "#STUCK No further edge can be taken. Program is stuck in node q%d with %d steps left.\n %A" node steps memory     
                 mes

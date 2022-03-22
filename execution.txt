@@ -1,8 +1,9 @@
-Action: boolean branching
+Action: boolean check
  Node q0
- Memory-> (map [("f", false)], map [("x", 0.0)], map [("A", [1.0; 2.0; 3.0; 4.0; 5.0])]) 
+ Memory-> (map [], map [("x", 0.0)], map []) 
 
 Action: assignment
- Node q1
- Memory(map [("f", false)], map [("x", 0.0)], map [("A", [1.0; 2.0; 3.0; 4.0; 5.0])])
+ Node q3
+ Memory(map [], map [("x", 0.0)], map [])
 
+#TERMINATED Program has executed all steps

@@ -66,9 +66,11 @@ let printInnerMenu () =
 let memoryAlloc(edges, typ) =
     match typ with
     | "auto" -> 
-                let arithMap = initAllAVar (varAFinder edges)
+                let (setB, setA) = varBFinder edges
+                let (setB, setA) = (setB, Set.union setA (varAFinder edges))
+                let arithMap = initAllAVar setA
                 let arrayMap = Map.empty
-                let boolMap = initAllBVar (varBFinder edges)
+                let boolMap = initAllBVar setB
                 printfn "Automatic variable initialization is applied"
                 (boolMap,arithMap,arrayMap)
     | "user" ->
@@ -104,6 +106,7 @@ let rec executeSteps edges =
                 printfn "%A" arithMap
                 printfn "%A" arrayMap
 
+                printfn "Input maximal number of steps"
                 let (x,steps) = getInput()
                 let execStr = executeGraph edges (boolMap, arithMap, arrayMap) 0 steps
                 File.WriteAllText("execution.txt",execStr)
