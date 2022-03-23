@@ -91,7 +91,6 @@ let memoryAlloc(edges, typ) =
                     (printfn "Parse error at : Line %i, %i, Unexpected char: %s" (lexbufInp.EndPos.pos_lnum+ 1) 
                     (lexbufInp.EndPos.pos_cnum - lexbufInp.EndPos.pos_bol) (LexBuffer<_>.LexemeString lexbufInp))
                     (Map.empty, Map.empty, Map.empty)
-                
 
 
     | _ -> (Map.empty, Map.empty, Map.empty)
