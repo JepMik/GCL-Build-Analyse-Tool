@@ -56,7 +56,7 @@ let prettify ()=
 
 
 let printInnerMenu () = 
-    printf "Options:\n "
+    printf "Options:\n"
     printfn "1. Step-wise Execution with Automatic Input"
     printfn "2. Step-wise Execution with User Input"
     printfn "3. Return to main menu"
@@ -66,8 +66,8 @@ let printInnerMenu () =
 let memoryAlloc(edges, typ) =
     match typ with
     | "auto" -> 
-                let (setB, setA) = varBFinder edges
-                let (setB, setA) = (setB, Set.union setA (varAFinder edges))
+                let (setB', setA') = varBFinder edges
+                let (setB, setA) = (setB', Set.union setA' (varAFinder edges))
                 let arithMap = initAllAVar setA
                 let arrayMap = Map.empty
                 let boolMap = initAllBVar setB

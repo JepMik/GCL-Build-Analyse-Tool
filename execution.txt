@@ -3,7 +3,39 @@ Action: boolean check
  Memory-> (map [], map [("x", 0.0)], map []) 
 
 Action: assignment
- Node q3
+ Node q2
  Memory(map [], map [("x", 0.0)], map [])
 
-#TERMINATED Program has executed all steps
+Action: boolean check
+ Node q0
+ Memory-> (map [], map [("x", 1.0)], map []) 
+
+Action: assignment
+ Node q2
+ Memory(map [], map [("x", 1.0)], map [])
+
+Action: boolean check
+ Node q0
+ Memory-> (map [], map [("x", 2.0)], map []) 
+
+Action: assignment
+ Node q2
+ Memory(map [], map [("x", 2.0)], map [])
+
+Action: boolean check
+ Node q0
+ Memory-> (map [], map [("x", 3.0)], map []) 
+
+Action: assignment
+ Node q1
+ Memory(map [], map [("x", 3.0)], map [])
+
+Action: boolean check
+ Node q0
+ Memory-> (map [], map [("x", 12.0)], map []) 
+
+Action: assignment
+ Node q-1
+ Memory(map [], map [("x", 12.0)], map [])
+
+#TERMINATED Program has reached final node.

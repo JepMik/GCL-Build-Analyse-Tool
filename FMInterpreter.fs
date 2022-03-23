@@ -56,22 +56,24 @@ let rec peekBool expr =
 let rec peekCommand com = 
     match com with
         | ArrayAssign(arr,index,value) -> Set.union ((peekArith index).Add(arr)) (peekArith value)
-        | Assign(var,value) -> (peekArith value).Add(var) //Maybe var not need to be included
+        | Assign(var,value) -> (peekArith value).Add(var) //Maybe var not needed to be included
         | _ -> Set.empty ;
 
 //Function that takes list of edges, and scans for variables that need value. Output is set of variables
 let rec varAFinder edges =
     match edges with
     | Ecomm(_,com,_)::tail -> Set.union (peekCommand com) (varAFinder tail)
-    | [] | _ -> Set.empty
+    | _::tail -> varAFinder tail
+    | [] -> Set.empty
         
 let rec varBFinder edges = 
     match edges with 
     | Ebool(_,bool,_)::tail -> 
                             let (setB, setA) = peekBool bool
                             let (setB', setA') = varBFinder tail
-                            (Set.union setB setB', Set.union setA setA') 
-    | [] | _ -> (Set.empty, Set.empty)
+                            (Set.union setB setB', Set.union setA setA')
+    | _::tail -> varBFinder tail 
+    | [] -> (Set.empty, Set.empty)
 
 // Initialize one arithmetic variable name to value 0 - helper for folding
 let varAInit item (map:Map<string,float>) = map.Add(item, 0.0)
@@ -123,10 +125,10 @@ let rec evalB e mapB mapA arr =
     | Neg(x) -> not (evalB x mapB mapA arr)
     | Equal(x,y) -> (evalA x mapA arr)=(evalA y mapA arr)
     | NotEqual(x,y) -> not ((evalA x mapA arr)=(evalA y mapA arr))
-    | Greater(x,y) -> (evalA x mapA arr)<(evalA y mapA arr)
-    | GreaterEqual(x,y) -> (evalA x mapA arr)<=(evalA y mapA arr)
-    | Less(x,y) -> (evalA x mapA arr)>(evalA y mapA arr)
-    | LessEqual(x,y) -> (evalA x mapA arr)>=(evalA y mapA arr)
+    | Greater(x,y) -> (evalA x mapA arr)>(evalA y mapA arr)
+    | GreaterEqual(x,y) -> (evalA x mapA arr)>=(evalA y mapA arr)
+    | Less(x,y) -> (evalA x mapA arr)<(evalA y mapA arr)
+    | LessEqual(x,y) -> (evalA x mapA arr)<=(evalA y mapA arr)
     | StrB(str) -> 
             try 
                 Map.find str mapB
@@ -191,19 +193,23 @@ let rec executeGraph edgeList memory node steps =
         try 
             let edge = List.find (fun edg -> 
                 match edg with
-                | Ecomm(ndx,_,_) -> ndx=node
                 | Ebool(ndx,bol,_) -> 
-                        (evalB bol mapB mapA arr) && ndx=node) edgeList
-           
+                        (evalB bol mapB mapA arr) && ndx=node
+                | Ecomm(ndx,_,_) -> ndx=node) edgeList
             match edge with
             | Ecomm(node, com, next) -> 
                         let memory1 = evalC com mapB mapA arr 
                         let message = sprintf "Action: assignment\n Node q%d\n Memory%A\n\n" node memory
-                        if (next=-1) then message + "#TERMINATED Program has executed all steps" 
+                        if (next = (-1)) then
+                                            let messageN = sprintf "Action: assignment\n Node q%d\n Memory%A\n\n" next memory 
+                                            message + messageN + "#TERMINATED Program has reached final node." 
                         else message + (executeGraph edgeList memory1 next (steps-1))
             | Ebool(node, bol, next) ->
                         let message = sprintf "Action: boolean check\n Node q%d\n Memory-> %A \n\n" node memory
-                        message + (executeGraph edgeList memory next (steps-1))
+                        if (next = (-1)) then
+                                            let messageN = sprintf "Action: assignment\n Node q%d\n Memory%A\n\n" next memory 
+                                            message + messageN + "#TERMINATED Program has reached final node." 
+                        else message + (executeGraph edgeList memory next (steps-1))
         with err -> 
                 let mes = sprintf "#STUCK No further edge can be taken. Program is stuck in node q%d with %d steps left.\n %A" node steps memory     
-                mes
+                err.Message + "\n" + mes
