@@ -117,22 +117,27 @@ When running option `1. Step-wise Execution with Automatic Input` or `2. Step-wi
 
 ### **Terminated or Stuck**
 
-The step-wise execution of the inputted Guarded Commands will run either until it is terminated, stuck or runs out of amount of steps. 
+The step-wise execution of the input Guarded Commands will run either until it is terminates, gets stuck or runs out of amount of steps. 
 The amount of steps shown is user-input, thus the number inputted may not be sufficient enough for the step-wise execution to either terminate or get stuck. The program can then be run again with a larger amount of steps to determine whether or not the program terminates or gets stuck later on. 
 
 Depending on whether the program terminates or gets stuck, one of the following messages will be shown.
 
-If the program TERMINATES with the given variables and within the set amount of steps:
+If the program executes until it runs out of possible steps, the following is printed:
 
-    #TERMINATED Program has executed all steps
+    #INSUFFICIENT Program has run out of executing steps
 OR if it TERMINATES by achieving the final node, the following message will be shown:
 
     #TERMINATED Program has reached final node.
 
 
-If the program gets STUCK with the given variables and within the set amount of steps, the following message will be given, which also shows where the program gets stuck and with how many steps left:
+If the program gets STUCK with the given variables and within the set amount of steps, the following message will be given, providing information on where the program gets stuck, why it gets stuck and with how many steps left:
 
-    #STUCK No further edge can be taken. Program is stuck in __ node with __ steps left.
+    #STUCK No further edge can be taken. Program is stuck in node __ with __ steps left.
+with one of the possible errors (or one of the F# Compiler exceptions):
+
+    ERROR: Unknown arithmetic variable __ in expression.
+    ERROR: Unknown boolean variable __ in expression.
+    ERROR: Invalid lookup of index __ in array __
 
 
 

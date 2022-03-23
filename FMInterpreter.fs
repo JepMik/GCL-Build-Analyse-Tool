@@ -188,7 +188,7 @@ let rec inputBMemory expr (mapB:Map<string,bool>) mapA arr =
 // Function to execute program statements based on edge list 
 let rec executeGraph edgeList memory node steps = 
     match steps with
-    | 0 -> "#TERMINATED Program has executed all steps" 
+    | 0 -> "#INSUFFICIENT Program has run out of executing steps" 
     | _ ->
         let (mapB, mapA, arr) = memory 
         try 
