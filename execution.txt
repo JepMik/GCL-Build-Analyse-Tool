@@ -1,6 +1,6 @@
 Action: assignment
  Node q0
- Memory(map [], map [("i", 1.0); ("j", 0.0); ("n", 4.0); ("t", 0.0)],
+ Memory->(map [], map [("i", 1.0); ("j", 0.0); ("n", 4.0); ("t", 0.0)],
  map [("A", [4.0; 2.0; 3.0; 1.0])])
 
 Action: boolean check
@@ -10,7 +10,7 @@ Action: boolean check
 
 Action: assignment
  Node q2
- Memory(map [], map [("i", 1.0); ("j", 1.0); ("n", 4.0); ("t", 0.0)],
+ Memory->(map [], map [("i", 1.0); ("j", 1.0); ("n", 4.0); ("t", 0.0)],
  map [("A", [4.0; 2.0; 3.0; 1.0])])
 
 Action: boolean check
@@ -20,132 +20,182 @@ Action: boolean check
 
 Action: assignment
  Node q5
- Memory(map [], map [("i", 1.0); ("j", 1.0); ("n", 4.0); ("t", 2.0)],
+ Memory->(map [], map [("i", 1.0); ("j", 1.0); ("n", 4.0); ("t", 2.0)],
  map [("A", [4.0; 2.0; 3.0; 1.0])])
 
 Action: assignment
  Node q6
- Memory(map [], map [("i", 1.0); ("j", 1.0); ("n", 4.0); ("t", 2.0)],
- map [("A", [4.0; 4.0; 2.0; 3.0; 1.0])])
+ Memory->(map [], map [("i", 1.0); ("j", 1.0); ("n", 4.0); ("t", 2.0)],
+ map [("A", [4.0; 4.0; 3.0; 1.0])])
 
 Action: assignment
  Node q7
- Memory(map [], map [("i", 1.0); ("j", 1.0); ("n", 4.0); ("t", 2.0)],
- map [("A", [2.0; 4.0; 4.0; 2.0; 3.0; 1.0])])
+ Memory->(map [], map [("i", 1.0); ("j", 1.0); ("n", 4.0); ("t", 2.0)],
+ map [("A", [2.0; 4.0; 3.0; 1.0])])
 
 Action: assignment
  Node q8
- Memory(map [], map [("i", 1.0); ("j", 0.0); ("n", 4.0); ("t", 2.0)],
- map [("A", [2.0; 4.0; 4.0; 2.0; 3.0; 1.0])])
+ Memory->(map [], map [("i", 1.0); ("j", 0.0); ("n", 4.0); ("t", 2.0)],
+ map [("A", [2.0; 4.0; 3.0; 1.0])])
 
 Action: boolean check
  Node q3
  Memory-> (map [], map [("i", 1.0); ("j", 0.0); ("n", 4.0); ("t", 2.0)],
- map [("A", [2.0; 4.0; 4.0; 2.0; 3.0; 1.0])]) 
+ map [("A", [2.0; 4.0; 3.0; 1.0])]) 
 
 Action: assignment
  Node q4
- Memory(map [], map [("i", 2.0); ("j", 0.0); ("n", 4.0); ("t", 2.0)],
- map [("A", [2.0; 4.0; 4.0; 2.0; 3.0; 1.0])])
+ Memory->(map [], map [("i", 2.0); ("j", 0.0); ("n", 4.0); ("t", 2.0)],
+ map [("A", [2.0; 4.0; 3.0; 1.0])])
 
 Action: boolean check
  Node q1
  Memory-> (map [], map [("i", 2.0); ("j", 0.0); ("n", 4.0); ("t", 2.0)],
- map [("A", [2.0; 4.0; 4.0; 2.0; 3.0; 1.0])]) 
+ map [("A", [2.0; 4.0; 3.0; 1.0])]) 
 
 Action: assignment
  Node q2
- Memory(map [], map [("i", 2.0); ("j", 2.0); ("n", 4.0); ("t", 2.0)],
- map [("A", [2.0; 4.0; 4.0; 2.0; 3.0; 1.0])])
+ Memory->(map [], map [("i", 2.0); ("j", 2.0); ("n", 4.0); ("t", 2.0)],
+ map [("A", [2.0; 4.0; 3.0; 1.0])])
 
 Action: boolean check
  Node q3
  Memory-> (map [], map [("i", 2.0); ("j", 2.0); ("n", 4.0); ("t", 2.0)],
- map [("A", [2.0; 4.0; 4.0; 2.0; 3.0; 1.0])]) 
+ map [("A", [2.0; 4.0; 3.0; 1.0])]) 
+
+Action: assignment
+ Node q5
+ Memory->(map [], map [("i", 2.0); ("j", 2.0); ("n", 4.0); ("t", 3.0)],
+ map [("A", [2.0; 4.0; 3.0; 1.0])])
+
+Action: assignment
+ Node q6
+ Memory->(map [], map [("i", 2.0); ("j", 2.0); ("n", 4.0); ("t", 3.0)],
+ map [("A", [2.0; 4.0; 4.0; 1.0])])
+
+Action: assignment
+ Node q7
+ Memory->(map [], map [("i", 2.0); ("j", 2.0); ("n", 4.0); ("t", 3.0)],
+ map [("A", [2.0; 3.0; 4.0; 1.0])])
+
+Action: assignment
+ Node q8
+ Memory->(map [], map [("i", 2.0); ("j", 1.0); ("n", 4.0); ("t", 3.0)],
+ map [("A", [2.0; 3.0; 4.0; 1.0])])
+
+Action: boolean check
+ Node q3
+ Memory-> (map [], map [("i", 2.0); ("j", 1.0); ("n", 4.0); ("t", 3.0)],
+ map [("A", [2.0; 3.0; 4.0; 1.0])]) 
 
 Action: assignment
  Node q4
- Memory(map [], map [("i", 3.0); ("j", 2.0); ("n", 4.0); ("t", 2.0)],
- map [("A", [2.0; 4.0; 4.0; 2.0; 3.0; 1.0])])
+ Memory->(map [], map [("i", 3.0); ("j", 1.0); ("n", 4.0); ("t", 3.0)],
+ map [("A", [2.0; 3.0; 4.0; 1.0])])
 
 Action: boolean check
  Node q1
- Memory-> (map [], map [("i", 3.0); ("j", 2.0); ("n", 4.0); ("t", 2.0)],
- map [("A", [2.0; 4.0; 4.0; 2.0; 3.0; 1.0])]) 
+ Memory-> (map [], map [("i", 3.0); ("j", 1.0); ("n", 4.0); ("t", 3.0)],
+ map [("A", [2.0; 3.0; 4.0; 1.0])]) 
 
 Action: assignment
  Node q2
- Memory(map [], map [("i", 3.0); ("j", 3.0); ("n", 4.0); ("t", 2.0)],
- map [("A", [2.0; 4.0; 4.0; 2.0; 3.0; 1.0])])
+ Memory->(map [], map [("i", 3.0); ("j", 3.0); ("n", 4.0); ("t", 3.0)],
+ map [("A", [2.0; 3.0; 4.0; 1.0])])
 
 Action: boolean check
  Node q3
- Memory-> (map [], map [("i", 3.0); ("j", 3.0); ("n", 4.0); ("t", 2.0)],
- map [("A", [2.0; 4.0; 4.0; 2.0; 3.0; 1.0])]) 
+ Memory-> (map [], map [("i", 3.0); ("j", 3.0); ("n", 4.0); ("t", 3.0)],
+ map [("A", [2.0; 3.0; 4.0; 1.0])]) 
 
 Action: assignment
  Node q5
- Memory(map [], map [("i", 3.0); ("j", 3.0); ("n", 4.0); ("t", 2.0)],
- map [("A", [2.0; 4.0; 4.0; 2.0; 3.0; 1.0])])
+ Memory->(map [], map [("i", 3.0); ("j", 3.0); ("n", 4.0); ("t", 1.0)],
+ map [("A", [2.0; 3.0; 4.0; 1.0])])
 
 Action: assignment
  Node q6
- Memory(map [], map [("i", 3.0); ("j", 3.0); ("n", 4.0); ("t", 2.0)],
- map [("A", [2.0; 4.0; 4.0; 4.0; 2.0; 3.0; 1.0])])
+ Memory->(map [], map [("i", 3.0); ("j", 3.0); ("n", 4.0); ("t", 1.0)],
+ map [("A", [2.0; 3.0; 4.0; 4.0])])
 
 Action: assignment
  Node q7
- Memory(map [], map [("i", 3.0); ("j", 3.0); ("n", 4.0); ("t", 2.0)],
- map [("A", [2.0; 4.0; 2.0; 4.0; 4.0; 2.0; 3.0; 1.0])])
+ Memory->(map [], map [("i", 3.0); ("j", 3.0); ("n", 4.0); ("t", 1.0)],
+ map [("A", [2.0; 3.0; 1.0; 4.0])])
 
 Action: assignment
  Node q8
- Memory(map [], map [("i", 3.0); ("j", 2.0); ("n", 4.0); ("t", 2.0)],
- map [("A", [2.0; 4.0; 2.0; 4.0; 4.0; 2.0; 3.0; 1.0])])
+ Memory->(map [], map [("i", 3.0); ("j", 2.0); ("n", 4.0); ("t", 1.0)],
+ map [("A", [2.0; 3.0; 1.0; 4.0])])
 
 Action: boolean check
  Node q3
- Memory-> (map [], map [("i", 3.0); ("j", 2.0); ("n", 4.0); ("t", 2.0)],
- map [("A", [2.0; 4.0; 2.0; 4.0; 4.0; 2.0; 3.0; 1.0])]) 
+ Memory-> (map [], map [("i", 3.0); ("j", 2.0); ("n", 4.0); ("t", 1.0)],
+ map [("A", [2.0; 3.0; 1.0; 4.0])]) 
 
 Action: assignment
  Node q5
- Memory(map [], map [("i", 3.0); ("j", 2.0); ("n", 4.0); ("t", 2.0)],
- map [("A", [2.0; 4.0; 2.0; 4.0; 4.0; 2.0; 3.0; 1.0])])
+ Memory->(map [], map [("i", 3.0); ("j", 2.0); ("n", 4.0); ("t", 1.0)],
+ map [("A", [2.0; 3.0; 1.0; 4.0])])
 
 Action: assignment
  Node q6
- Memory(map [], map [("i", 3.0); ("j", 2.0); ("n", 4.0); ("t", 2.0)],
- map [("A", [2.0; 4.0; 4.0; 2.0; 4.0; 4.0; 2.0; 3.0; 1.0])])
+ Memory->(map [], map [("i", 3.0); ("j", 2.0); ("n", 4.0); ("t", 1.0)],
+ map [("A", [2.0; 3.0; 3.0; 4.0])])
 
 Action: assignment
  Node q7
- Memory(map [], map [("i", 3.0); ("j", 2.0); ("n", 4.0); ("t", 2.0)],
- map [("A", [2.0; 2.0; 4.0; 4.0; 2.0; 4.0; 4.0; 2.0; 3.0; 1.0])])
+ Memory->(map [], map [("i", 3.0); ("j", 2.0); ("n", 4.0); ("t", 1.0)],
+ map [("A", [2.0; 1.0; 3.0; 4.0])])
 
 Action: assignment
  Node q8
- Memory(map [], map [("i", 3.0); ("j", 1.0); ("n", 4.0); ("t", 2.0)],
- map [("A", [2.0; 2.0; 4.0; 4.0; 2.0; 4.0; 4.0; 2.0; 3.0; 1.0])])
+ Memory->(map [], map [("i", 3.0); ("j", 1.0); ("n", 4.0); ("t", 1.0)],
+ map [("A", [2.0; 1.0; 3.0; 4.0])])
 
 Action: boolean check
  Node q3
- Memory-> (map [], map [("i", 3.0); ("j", 1.0); ("n", 4.0); ("t", 2.0)],
- map [("A", [2.0; 2.0; 4.0; 4.0; 2.0; 4.0; 4.0; 2.0; 3.0; 1.0])]) 
+ Memory-> (map [], map [("i", 3.0); ("j", 1.0); ("n", 4.0); ("t", 1.0)],
+ map [("A", [2.0; 1.0; 3.0; 4.0])]) 
+
+Action: assignment
+ Node q5
+ Memory->(map [], map [("i", 3.0); ("j", 1.0); ("n", 4.0); ("t", 1.0)],
+ map [("A", [2.0; 1.0; 3.0; 4.0])])
+
+Action: assignment
+ Node q6
+ Memory->(map [], map [("i", 3.0); ("j", 1.0); ("n", 4.0); ("t", 1.0)],
+ map [("A", [2.0; 2.0; 3.0; 4.0])])
+
+Action: assignment
+ Node q7
+ Memory->(map [], map [("i", 3.0); ("j", 1.0); ("n", 4.0); ("t", 1.0)],
+ map [("A", [1.0; 2.0; 3.0; 4.0])])
+
+Action: assignment
+ Node q8
+ Memory->(map [], map [("i", 3.0); ("j", 0.0); ("n", 4.0); ("t", 1.0)],
+ map [("A", [1.0; 2.0; 3.0; 4.0])])
+
+Action: boolean check
+ Node q3
+ Memory-> (map [], map [("i", 3.0); ("j", 0.0); ("n", 4.0); ("t", 1.0)],
+ map [("A", [1.0; 2.0; 3.0; 4.0])]) 
 
 Action: assignment
  Node q4
- Memory(map [], map [("i", 4.0); ("j", 1.0); ("n", 4.0); ("t", 2.0)],
- map [("A", [2.0; 2.0; 4.0; 4.0; 2.0; 4.0; 4.0; 2.0; 3.0; 1.0])])
+ Memory->(map [], map [("i", 4.0); ("j", 0.0); ("n", 4.0); ("t", 1.0)],
+ map [("A", [1.0; 2.0; 3.0; 4.0])])
 
 Action: boolean check
  Node q1
- Memory-> (map [], map [("i", 4.0); ("j", 1.0); ("n", 4.0); ("t", 2.0)],
- map [("A", [2.0; 2.0; 4.0; 4.0; 2.0; 4.0; 4.0; 2.0; 3.0; 1.0])]) 
+ Memory-> (map [], map [("i", 4.0); ("j", 0.0); ("n", 4.0); ("t", 1.0)],
+ map [("A", [1.0; 2.0; 3.0; 4.0])]) 
 
 Action: assignment
  Node q-1
- Memory->(map [], map [("i", 4.0); ("j", 1.0); ("n", 4.0); ("t", 2.0)],
- map [("A", [2.0; 2.0; 4.0; 4.0; 2.0; 4.0; 4.0; 2.0; 3.0; 1.0])])
+ Memory->(map [], map [("i", 4.0); ("j", 0.0); ("n", 4.0); ("t", 1.0)],
+ map [("A", [1.0; 2.0; 3.0; 4.0])])
 
 #TERMINATED Program has reached final node.

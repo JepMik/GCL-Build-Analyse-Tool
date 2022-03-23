@@ -145,7 +145,7 @@ let rec evalC e mapB (mapA:Map<string,float>) arr =
     | ArrayAssign(str,index,vlu) -> 
                         let indx = int (evalA index mapA arr)
                         let vlue = (evalA vlu mapA arr)
-                        let strArr = List.insertAt indx vlue (Map.find str arr)
+                        let strArr = List.updateAt indx vlue (Map.find str arr)
                         (mapB, mapA, arr.Add(str, strArr))
     | _ -> (mapB, mapA, arr)
 
