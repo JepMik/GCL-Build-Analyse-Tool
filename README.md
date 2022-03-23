@@ -23,10 +23,16 @@ When running the code a menu should pop-up with the options specified below.
     2. Non-Deterministic Program Graph
     3. Deterministic Program Graph
     4. Exit Menu
-After chosing an option, the input should be of Dijkstra's Guarded Command Language.
+After choosing an option, the input should be of Dijkstra's Guarded Command Language.
 If the input is not a valid GCL, the parser will acknowledge and send the user a special error message and tell where the error have been found. 
 
+#### Extented Menu Options:
+When choosing either a Non-Determinisitc Program Graph or a Deterministic Program Graph, the program graph will be constructed. Afterwards the following extended menu will be given:
 
+    1. Step-wise Execution with Automatic Input
+    2. Step-wise Execution with User Input
+    3. Return to main menu
+This extended menu gives the user the option of seeing a step-wise execution with either automated-input or with user-input for variables and arrays, or simply return to the main menu as given above.
 
 
 ## Syntax of our code
@@ -54,14 +60,19 @@ These function takes the expressions and turn them into a list of egdes containi
 
  These lists are of course different, depending on the choice of the desired Program Graph. The differences in syntax for the Non- and Deterministic Program Graphs can be seen in book Formal Methods chap. 2 from *Course 02141 - Computer Science Modelling on DTU*.
 
-The generation of the Program Graphs, are then processed by a function that translates the list of egdes into the syntax for graphviz, and generate a file called `graph.dot`. This file contains the program graph, consider reading *How to interpret program graph results*.
+In order to generate the Program Graphs, it is then processed by a function that translates the list of egdes into the syntax for graphviz, and generate a file called `graph.dot`. This file contains the program graph, consider reading *How to interpret program graph results*.
+
+
+## Step-Wise Execution
+The step-wise execution shows how the memory changes throughout the execution of the code and its actions and which nodes each execution takes place.
+
+From the Extended Menu Options, the user can choose to either input variables and arrays themselves or get automated input generated. Afterwards the user chooses how many execution steps they want shown. This will then initialise the Step-Wise Execution and generate a file called `execution.txt`. This file contains the step-wise execution of the program, consider reading *How to interpret the Step-wise Execution*.
 
 
 ## How to interpret the outcome of the prettifier
 **The outcome:** 
 
-Is a *"Pretty Printed"* AST, that shows how the arithmetic, boolean or other commands
-are being treated by the Parser and Lexer.
+Is a *"Pretty Printed"* AST, that shows how the arithmetic, boolean or other commands are being treated by the Parser and Lexer.
 
 *Example:*
 | Input | Outcome | Underlying AST |
@@ -75,18 +86,48 @@ are being treated by the Parser and Lexer.
 
 These examples show a clear image of how the AST is formed by the combined work of the Parser and Lexer.
 ## Error
-Parse errors are implemented in our GCL-parser, and should yield an error message, if the Lexer recognizes strings that are not defined.
+Parse errors are implemented in our GCL-parser, and should yield an error message, if the Lexer recognises strings that are not defined.
 
 If for some reason an error occurs while running an already defined syntax, then please contact the creators.
 
 ## How to interpret program graph results:
 **The outcome:**
 
-When running option `2. Non-Deterministic Program Graph` or `3. Deterministic Program Graph`. A file named `graph.dot` file will be generated, where the syntax of the [graphziz text language](https://graphviz.org/doc/info/lang.html) will be inside. The syntax will change each time the program is run, depending on the input of the Guarded Command Language.
+When running option `2. Non-Deterministic Program Graph` or `3. Deterministic Program Graph` from the Main Menu. A file named `graph.dot` will be generated, where the syntax of the [graphziz text language](https://graphviz.org/doc/info/lang.html) will be inside. The syntax will change each time the program is run, depending on the input of the Guarded Command Language.
 
 If using VS-code, and [extension](https://marketplace.visualstudio.com/items?itemName=joaompinto.vscode-graphviz) has been downloaded. The graph can be seen directly in the program, utilsing the extension.
 
 Otherwise [this link](https://edotor.net/). The syntax of the `graph.dot` can be dragged and dropped, and hereby shown in graph format.
+
+
+## How to interpret the Step-Wise Execution:
+**The outcome:**
+
+When running option `1. Step-wise Execution with Automatic Input` or `2. Step-wise Execution with User Input` from the Extended Menu Options. A file named `execution.txt` will be generated, where the syntax 
+of step-wise execution is written in the following manner:
+
+___ is the node.
+___ is the action ???
+___ is the arithmetic ???
+___ is the boolean ???
+___ is the array ???
+___ is the memory ???
+
+### Terminated or Stuck
+
+The step-wise execution of the inputted Guarded Commands will run either until it is terminated, stuck or runs out of amount of steps. 
+The amount of steps shown is user-input, thus the number inputted may not be sufficient enough for the step-wise execution to either terminate or get stuck. The program can then be run again with a larger amount of steps to determine whether or not the program terminates or gets stuck later on. 
+
+Depending on whether the program terminates or gets stuck, one of the following messages will be shown.
+
+If the program TERMINATES with the given variables and within the set amount of steps:
+
+    #TERMINATED Program has executed all steps
+
+If the program gets STUCK with the given variables and within the set amount of steps, the following message will be given, which also shows where the program gets stuck and with how many steps left:
+
+    #STUCK No further edge can be taken. Program is stuck in __ node with __ steps left.
+
 
 
 *Project completed within DTU course 02141 - Computer Science Modelling*
