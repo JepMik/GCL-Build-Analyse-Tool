@@ -1,3 +1,6 @@
+//VERSION: 4.0
+
+
 // This script implements our interactive GCL compiler & interpreter
 // We need to import a couple of modules, including the generated lexer and parser
 
@@ -44,13 +47,16 @@ let prettify ()=
         //Create the lexical buffer
         let lexbuf = LexBuffer<char>.FromString input
         
-        //Parsed result
-        let res = FMProjectParser.start FMProjectLexer.tokenize lexbuf 
-        printfn "<----Pretty print:---->"
-        printfn "%s" (printC res 0)
+        try
+            //Parsed result
+            let res = FMProjectParser.start FMProjectLexer.tokenize lexbuf 
+            printfn "<----Pretty print:---->"
+            printfn "%s" (printC res 0)
 
+        with e -> printfn "Parse error at : Line %i, %i, Unexpected char: %s" (lexbuf.EndPos.pos_lnum+ 1) 
+                    (lexbuf.EndPos.pos_cnum - lexbuf.EndPos.pos_bol) (LexBuffer<_>.LexemeString lexbuf)
+    with err ->printfn "%s" err.Message
 
-    with e -> printfn "ERROR: %s" e.Message;;
 //prettify();;
 
 
@@ -88,8 +94,9 @@ let memoryAlloc(edges, typ) =
                     printfn "User variable initialization is applied"
                     (boolMap,arithMap,arrayMap)
                 with e -> 
-                    (printfn "Parse error at : Line %i, %i, Unexpected char: %s" (lexbufInp.EndPos.pos_lnum+ 1) 
-                    (lexbufInp.EndPos.pos_cnum - lexbufInp.EndPos.pos_bol) (LexBuffer<_>.LexemeString lexbufInp))
+                    let mes = (sprintf "Parse error at : Line %i, %i, Unexpected char: %s" (lexbufInp.EndPos.pos_lnum+ 1) 
+                        (lexbufInp.EndPos.pos_cnum - lexbufInp.EndPos.pos_bol) (LexBuffer<_>.LexemeString lexbufInp))
+                    failwith mes
                     (Map.empty, Map.empty, Map.empty)
 
 
@@ -116,7 +123,7 @@ let rec executeSteps edges =
                 printfn "%A" boolMap
                 printfn "%A" arithMap
                 printfn "%A" arrayMap
-
+                
                 printfn "Input maximal number of steps"
                 let (x,steps) = getInput()
                 let execStr = executeGraph edges (boolMap, arithMap, arrayMap) 0 steps
@@ -138,7 +145,9 @@ let determ ()=
 
             //Parsed result
             let res = FMProjectParser.start FMProjectLexer.tokenize lexbuf  
-            let (edgeList,x) = detGenenC res 0 -1 1          
+            let (edgeList, x, domP) = detGenenC res 0 -1 1  
+            let domainP = Set.add (-1) (Set.add 0 domP)
+            printfn "%A" domainP      
             let graphstr = "strict digraph {\n"+
                             listGraph edgeList
                             + "}\n"
@@ -158,7 +167,7 @@ let determ ()=
 let nondeter()=
     try
         printfn "Insert your Guarded Commands program to be 
-                converted to a deterministic program graph:"
+                converted to a non-deterministic program graph:"
         //Read console input
         let program = Console.ReadLine()
         //Create the lexical buffer
@@ -166,7 +175,9 @@ let nondeter()=
         try 
             //Parsed result
             let res = FMProjectParser.start FMProjectLexer.tokenize lexbuf 
-            let (edgeList,x) = genenC res 0 -1 1
+            let (edgeList,x,domP) = genenC res 0 -1 1
+            let domainP = Set.add (-1) (Set.add 0 domP)
+            printfn "%A" domainP 
             let graphstr = "strict digraph {\n"+
                             listGraph edgeList
                             + "}\n"

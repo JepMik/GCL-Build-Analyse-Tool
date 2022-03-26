@@ -20,42 +20,44 @@ let rec doneGC egc =
 //Non-deterministic graphs generator
 let rec genenC e init final next = 
     match e with
-    | Order(c1,c2) ->let (E1,last) = (genenC c1 init next (next+1)) 
-                     let (E2,last2) = (genenC c2 next final last)
-                     (E1 @ E2, last2) 
-    | If(gc) -> (genenGC gc init final next)
-    | Do(gc) -> let (E,last) = (genenGC gc init init next) 
-                (E @ [Ebool(init,doneGC gc,final)], last)
-    | _ -> ([Ecomm(init,e,final)], next)
+    | Order(c1,c2) ->let (E1,last,domP) = (genenC c1 init next (next+1)) 
+                     let (E2,last2,domP2) = (genenC c2 next final last)
+                     (E1 @ E2, last2, Set.union domP domP2) 
+    | If(gc) -> let (E, last, domP) = genenGC gc init final next
+                (E, last, domP)
+    | Do(gc) -> let (E,last,domP) = (genenGC gc init init next) 
+                (E @ [Ebool(init,doneGC gc,final)], last, Set.add init domP)
+
+    | _ -> ([Ecomm(init,e,final)], next, Set.empty)
 and genenGC e init final next =                   
     match e with 
     | IfThen(b,C) -> 
-            let (E,last) = (genenC C next final (next+1))
-            ([Ebool(init,b,next)] @ E, last)
+            let (E,last,domP) = (genenC C next final (next+1))
+            ([Ebool(init,b,next)] @ E, last, domP)
     | FatBar(gc1,gc2) -> 
-            let (E1,last1) = genenGC gc1 init final next             
-            let (E2,last2) = genenGC gc2 init final last1
-            (E1 @ E2, last2)
+            let (E1,last1,domP) = genenGC gc1 init final next             
+            let (E2,last2,domP) = genenGC gc2 init final last1
+            (E1 @ E2, last2,domP)
 
 
 //Deterministic graphs generator
 let rec detGenenC e init final next=
     match e with
-        | Order(c1,c2) -> let (E1,last) = (detGenenC c1 init next (next+1)) 
-                          let (E2,last2) = (detGenenC c2 next final last)
-                          (E1 @ E2, last2) 
-        | If(gc) -> let (E,next,d) = (detGenenGC gc init final next (Bool(false)))
-                    (E, next) 
-        | Do(gc) -> let (E,next,d) = (detGenenGC gc init init next (Bool(false)))
-                    (E @ [Ebool(init,Neg(d),final)], next)
-        | _ -> ([Ecomm(init,e,final)], next)
+        | Order(c1,c2) -> let (E1,last,domP) = (detGenenC c1 init next (next+1)) 
+                          let (E2,last2,domP2) = (detGenenC c2 next final last)
+                          (E1 @ E2, last2, Set.union domP domP2) 
+        | If(gc) -> let (E,next,d,domP) = (detGenenGC gc init final next (Bool(false)))
+                    (E, next, domP) 
+        | Do(gc) -> let (E,next,d,domP) = (detGenenGC gc init init next (Bool(false)))
+                    (E @ [Ebool(init,Neg(d),final)], next, Set.add init domP)
+        | _ -> ([Ecomm(init,e,final)], next, Set.empty)
 and detGenenGC e init final next d =
     match e with 
-    | IfThen(b,C) -> let (E,last) = (detGenenC C next final (next+1))
-                     ([Ebool(init,LogAnd(b,Neg(d)),next)] @ E, last, (LogOr(b,d)))
-    | FatBar(gc1,gc2) -> let (E1,last1,d1) = detGenenGC gc1 init final next d
-                         let (E2,last2,d2) = detGenenGC gc2 init final last1 d1
-                         (E1 @ E2, last2, d2)
+    | IfThen(b,C) -> let (E,last,domP) = (detGenenC C next final (next+1))
+                     ([Ebool(init,LogAnd(b,Neg(d)),next)] @ E, last, (LogOr(b,d)), domP)
+    | FatBar(gc1,gc2) -> let (E1,last1,d1,domP) = detGenenGC gc1 init final next d
+                         let (E2,last2,d2,domP) = detGenenGC gc2 init final last1 d1
+                         (E1 @ E2, last2, d2, domP)
 
 // "Pretty Printer" for arithmetic expressions to show precedence of the operators
 let rec printA e =

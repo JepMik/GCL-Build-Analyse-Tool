@@ -63,3 +63,22 @@ type inputVal =
   | SetBool of (string * boolExpr)
   | SetArray of (string * seqInput) 
   | SetDelim of (inputVal * inputVal)
+
+//Predicate types
+type predicate = 
+  | Pbool of (bool)
+  | Pand of (predicate * predicate)
+  | Por of (predicate * predicate)
+  | Pnot of (predicate)
+  | Pimply of (predicate * predicate)
+  //| EXIST of (arithExpr * Predicate)
+  //| FORALL of (arithExpr * Predicate)
+  | Pequal of (arithExpr * arithExpr)
+  | Pnequal of (arithExpr * arithExpr)
+  | Pgreater of (arithExpr * arithExpr)
+  | PgreaterEqual of (arithExpr * arithExpr)
+  | Pless of (arithExpr * arithExpr)
+  | PlessEqual of (arithExpr * arithExpr)
+  | StrP of (string)
+
+

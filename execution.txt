@@ -1,9 +1,3 @@
-Action: assignment
- Node q0
- Memory->(map [], map [("x", infinity)], map [])
-
-Action: assignment
- Node q-1
- Memory->(map [], map [("x", infinity)], map [])
-
-#TERMINATED Program has reached final node with 9 steps left.
+ERROR: Unknown arithmetic variable x in expression.
+#STUCK No further edge can be taken. Program is stuck in node q0 with 10 steps left.
+ (map [], map [], map [])
