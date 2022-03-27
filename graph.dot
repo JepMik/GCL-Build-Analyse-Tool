@@ -1,9 +1,7 @@
 strict digraph {
-q► -> q1[label="x:=1"];
-q1 -> q3[label="True"];
-q3 -> q1[label="x:=3"];
-q1 -> q4[label="False"];
-q4 -> q1[label="x:=(4*2)"];
-q1 -> q2[label="(!(True))||(!(False))"];
-q2 -> q◄[label="y:=14"];
+q► -> q1[label="y:=1"];
+q1 -> q2[label="x>0"];
+q2 -> q3[label="y:=(x*y)"];
+q3 -> q1[label="x:=(x-1)"];
+q1 -> q◄[label="!(x>0)"];
 }

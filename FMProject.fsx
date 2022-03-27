@@ -17,14 +17,14 @@ open FMProjectParser
 open FMProjectLexer
 #load "FMProgramGraph.fs"
 open FMProgramGraph
-// #load "FMInputAST.fs"
-// open FMInputAST
 #load "FMInputParser.fs"
 open FMInputParser
 #load "FMInputLexer.fs"
 open FMInputLexer
 #load "FMInterpreter.fs"
 open FMInterpreter
+#load "FMVerification.fs"
+open FMVerification
 
 // Function that parses a given input
 let parse input =
@@ -147,7 +147,7 @@ let determ ()=
             let res = FMProjectParser.start FMProjectLexer.tokenize lexbuf  
             let (edgeList, x, domP) = detGenenC res 0 -1 1  
             let domainP = Set.add (-1) (Set.add 0 domP)
-            printfn "%A" domainP      
+            
             let graphstr = "strict digraph {\n"+
                             listGraph edgeList
                             + "}\n"
@@ -155,6 +155,9 @@ let determ ()=
             File.WriteAllText("graph.dot",graphstr)
 
             executeSteps edgeList
+
+            let SPF = buildSPF domainP edgeList
+            printfn "%A" SPF
 
 
         //Undefined string encountered   
@@ -177,7 +180,6 @@ let nondeter()=
             let res = FMProjectParser.start FMProjectLexer.tokenize lexbuf 
             let (edgeList,x,domP) = genenC res 0 -1 1
             let domainP = Set.add (-1) (Set.add 0 domP)
-            printfn "%A" domainP 
             let graphstr = "strict digraph {\n"+
                             listGraph edgeList
                             + "}\n"
@@ -185,6 +187,9 @@ let nondeter()=
             File.WriteAllText("graph.dot",graphstr)
 
             executeSteps edgeList
+            
+            let SPF = buildSPF domainP edgeList
+            printfn "%A" SPF
 
         //Undefined string encountered   
         with e -> printfn "Parse error at : Line %i, %i, Unexpected char: %s" (lexbuf.EndPos.pos_lnum+ 1) 
@@ -195,8 +200,8 @@ let nondeter()=
 let printMenu () = 
     printfn "Menu: "
     printfn "1. Pretty printer"
-    printfn "2. Non-Deterministic Program Graph"
-    printfn "3. Deterministic Program Graph"
+    printfn "2. Non-Deterministic Program"
+    printfn "3. Deterministic Program"
     printfn "4. Exit menu"
     printf "Enter your choice: "
 
