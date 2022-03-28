@@ -18,12 +18,12 @@ let rec build init action final domP edgeList spf =
 and helper action final domP edgeList spf edge =
     match edge with
     | Ecomm(q, alp, _ ) ->
-        let str = (printC alp 0) + ";" + action
+        let str = (printC alp 0) + "; " + action
         if Set.contains q domP
             then Set.add (q,str,final) spf
             else build q str final domP edgeList spf
     | Ebool(q, alp, _ ) -> 
-        let str = (printB alp) + ";" + action
+        let str = (printB alp) + "; " + action
         if Set.contains q domP
             then Set.add (q,str,final) spf
             else build q str final domP edgeList spf
