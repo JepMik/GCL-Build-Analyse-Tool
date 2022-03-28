@@ -114,10 +114,10 @@ and printC e n=
 
 let convert x y =
     match (x,y) with
-    | (0,-1) ->("►", "◄")
-    | (0,d) -> ("►",d.ToString())
-    | (d,-1) -> (d.ToString(),"◄")
-    | (d,0) -> (d.ToString(),"►")
+    | (0,-1) ->("▷", "◀")
+    | (0,d) -> ("▷",d.ToString())
+    | (d,-1) -> (d.ToString(),"◀")
+    | (d,0) -> (d.ToString(),"▷")
     | (d1,d2) -> (d1.ToString(),d2.ToString())
 
 //Function that takes in list and generates graphviz syntax

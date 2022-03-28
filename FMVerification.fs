@@ -31,3 +31,10 @@ and helper action final domP edgeList spf edge =
 
 let rec buildSPF domP edgeList =
     Set.fold (fun spf node -> build node "" node domP edgeList spf) Set.empty domP
+
+
+let rec printSPF spf = 
+    Set.fold (fun po (p,str,q) -> 
+                    let (a,c) = convert p q
+                    let str' = sprintf "q%s %s q%s \n" a str c
+                    po+str' ) "" spf

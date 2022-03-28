@@ -108,9 +108,8 @@ let rec executeSteps edges =
     match getInput() with
     | true, 1 ->  
                 let (boolMap, arithMap, arrayMap) = memoryAlloc( edges, "auto")            
-                printfn "%A" boolMap
-                printfn "%A" arithMap
-                printfn "%A" arrayMap
+                printfn "Initial memory assigned is shown below:"
+                printfn "%A %A %A" boolMap arithMap arrayMap
 
                 printfn "Input maximal number of steps"
                 let (x,steps) = getInput()
@@ -119,10 +118,9 @@ let rec executeSteps edges =
                 printfn "Check step-wise execution logs in 'execution.txt'!"
 
     | true, 2 -> 
-                let (boolMap, arithMap, arrayMap) = memoryAlloc( edges, "user")            
-                printfn "%A" boolMap
-                printfn "%A" arithMap
-                printfn "%A" arrayMap
+                let (boolMap, arithMap, arrayMap) = memoryAlloc( edges, "user")     
+                printfn "Initial memory assigned is shown below:"
+                printfn "%A %A %A" boolMap arithMap arrayMap
                 
                 printfn "Input maximal number of steps"
                 let (x,steps) = getInput()
@@ -152,12 +150,14 @@ let determ ()=
                             listGraph edgeList
                             + "}\n"
             Console.WriteLine(graphstr)
+            printfn "The GCL program graph is printed in file 'graph.dot' and can be visualized!"
             File.WriteAllText("graph.dot",graphstr)
 
             executeSteps edgeList
 
             let SPF = buildSPF domainP edgeList
-            printfn "%A" SPF
+            File.WriteAllText("proofoblig.txt",printSPF SPF)
+            printfn "Proof obligations are printed in the file 'proofoblig.txt'!"
 
 
         //Undefined string encountered   
@@ -184,12 +184,15 @@ let nondeter()=
                             listGraph edgeList
                             + "}\n"
             Console.WriteLine(graphstr)
+            printfn "The GCL program graph is printed in file 'graph.dot' and can be visualized!"
             File.WriteAllText("graph.dot",graphstr)
 
             executeSteps edgeList
             
             let SPF = buildSPF domainP edgeList
-            printfn "%A" SPF
+            File.WriteAllText("proofoblig.txt",printSPF SPF)
+            printfn "Proof obligations are printed in the file 'proofoblig.txt'!"
+
 
         //Undefined string encountered   
         with e -> printfn "Parse error at : Line %i, %i, Unexpected char: %s" (lexbuf.EndPos.pos_lnum+ 1) 
