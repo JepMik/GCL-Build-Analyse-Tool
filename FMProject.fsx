@@ -156,9 +156,11 @@ let determ ()=
             executeSteps edgeList
 
             let SPF = buildSPF domainP edgeList
-            File.WriteAllText("proofoblig.txt",printSPF SPF)
-            printfn "Proof obligations are printed in the file 'proofoblig.txt'!"
-
+            File.WriteAllText("shortPathFragments.txt",printSPF SPF)
+            printfn "Proof obligations are printed in the file 'shortPathFragments.txt'!"
+            
+            File.WriteAllText("proofObligations.txt",printSPF SPF)
+            printfn "Proof obligations are printed in the file 'proofObligations.txt'!"
 
         //Undefined string encountered   
         with e -> printfn "Parse error at : Line %i, %i, Unexpected char: %s" (lexbuf.EndPos.pos_lnum+ 1) 
@@ -190,8 +192,12 @@ let nondeter()=
             executeSteps edgeList
             
             let SPF = buildSPF domainP edgeList
-            File.WriteAllText("proofoblig.txt",printSPF SPF)
-            printfn "Proof obligations are printed in the file 'proofoblig.txt'!"
+            
+            File.WriteAllText("shortPathFragments.txt",printSPF SPF)
+            printfn "Proof obligations are printed in the file 'shortPathFragments.txt'!"
+
+            File.WriteAllText("proofObligations.txt",printSPF SPF)
+            printfn "Proof obligations are printed in the file 'proofObligations.txt'!"
 
 
         //Undefined string encountered   
