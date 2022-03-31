@@ -49,9 +49,10 @@ let prettify ()=
         
         try
             //Parsed result
-            let res = ProgramParser.start ProgramLexer.tokenize lexbuf 
+            let result = ProgramParser.start ProgramLexer.tokenize lexbuf 
+            let (Annot(begpr, prog, endpr)) = result
             printfn "<----Pretty print:---->"
-            printfn "%s" (printC res 0)
+            printfn "%s" (printC prog 0)
 
         with e -> printfn "Parse error at : Line %i, %i, Unexpected char: %s" (lexbuf.EndPos.pos_lnum+ 1) 
                     (lexbuf.EndPos.pos_cnum - lexbuf.EndPos.pos_bol) (LexBuffer<_>.LexemeString lexbuf)
@@ -115,7 +116,7 @@ let rec executeSteps edges =
                 let (x,steps) = getInput()
                 let execStr = executeGraph edges (boolMap, arithMap, arrayMap) 0 steps
                 File.WriteAllText("executionLogs.txt",execStr)
-                printfn "Check step-wise execution logs in 'execution.txt'!"
+                printfn "Check step-wise execution logs in 'executionLogs.txt'!"
 
     | true, 2 -> 
                 let (boolMap, arithMap, arrayMap) = memoryAlloc( edges, "user")     
@@ -126,7 +127,7 @@ let rec executeSteps edges =
                 let (x,steps) = getInput()
                 let execStr = executeGraph edges (boolMap, arithMap, arrayMap) 0 steps
                 File.WriteAllText("executionLogs.txt",execStr)
-                printfn "Check step-wise execution logs in 'execution.txt'!"
+                printfn "Check step-wise execution logs in 'executionLogs.txt'!"
     | true, 3 -> ()
     | _ -> executeSteps (edges)
 
@@ -142,8 +143,8 @@ let determ ()=
         try 
 
             //Parsed result
-            let res = ProgramParser.start ProgramLexer.tokenize lexbuf  
-            let (edgeList, x, domP) = detGenenC res 0 -1 1  
+            let (Annot(begpr, prog, endpr)) = ProgramParser.start ProgramLexer.tokenize lexbuf  
+            let (edgeList, x, domP) = detGenenC prog 0 -1 1  
             let domainP = Set.add (-1) (Set.add 0 domP)
             
             let graphstr = "strict digraph {\n"+
@@ -159,7 +160,7 @@ let determ ()=
             File.WriteAllText("shortPathFragments.txt",printSPF SPF)
             printfn "Proof obligations are printed in the file 'shortPathFragments.txt'!"
             
-            File.WriteAllText("proofObligations.txt",printSPF SPF)
+            File.WriteAllText("proofObligations.txt",printPO SPF)
             printfn "Proof obligations are printed in the file 'proofObligations.txt'!"
 
         //Undefined string encountered   
@@ -179,8 +180,8 @@ let nondeter()=
         let lexbuf = LexBuffer<char>.FromString program
         try 
             //Parsed result
-            let res = ProgramParser.start ProgramLexer.tokenize lexbuf 
-            let (edgeList,x,domP) = genenC res 0 -1 1
+            let (Annot(begpr, prog, endpr)) = ProgramParser.start ProgramLexer.tokenize lexbuf 
+            let (edgeList,x,domP) = genenC prog 0 -1 1
             let domainP = Set.add (-1) (Set.add 0 domP)
             let graphstr = "strict digraph {\n"+
                             listGraph edgeList
@@ -196,7 +197,7 @@ let nondeter()=
             File.WriteAllText("shortPathFragments.txt",printSPF SPF)
             printfn "Proof obligations are printed in the file 'shortPathFragments.txt'!"
 
-            File.WriteAllText("proofObligations.txt",printSPF SPF)
+            File.WriteAllText("proofObligations.txt",printPO SPF)
             printfn "Proof obligations are printed in the file 'proofObligations.txt'!"
 
 
@@ -214,7 +215,7 @@ let printMenu () =
     printfn "4. Exit menu"
     printf "Enter your choice: "
 
-let rec menu() = 
+let rec menu() =     
     printMenu()
     match getInput() with
     | true, 1 -> 

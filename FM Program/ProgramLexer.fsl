@@ -33,8 +33,11 @@ rule tokenize = parse
 | bool          { BOOL(Boolean.Parse(LexBuffer<_>.LexemeString lexbuf)) }
 | variable      { let str = LexBuffer<_>.LexemeString lexbuf in VARIABLE(str) }
 
-| "begin"       { BEGIN }
-| "end"         { END }
+
+//| '∧'           { CONJ }
+//| '∨'           { DISJ }
+//| '∀'           { FALL }
+//| '∃'           { EXIST }
 
 // Arithmetic expressions to TOKENs
 | '*'           { TIMES }
@@ -75,3 +78,9 @@ rule tokenize = parse
 | ">="          { GREATEREQ }
 | '<'           { LESS }
 | "<="          { LESSEQ }
+
+//Used for predicates
+| "begin"whitespace       { BEGIN }
+| "end"whitespace         { END }
+| "=>"                    { IMPL }
+| "<=>"                   { EQUIV }

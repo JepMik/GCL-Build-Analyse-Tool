@@ -21,6 +21,8 @@ type token =
   | OD
   | BEGIN
   | END
+  | IMPL
+  | EQUIV
   | IFTHEN
   | FATBAR
   | LBRAK
@@ -59,6 +61,8 @@ type tokenId =
     | TOKEN_OD
     | TOKEN_BEGIN
     | TOKEN_END
+    | TOKEN_IMPL
+    | TOKEN_EQUIV
     | TOKEN_IFTHEN
     | TOKEN_FATBAR
     | TOKEN_LBRAK
@@ -81,12 +85,14 @@ type tokenId =
 type nonTerminalId = 
     | NONTERM__startstart
     | NONTERM_start
+    | NONTERM_annotated
     | NONTERM_expression
     | NONTERM_expression1
     | NONTERM_str
     | NONTERM_boolexpression
     | NONTERM_guardcom
     | NONTERM_command
+    | NONTERM_predicate
 /// This function maps tokens to integer indexes
 val tagOfToken: token -> int
 
@@ -98,4 +104,4 @@ val prodIdxToNonTerminal: int -> nonTerminalId
 
 /// This function gets the name of a token as a string
 val token_to_string: token -> string
-val start : (FSharp.Text.Lexing.LexBuffer<'cty> -> token) -> FSharp.Text.Lexing.LexBuffer<'cty> -> (command) 
+val start : (FSharp.Text.Lexing.LexBuffer<'cty> -> token) -> FSharp.Text.Lexing.LexBuffer<'cty> -> (annot) 

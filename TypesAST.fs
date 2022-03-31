@@ -2,6 +2,7 @@
 // to store represent boolean, arithmetic, commands and guarded commands from Parser and Lexer.
 module TypesAST
 
+
 // type arithExpr does basic arithmetric operations
 type arithExpr =
   | Num of int        //be aware later, since taking int, store as float
@@ -44,11 +45,31 @@ and command =
   | Skip 
   | Order of (command * command)
   | If of (guardCommand)
-  | Do of (guardCommand)
+  | Do of (pred * guardCommand)
+
+//Predicate types
+and pred = 
+  | Pbool of (bool)
+  | Pand of (pred * pred)
+  | Por of (pred * pred)
+  | Pnot of (pred)
+  | Pimply of (pred * pred)
+  //| EXIST of (arithExpr * Predicate)
+  //| FORALL of (arithExpr * Predicate)
+  | Pequal of (arithExpr * arithExpr)
+  | Pnequal of (arithExpr * arithExpr)
+  | Pgreater of (arithExpr * arithExpr)
+  | PgreaterEqual of (arithExpr * arithExpr)
+  | Pless of (arithExpr * arithExpr)
+  | PlessEqual of (arithExpr * arithExpr)
+  | StrP of (string)
+
+// Annotated program
+and annot = Annot of (pred * command * pred)
 
 // Edge types
 // This could be changed to Action type, page 139 in book.
-type edge = 
+type Edge = 
   | Ebool of (int * boolExpr * int)
   | Ecomm of (int * command * int)
 
@@ -66,22 +87,4 @@ type inputVal =
 type fragAct = 
   | B of boolExpr
   | C of command
-
-//Predicate types
-type predicate = 
-  | Pbool of (bool)
-  | Pand of (predicate * predicate)
-  | Por of (predicate * predicate)
-  | Pnot of (predicate)
-  | Pimply of (predicate * predicate)
-  //| EXIST of (arithExpr * Predicate)
-  //| FORALL of (arithExpr * Predicate)
-  | Pequal of (arithExpr * arithExpr)
-  | Pnequal of (arithExpr * arithExpr)
-  | Pgreater of (arithExpr * arithExpr)
-  | PgreaterEqual of (arithExpr * arithExpr)
-  | Pless of (arithExpr * arithExpr)
-  | PlessEqual of (arithExpr * arithExpr)
-  | StrP of (string)
-
 

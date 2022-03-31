@@ -25,8 +25,8 @@ let rec genenC e init final next =
                      (E1 @ E2, last2, Set.union domP domP2) 
     | If(gc) -> let (E, last, domP) = genenGC gc init final next
                 (E, last, domP)
-    | Do(gc) -> let (E,last,domP) = (genenGC gc init init next) 
-                (E @ [Ebool(init,doneGC gc,final)], last, Set.add init domP)
+    | Do(_, gc) -> let (E,last,domP) = (genenGC gc init init next) 
+                   (E @ [Ebool(init,doneGC gc,final)], last, Set.add init domP)
 
     | _ -> ([Ecomm(init,e,final)], next, Set.empty)
 and genenGC e init final next =                   
@@ -48,8 +48,8 @@ let rec detGenenC e init final next=
                           (E1 @ E2, last2, Set.union domP domP2) 
         | If(gc) -> let (E,next,d,domP) = (detGenenGC gc init final next (Bool(false)))
                     (E, next, domP) 
-        | Do(gc) -> let (E,next,d,domP) = (detGenenGC gc init init next (Bool(false)))
-                    (E @ [Ebool(init,Neg(d),final)], next, Set.add init domP)
+        | Do(_, gc) -> let (E,next,d,domP) = (detGenenGC gc init init next (Bool(false)))
+                       (E @ [Ebool(init,Neg(d),final)], next, Set.add init domP)
         | _ -> ([Ecomm(init,e,final)], next, Set.empty)
 and detGenenGC e init final next d =
     match e with 
@@ -110,7 +110,7 @@ and printC e n=
     | Skip -> (indent n)+"skip"
     | Order(x,y) -> (indent n)+(printC x n)+";\n"+(indent n)+(printC y n)
     | If(x) -> "if "+(printGC x (n+1))+"\n"+"fi"
-    | Do(x) -> "do "+(printGC x (n+1))+"\n"+"od"
+    | Do(_, x) -> "do "+(printGC x (n+1))+"\n"+"od"
 
 let convert x y =
     match (x,y) with
@@ -132,9 +132,5 @@ let rec listGraph edgeL=
                 "q"+a+" -> q"+c+"[label=\""+(printC com 0)+"\"];\n"  
                                 + (listGraph tail)
     | [] -> ""
-let graphstr = "strict digraph {\n"+
-                listGraph [Ecomm (1, Assign ("x", Num 2), 2); Ebool (0, Bool true, 1)]
-                + "}\n" // Example
-//File.WriteAllText (filename , string output)  
-File.WriteAllText("graph.dot",graphstr);;
+
 
