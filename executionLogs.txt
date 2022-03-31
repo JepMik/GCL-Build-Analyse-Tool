@@ -1,3 +1,0 @@
-An index satisfying the predicate was not found in the collection.
-#STUCK No further edge can be taken. Program is stuck in node q0 with 10 steps left.
- (map [], map [("x", 0.0)], map [])

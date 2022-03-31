@@ -40,10 +40,11 @@ let getInput () = Int32.TryParse(Console.ReadLine())
 
 let rec chooseInput(file) = 
     printfn "Choose input source: "
-    printfn "1. Text file "
-    printfn "2. Console "
+    printfn "1. Text file ('%s')" file
+    printfn "2. Console"
+    printf "Enter your choice: "
     match getInput() with
-    | true, 1 -> printfn "Input taken from file %s" file
+    | true, 1 -> printfn "Input taken from file '%s'" file
                  File.ReadAllText(file)
     | true, 2 -> Console.ReadLine()
     | _ -> chooseInput(file)
@@ -53,7 +54,7 @@ let prettify ()=
     try
         printfn "Insert your Guarded Commands program to be parsed:"
         //Read console input
-        let input = Console.ReadLine()
+        let input = chooseInput("INProgram.txt")
         //Create the lexical buffer
         let lexbuf = LexBuffer<char>.FromString input
         
@@ -63,6 +64,8 @@ let prettify ()=
             let (Annot(begpr, prog, endpr)) = result
             printfn "<----Pretty print:---->"
             printfn "%s" (printC prog 0)
+            printfn "Prettified program is also available in 'OUTPretty.txt'!"
+            File.WriteAllLines("OUTPretty.txt",[(printC prog 0)])
 
         with e -> printfn "Parse error at : Line %i, %i, Unexpected char: %s" (lexbuf.EndPos.pos_lnum+ 1) 
                     (lexbuf.EndPos.pos_cnum - lexbuf.EndPos.pos_bol) (LexBuffer<_>.LexemeString lexbuf)
@@ -122,33 +125,36 @@ let rec runProgram edgeList domainP predMemory =
     | true, 1 ->  
                 let (boolMap, arithMap, arrayMap) = memoryAlloc( edgeList, "auto")            
                 printfn "Initial memory assigned is shown below:"
-                printfn "%A %A %A" boolMap arithMap arrayMap
+                printfn "Memory ==> %A %A %A" boolMap arithMap arrayMap
 
                 printfn "Input maximal number of steps"
                 let (x,steps) = getInput()
                 let execStr = executeGraph edgeList (boolMap, arithMap, arrayMap) 0 steps
-                File.WriteAllText("executionLogs.txt",execStr)
-                printfn "Check step-wise execution logs in 'executionLogs.txt'!"
+                File.WriteAllText("OUTexecution.txt",execStr)
+                printfn "Check step-wise execution logs in 'OUTexecution.txt'!"
 
     | true, 2 -> 
                 let (boolMap, arithMap, arrayMap) = memoryAlloc( edgeList, "user")     
                 printfn "Initial memory assigned is shown below:"
-                printfn "%A %A %A" boolMap arithMap arrayMap
+                printfn "Memory ==> %A %A %A" boolMap arithMap arrayMap
                 
                 printfn "Input maximal number of steps"
                 let (x,steps) = getInput()
                 let execStr = executeGraph edgeList (boolMap, arithMap, arrayMap) 0 steps
-                File.WriteAllText("executionLogs.txt",execStr)
-                printfn "Check step-wise execution logs in 'executionLogs.txt'!"
+                File.WriteAllText("OUTexecution.txt",execStr)
+                printfn "Check step-wise execution logs in 'OUTexecution.txt'!"
+
     | true, 3 ->
                 let SPF = buildSPF domainP edgeList
-                File.WriteAllText("shortPathFragments.txt",printSPF SPF)
-                printfn "Proof obligations are printed in the file 'shortPathFragments.txt'!"
-                
-                // predMemory used
+                File.WriteAllText("OUTspfrag.txt",printSPF SPF)
+                printfn "Short Path Fragments are printed in the file 'OUTspfrag.txt'!"
+                Console.WriteLine(printSPF SPF)
 
-                File.WriteAllText("proofObligations.txt",printPO SPF)
-                printfn "Proof obligations are printed in the file 'proofObligations.txt'!"
+                let PO = extractPO SPF predMemory
+                File.WriteAllText("OUTproofOb.txt",printPO PO)
+                printfn "Proof Obligations are printed in the file 'OUTproofOb.txt'!"
+                Console.WriteLine(printPO PO)
+
     | true, 4 -> ()
     | _ -> runProgram edgeList domainP predMemory
 
@@ -158,7 +164,7 @@ let determ ()=
         printfn "Insert your Guarded Commands program to be
                 converted to a deterministic program graph:"
         //Read console input
-        let input = Console.ReadLine()
+        let input = chooseInput("INProgram.txt")
         //Create the lexical buffer
         let lexbuf = LexBuffer<char>.FromString input
         try 
@@ -190,7 +196,7 @@ let nondeter()=
         printfn "Insert your Guarded Commands program to be 
                 converted to a non-deterministic program graph:"
         //Read console input
-        let program = Console.ReadLine()
+        let program = chooseInput("INProgram.txt")
         //Create the lexical buffer
         let lexbuf = LexBuffer<char>.FromString program
         try 

@@ -1,2 +1,0 @@
-[P(q▷)] False  x:=2    [P(q▷)] 
-[P(q▷)] !(False)    [P(q◀)] 

@@ -35,7 +35,33 @@ let rec buildSPF domP edgeList =
     Set.fold (fun spf node -> build node [] node domP edgeList spf) Set.empty domP
 // Output -> set of short path fragments
 
-//let rec extractPO 
+// Function to extract predicate assignments and provide proof obligations
+let rec extractPO spf predMemory = 
+    Set.map (
+        fun (init, frag, final) -> 
+            match init, final with
+            | 0,0 -> 
+                    let (begpr, map, _) = predMemory
+                    match Map.tryFind 0 map with
+                    | Some (pred) -> (Pand (begpr, pred), frag, Pand (begpr, pred))
+                    | None -> (begpr, frag, begpr)
+            | -1,-1 -> 
+                    let (_, map, endpr) = predMemory
+                    match Map.tryFind -1 map with
+                    | Some (pred) -> (Pand (pred, endpr), frag, Pand (pred, endpr))
+                    | None -> (endpr, frag, endpr)
+            | 0, -1 ->
+                    let (begpr, _ , endpr) = predMemory
+                    (begpr, frag, endpr)
+            | x, y ->
+                    let (_,map,_) = predMemory
+                    match (Map.tryFind x map, Map.tryFind y map) with
+                    | (Some(a), Some(b)) -> (a, frag, b)
+                    | (Some(a), None) -> (a,frag, Pbool true)
+                    | (None,Some(b)) -> (Pbool true,frag,b)
+                    | (None,None) -> (Pbool true, frag,Pbool true)
+
+        ) spf
 
 // Pretty printer for predicates
 let rec printPred pred = 
@@ -44,7 +70,7 @@ let rec printPred pred =
     | StrP(x) -> x
     | Pand(x,y) -> "("+(printPred x)+")∧("+(printPred y)+")"
     | Por(x,y) -> "("+(printPred x)+")∨("+(printPred y)+")"
-    | Pnot(x) -> "¬("+(printB x)+")"
+    | Pnot(x) -> "¬("+(printPred x)+")"
     | Pequal(x,y) -> (printA x)+"="+(printA y)
     | Pnequal(x,y) -> (printA x)+"!="+(printA y)
     | Pgreater(x,y) -> (printA x)+">"+(printA y)
@@ -65,12 +91,11 @@ let rec printFragment lst =
 let rec printSPF spf = 
     Set.fold (fun sp (p,lst,q) -> 
                     let (a,c) = convert p q
-                    let str' = sprintf "q%s %s q%s \n" a (printFragment lst) c
+                    let str' = sprintf "q%s  %sq%s\n" a (printFragment lst) c
                     sp+str' ) "" spf
 
 // Function to print the proof obligations
-let rec printPO spf = 
-    Set.fold (fun po (p,lst,q) -> 
-                    let (a,c) = convert p q
-                    let str' = sprintf "[P(q%s)] %s [P(q%s)] \n" a (printFragment lst) c
-                    po+str' ) "" spf
+let rec printPO po = 
+    Set.fold (fun str (pred, frag, post) -> 
+                    let str' = sprintf "[%s]  %s[%s]\n" (printPred pred) (printFragment frag) (printPred post)
+                    str+str' ) "" po

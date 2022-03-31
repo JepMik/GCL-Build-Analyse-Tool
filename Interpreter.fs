@@ -200,18 +200,21 @@ let rec executeGraph edgeList memory node steps =
             match edge with
             | Ecomm(node, com, next) -> 
                         let memory1 = evalC com mapB mapA arr 
-                        let message = sprintf "Action: assignment\n Node q%d\n Memory->%A\n\n" node memory1
+                        let (sym,syf) = convert node next
+                        let message = sprintf "Action: assignment\n Node q%s\n Memory->%A\n\n" sym memory1
                         if (next = (-1)) then
-                                            let messageN = sprintf "Action: assignment\n Node q%d\n Memory->%A\n\n" next memory1
+                                            let messageN = sprintf "Action: assignment\n Node q%s\n Memory->%A\n\n" syf memory1
                                             let termMes = sprintf "#TERMINATED Program has reached final node with %d steps left." (steps-1)
                                             message + messageN + termMes
                         else message + (executeGraph edgeList memory1 next (steps-1))
             | Ebool(node, bol, next) ->
-                        let message = sprintf "Action: boolean test\n Node q%d\n Memory-> %A \n\n" node memory
+                        let (sym,syf) = convert node next
+                        let message = sprintf "Action: boolean test\n Node q%s\n Memory-> %A \n\n" sym memory
                         if (next = (-1)) then
-                                            let messageN = sprintf "Action: assignment\n Node q%d\n Memory->%A\n\n" next memory 
+                                            let messageN = sprintf "Action: assignment\n Node q%s\n Memory->%A\n\n" syf memory 
                                             message + messageN + "#TERMINATED Program has reached final node." 
                         else message + (executeGraph edgeList memory next (steps-1))
         with err -> 
-                let mes = sprintf "#STUCK No further edge can be taken. Program is stuck in node q%d with %d steps left.\n %A" node steps memory     
+                let (sym,_) = convert node 0
+                let mes = sprintf "#STUCK No further edge can be taken. Program is stuck in node q%s with %d steps left.\n %A" sym steps memory     
                 err.Message + "\n" + mes

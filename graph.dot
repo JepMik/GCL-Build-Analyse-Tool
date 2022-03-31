@@ -1,5 +1,7 @@
 strict digraph {
-q▷ -> q1[label="(False)&&(!(False))"];
-q1 -> q▷[label="x:=2"];
-q▷ -> q◀[label="!((False)||(False))"];
+q▷ -> q1[label="y:=1"];
+q1 -> q2[label="x>0"];
+q2 -> q3[label="y:=(x*y)"];
+q3 -> q1[label="x:=(x-1)"];
+q1 -> q◀[label="!(x>0)"];
 }

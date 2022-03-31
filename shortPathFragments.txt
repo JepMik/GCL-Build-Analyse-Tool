@@ -1,2 +1,0 @@
-q▷ False  x:=2    q▷ 
-q▷ !(False)    q◀ 
