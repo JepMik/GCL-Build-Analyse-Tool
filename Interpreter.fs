@@ -1,9 +1,9 @@
-module FMInterpreter
+module Interpreter
 
 //#load "FMProgramGraph.fs"
-open FMProgramGraph
+open ProgramGraph
 //#load "FMProjectTypesAST.fs"
-open FMProjectTypesAST
+open TypesAST
 open System
 
 //Function that looks into arithmetic and generates a set of variables.
@@ -207,7 +207,7 @@ let rec executeGraph edgeList memory node steps =
                                             message + messageN + termMes
                         else message + (executeGraph edgeList memory1 next (steps-1))
             | Ebool(node, bol, next) ->
-                        let message = sprintf "Action: boolean check\n Node q%d\n Memory-> %A \n\n" node memory
+                        let message = sprintf "Action: boolean test\n Node q%d\n Memory-> %A \n\n" node memory
                         if (next = (-1)) then
                                             let messageN = sprintf "Action: assignment\n Node q%d\n Memory->%A\n\n" next memory 
                                             message + messageN + "#TERMINATED Program has reached final node." 
