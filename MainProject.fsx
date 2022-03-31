@@ -38,6 +38,16 @@ let parse input =
 
 let getInput () = Int32.TryParse(Console.ReadLine())
 
+let rec chooseInput(file) = 
+    printfn "Choose input source: "
+    printfn "1. Text file "
+    printfn "2. Console "
+    match getInput() with
+    | true, 1 -> printfn "Input taken from file %s" file
+                 File.ReadAllText(file)
+    | true, 2 -> Console.ReadLine()
+    | _ -> chooseInput(file)
+
 
 let prettify ()=
     try
@@ -66,7 +76,9 @@ let printInnerMenu () =
     printf "Options:\n"
     printfn "1. Step-wise Execution with Automatic Input"
     printfn "2. Step-wise Execution with User Input"
-    printfn "3. Return to main menu"
+    printfn "3. Program Verification"
+    // printfn "4. Program Analysis"
+    printfn "4. Return to main menu"
     printf "Enter your choice: "
 
 
@@ -83,7 +95,7 @@ let memoryAlloc(edges, typ) =
     | "user" ->
                 printfn "Insert input values for your Guarded Commands program:"
                 //Read console input
-                let input = Console.ReadLine()
+                let input = chooseInput("INInput.txt")
                 //Create the lexical buffer
                 let lexbufInp = LexBuffer<char>.FromString input
                 try 
@@ -103,33 +115,42 @@ let memoryAlloc(edges, typ) =
 
     | _ -> (Map.empty, Map.empty, Map.empty)
 
-let rec executeSteps edges = 
+let rec runProgram edgeList domainP predMemory = 
         
     printInnerMenu()
     match getInput() with
     | true, 1 ->  
-                let (boolMap, arithMap, arrayMap) = memoryAlloc( edges, "auto")            
+                let (boolMap, arithMap, arrayMap) = memoryAlloc( edgeList, "auto")            
                 printfn "Initial memory assigned is shown below:"
                 printfn "%A %A %A" boolMap arithMap arrayMap
 
                 printfn "Input maximal number of steps"
                 let (x,steps) = getInput()
-                let execStr = executeGraph edges (boolMap, arithMap, arrayMap) 0 steps
+                let execStr = executeGraph edgeList (boolMap, arithMap, arrayMap) 0 steps
                 File.WriteAllText("executionLogs.txt",execStr)
                 printfn "Check step-wise execution logs in 'executionLogs.txt'!"
 
     | true, 2 -> 
-                let (boolMap, arithMap, arrayMap) = memoryAlloc( edges, "user")     
+                let (boolMap, arithMap, arrayMap) = memoryAlloc( edgeList, "user")     
                 printfn "Initial memory assigned is shown below:"
                 printfn "%A %A %A" boolMap arithMap arrayMap
                 
                 printfn "Input maximal number of steps"
                 let (x,steps) = getInput()
-                let execStr = executeGraph edges (boolMap, arithMap, arrayMap) 0 steps
+                let execStr = executeGraph edgeList (boolMap, arithMap, arrayMap) 0 steps
                 File.WriteAllText("executionLogs.txt",execStr)
                 printfn "Check step-wise execution logs in 'executionLogs.txt'!"
-    | true, 3 -> ()
-    | _ -> executeSteps (edges)
+    | true, 3 ->
+                let SPF = buildSPF domainP edgeList
+                File.WriteAllText("shortPathFragments.txt",printSPF SPF)
+                printfn "Proof obligations are printed in the file 'shortPathFragments.txt'!"
+                
+                // predMemory used
+
+                File.WriteAllText("proofObligations.txt",printPO SPF)
+                printfn "Proof obligations are printed in the file 'proofObligations.txt'!"
+    | true, 4 -> ()
+    | _ -> runProgram edgeList domainP predMemory
 
 
 let determ ()=
@@ -144,24 +165,18 @@ let determ ()=
 
             //Parsed result
             let (Annot(begpr, prog, endpr)) = ProgramParser.start ProgramLexer.tokenize lexbuf  
-            let (edgeList, x, domP) = detGenenC prog 0 -1 1  
+            let (edgeList, x, domP, predMap) = detGenenC prog 0 -1 1  
             let domainP = Set.add (-1) (Set.add 0 domP)
-            
+            let predMemory = (begpr, predMap, endpr)
+
             let graphstr = "strict digraph {\n"+
                             listGraph edgeList
                             + "}\n"
-            Console.WriteLine(graphstr)
-            printfn "The GCL program graph is printed in file 'graph.dot' and can be visualized!"
+
             File.WriteAllText("graph.dot",graphstr)
+            printfn "The GCL program graph is printed in file 'graph.dot' and can be visualized!"
 
-            executeSteps edgeList
-
-            let SPF = buildSPF domainP edgeList
-            File.WriteAllText("shortPathFragments.txt",printSPF SPF)
-            printfn "Proof obligations are printed in the file 'shortPathFragments.txt'!"
-            
-            File.WriteAllText("proofObligations.txt",printPO SPF)
-            printfn "Proof obligations are printed in the file 'proofObligations.txt'!"
+            runProgram edgeList domainP predMemory
 
         //Undefined string encountered   
         with e -> printfn "Parse error at : Line %i, %i, Unexpected char: %s" (lexbuf.EndPos.pos_lnum+ 1) 
@@ -181,25 +196,18 @@ let nondeter()=
         try 
             //Parsed result
             let (Annot(begpr, prog, endpr)) = ProgramParser.start ProgramLexer.tokenize lexbuf 
-            let (edgeList,x,domP) = genenC prog 0 -1 1
+            let (edgeList,x,domP,predMap) = genenC prog 0 -1 1
             let domainP = Set.add (-1) (Set.add 0 domP)
+            let predMemory = (begpr, predMap, endpr)
+
             let graphstr = "strict digraph {\n"+
                             listGraph edgeList
                             + "}\n"
-            Console.WriteLine(graphstr)
+            
             printfn "The GCL program graph is printed in file 'graph.dot' and can be visualized!"
             File.WriteAllText("graph.dot",graphstr)
 
-            executeSteps edgeList
-            
-            let SPF = buildSPF domainP edgeList
-            
-            File.WriteAllText("shortPathFragments.txt",printSPF SPF)
-            printfn "Proof obligations are printed in the file 'shortPathFragments.txt'!"
-
-            File.WriteAllText("proofObligations.txt",printPO SPF)
-            printfn "Proof obligations are printed in the file 'proofObligations.txt'!"
-
+            runProgram edgeList domainP predMemory
 
         //Undefined string encountered   
         with e -> printfn "Parse error at : Line %i, %i, Unexpected char: %s" (lexbuf.EndPos.pos_lnum+ 1) 
@@ -207,11 +215,12 @@ let nondeter()=
 
     with e -> printfn "ERROR: %s" e.Message;;
 
+
 let printMenu () = 
     printfn "Menu: "
     printfn "1. Pretty printer"
-    printfn "2. Non-Deterministic Program"
-    printfn "3. Deterministic Program"
+    printfn "2. Non-Deterministic Program Environments"
+    printfn "3. Deterministic Program Environments"
     printfn "4. Exit menu"
     printf "Enter your choice: "
 

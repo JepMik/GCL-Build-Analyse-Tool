@@ -1,2 +1,2 @@
-q▷ x=3  x:=(x+1)  x:=4    q◀ 
-q▷ x>3  x:=3  x:=4    q◀ 
+q▷ False  x:=2    q▷ 
+q▷ !(False)    q◀ 

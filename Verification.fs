@@ -35,6 +35,25 @@ let rec buildSPF domP edgeList =
     Set.fold (fun spf node -> build node [] node domP edgeList spf) Set.empty domP
 // Output -> set of short path fragments
 
+//let rec extractPO 
+
+// Pretty printer for predicates
+let rec printPred pred = 
+    match pred with 
+    | Pbool(x) -> x.ToString()
+    | StrP(x) -> x
+    | Pand(x,y) -> "("+(printPred x)+")∧("+(printPred y)+")"
+    | Por(x,y) -> "("+(printPred x)+")∨("+(printPred y)+")"
+    | Pnot(x) -> "¬("+(printB x)+")"
+    | Pequal(x,y) -> (printA x)+"="+(printA y)
+    | Pnequal(x,y) -> (printA x)+"!="+(printA y)
+    | Pgreater(x,y) -> (printA x)+">"+(printA y)
+    | PgreaterEqual(x,y) -> (printA x)+">="+(printA y)
+    | Pless(x,y) -> (printA x)+"<"+(printA y)
+    | PlessEqual(x,y) -> (printA x)+"<="+(printA y)
+    | Pimply(x,y) -> "("+(printPred x)+")=>("+(printPred y)+")"
+
+
 // Function to print short path fragment from list of actions
 let rec printFragment lst = 
     match lst with

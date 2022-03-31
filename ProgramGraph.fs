@@ -17,47 +17,50 @@ let rec doneGC egc =
 // Compiler that takes GCL AST and converts to list of edges consisting 
 // of (node(int), expression(command), node(int))
 
+// newMap works as a map union
+let newMap map1 map2 = Map.fold (fun acc key value -> Map.add key value acc) map1 map2
+
 //Non-deterministic graphs generator
 let rec genenC e init final next = 
     match e with
-    | Order(c1,c2) ->let (E1,last,domP) = (genenC c1 init next (next+1)) 
-                     let (E2,last2,domP2) = (genenC c2 next final last)
-                     (E1 @ E2, last2, Set.union domP domP2) 
-    | If(gc) -> let (E, last, domP) = genenGC gc init final next
-                (E, last, domP)
-    | Do(_, gc) -> let (E,last,domP) = (genenGC gc init init next) 
-                   (E @ [Ebool(init,doneGC gc,final)], last, Set.add init domP)
+    | Order(c1,c2) ->let (E1,last,domP,predMap) = (genenC c1 init next (next+1)) 
+                     let (E2,last2,domP2,predMap2) = (genenC c2 next final last)
+                     (E1 @ E2, last2, Set.union domP domP2, newMap predMap predMap2) 
+    | If(gc) -> let (E, last, domP,predMap) = genenGC gc init final next
+                (E, last, domP, predMap)
+    | Do(pred, gc) -> let (E,last,domP,predMap) = (genenGC gc init init next) 
+                      (E @ [Ebool(init,doneGC gc,final)], last, Set.add init domP, Map.add init pred predMap)
 
-    | _ -> ([Ecomm(init,e,final)], next, Set.empty)
+    | _ -> ([Ecomm(init,e,final)], next, Set.empty, Map.empty)
 and genenGC e init final next =                   
     match e with 
     | IfThen(b,com) -> 
-            let (E,last,domP) = (genenC com next final (next+1))
-            ([Ebool(init,b,next)] @ E, last, domP)
+            let (E,last,domP,predMap) = (genenC com next final (next+1))
+            ([Ebool(init,b,next)] @ E, last, domP, predMap)
     | FatBar(gc1,gc2) -> 
-            let (E1,last1,domP) = genenGC gc1 init final next             
-            let (E2,last2,domP) = genenGC gc2 init final last1
-            (E1 @ E2, last2,domP)
+            let (E1,last1,domP, predMap) = genenGC gc1 init final next             
+            let (E2,last2,domP, predMap2) = genenGC gc2 init final last1
+            (E1 @ E2, last2,domP, newMap predMap predMap2)
 
 
 //Deterministic graphs generator
 let rec detGenenC e init final next=
     match e with
-        | Order(c1,c2) -> let (E1,last,domP) = (detGenenC c1 init next (next+1)) 
-                          let (E2,last2,domP2) = (detGenenC c2 next final last)
-                          (E1 @ E2, last2, Set.union domP domP2) 
-        | If(gc) -> let (E,next,d,domP) = (detGenenGC gc init final next (Bool(false)))
-                    (E, next, domP) 
-        | Do(_, gc) -> let (E,next,d,domP) = (detGenenGC gc init init next (Bool(false)))
-                       (E @ [Ebool(init,Neg(d),final)], next, Set.add init domP)
-        | _ -> ([Ecomm(init,e,final)], next, Set.empty)
+        | Order(c1,c2) -> let (E1,last,domP,predMap) = (detGenenC c1 init next (next+1)) 
+                          let (E2,last2,domP2,predMap2) = (detGenenC c2 next final last)
+                          (E1 @ E2, last2, Set.union domP domP2, newMap predMap predMap2) 
+        | If(gc) -> let (E,next,d,domP,predMap) = (detGenenGC gc init final next (Bool(false)))
+                    (E, next, domP, predMap) 
+        | Do(pred, gc) -> let (E,next,d,domP,predMap) = (detGenenGC gc init init next (Bool(false)))
+                          (E @ [Ebool(init,Neg(d),final)], next, Set.add init domP, Map.add init pred predMap)
+        | _ -> ([Ecomm(init,e,final)], next, Set.empty, Map.empty)
 and detGenenGC e init final next d =
     match e with 
-    | IfThen(b,com) -> let (E,last,domP) = (detGenenC com next final (next+1))
-                       ([Ebool(init,LogAnd(b,Neg(d)),next)] @ E, last, (LogOr(b,d)), domP)
-    | FatBar(gc1,gc2) -> let (E1,last1,d1,domP) = detGenenGC gc1 init final next d
-                         let (E2,last2,d2,domP) = detGenenGC gc2 init final last1 d1
-                         (E1 @ E2, last2, d2, domP)
+    | IfThen(b,com) -> let (E,last,domP,predMap) = (detGenenC com next final (next+1))
+                       ([Ebool(init,LogAnd(b,Neg(d)),next)] @ E, last, (LogOr(b,d)), domP, predMap)
+    | FatBar(gc1,gc2) -> let (E1,last1,d1,domP, predMap) = detGenenGC gc1 init final next d
+                         let (E2,last2,d2,domP, predMap2) = detGenenGC gc2 init final last1 d1
+                         (E1 @ E2, last2, d2, domP, newMap predMap predMap2)
 
 // "Pretty Printer" for arithmetic expressions to show precedence of the operators
 let rec printA e =
@@ -115,6 +118,7 @@ and printC e n=
 let convert x y =
     match (x,y) with
     | (0,-1) ->("▷", "◀")
+    | (0,0) -> ("▷","▷")
     | (0,d) -> ("▷",d.ToString())
     | (d,-1) -> (d.ToString(),"◀")
     | (d,0) -> (d.ToString(),"▷")
