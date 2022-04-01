@@ -146,15 +146,19 @@ let rec runProgram edgeList domainP predMemory =
 
     | true, 3 ->
                 let SPF = buildSPF domainP edgeList
-                File.WriteAllText("OUTspfrag.txt",printSPF SPF)
+                File.WriteAllText("OUTspfrag.txt", printSPF SPF)
                 printfn "Short Path Fragments are printed in the file 'OUTspfrag.txt'!"
-                Console.WriteLine(printSPF SPF)
+                Console.WriteLine("SPF: --> \n"+printSPF SPF)
 
                 let PO = extractPO SPF predMemory
-                File.WriteAllText("OUTproofOb.txt",printPO PO)
+                File.WriteAllText("OUTproofOb.txt", printPO PO)
                 printfn "Proof Obligations are printed in the file 'OUTproofOb.txt'!"
-                Console.WriteLine(printPO PO)
+                Console.WriteLine("Proof Obligations: --> \n"+printPO PO)
 
+                let VC = constrVC PO
+                File.WriteAllText("OUTverifCond.txt", printVC VC)
+                printfn "Verification Conditions are printed in the file 'OUTverifCond.txt'!"
+                Console.WriteLine("Verification: --> \n"+printVC VC)
     | true, 4 -> ()
     | _ -> runProgram edgeList domainP predMemory
 
