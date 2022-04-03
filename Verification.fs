@@ -1,4 +1,5 @@
 module Verification
+
 //#load "TypesAST.fs"
 open TypesAST
 //#load "ProgramGraph.fs"
@@ -40,21 +41,45 @@ let rec extractPO spf predMemory =
     Set.map (
         fun (init, frag, final) -> 
             match init, final with
-            | 0,0 -> 
-                    let (begpr, map, _) = predMemory
-                    match Map.tryFind 0 map with
-                    | Some (pred) -> (Pand (begpr, pred), frag, Pand (begpr, pred))
-                    | None -> (begpr, frag, begpr)
-            | -1,-1 -> 
-                    let (_, map, endpr) = predMemory
-                    match Map.tryFind -1 map with
-                    | Some (pred) -> (Pand (pred, endpr), frag, Pand (pred, endpr))
-                    | None -> (endpr, frag, endpr)
             | 0, -1 ->
                     let (begpr, _ , endpr) = predMemory
+                    #if DEBUG
+                    printfn "%A %A" begpr endpr
+                    #endif
                     (begpr, frag, endpr)
+            | 0, y -> 
+                    let (begpr, map, _) = predMemory
+                    #if DEBUG
+                    printfn "%A %A" begpr map
+                    #endif
+                    match (Map.tryFind 0 map, Map.tryFind y map) with
+                    | (Some (pred), Some(b)) -> 
+                            (Pand (begpr, pred), frag, b)
+                    | (Some (pred), None) -> 
+                            (Pand (begpr, pred), frag, Pbool true)
+                    | (None, Some(b)) ->
+                            (begpr, frag, b)
+                    | (None, None) -> 
+                            (begpr, frag, Pbool true)
+            | x, -1 -> 
+                    let (_, map, endpr) = predMemory
+                    #if DEBUG
+                    printfn "%A %A" map endpr
+                    #endif
+                    match (Map.tryFind -1 map, Map.tryFind x map) with
+                    | (Some (pred), Some(a)) -> 
+                            (a, frag, Pand (pred, endpr))
+                    | (Some (pred), None) -> 
+                            (Pbool true, frag, Pand (pred, endpr))
+                    | (None, Some(a)) ->
+                            (a, frag, endpr)
+                    | (None, None) -> 
+                            (Pbool true, frag, endpr)
             | x, y ->
                     let (_,map,_) = predMemory
+                    #if DEBUG
+                    printfn "%A" map
+                    #endif
                     match (Map.tryFind x map, Map.tryFind y map) with
                     | (Some(a), Some(b)) -> (a, frag, b)
                     | (Some(a), None) -> (a,frag, Pbool true)

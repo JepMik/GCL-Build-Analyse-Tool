@@ -57,10 +57,10 @@ start: annotated EOF             { $1 }
 // written in the yacc format:
 
 annotated:
-  | command                                                          { Annot(Pbool(true), $1, Pbool(true)) }
   | BEGIN LBRAK predicate RBRAK command END LBRAK predicate RBRAK    { Annot($3,$5,$8) }
-  | command END LBRAK predicate RBRAK                                { Annot(Pbool(true),$1,$4) }
   | BEGIN LBRAK predicate RBRAK command                              { Annot($3,$5,Pbool(true)) }
+  | command END LBRAK predicate RBRAK                                { Annot(Pbool(true),$1,$4) }
+  | command                                                          { Annot(Pbool(true), $1, Pbool(true)) }
 // Arithmetic productions
 //a ::= n | x | A[a] | a + a | a - a | a * a | a / a | - a | a ^ a | (a) | ln a | log a
 expression:
@@ -130,7 +130,7 @@ command:
 
 
 
-// P::= true | false | x | P ∨ P | P ∧ P | !P | P => P | 
+// P::= true | false | x | P ∨ P | P ∧ P | ¬P | P => P | 
 //  a = a | a <= a | a != a | a >= a | a > a | a < a |
 predicate:
   | BOOL                                { Pbool($1) }
@@ -145,5 +145,5 @@ predicate:
   | expression GREATEREQ expression     { PgreaterEqual($1,$3) }
   | expression LESS expression          { Pless($1,$3) }
   | expression LESSEQ expression        { PlessEqual($1,$3) }
-
+  | LPAR predicate RPAR                 { $2 }
 %%

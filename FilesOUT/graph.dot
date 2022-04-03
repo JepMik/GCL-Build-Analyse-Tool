@@ -1,0 +1,7 @@
+strict digraph {
+q▷ -> q1[label="x:=0"];
+q1 -> q2[label="i:=1"];
+q2 -> q3[label="(i<=n)&&(!(False))"];
+q3 -> q2[label="x:=(x+i)"];
+q2 -> q◀[label="!((i<=n)||(False))"];
+}

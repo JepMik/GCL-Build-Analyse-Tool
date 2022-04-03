@@ -1,0 +1,17 @@
+Action: assignment
+ Node q▷
+ Memory->(map [], map [("i", 0.0); ("n", 0.0); ("x", 0.0)], map [])
+
+Action: assignment
+ Node q1
+ Memory->(map [], map [("i", 1.0); ("n", 0.0); ("x", 0.0)], map [])
+
+Action: boolean test
+ Node q2
+ Memory-> (map [], map [("i", 1.0); ("n", 0.0); ("x", 0.0)], map []) 
+
+Action: assignment
+ Node q◀
+ Memory->(map [], map [("i", 1.0); ("n", 0.0); ("x", 0.0)], map [])
+
+#TERMINATED Program has reached final node.

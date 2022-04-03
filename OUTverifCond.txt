@@ -1,3 +1,0 @@
-True => True
-True => (True)∧(¬(x>0))
-True => (True)∧((x-1)>0)

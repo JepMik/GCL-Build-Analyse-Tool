@@ -67,7 +67,7 @@ let prettify ()=
             printfn "Prettified program is also available in 'OUTPretty.txt'!"
             File.WriteAllLines("OUTPretty.txt",[(printC prog 0)])
 
-        with e -> printfn "Parse error at : Line %i, %i, Unexpected char: %s" (lexbuf.EndPos.pos_lnum+ 1) 
+        with e -> printfn "Parse error at : Line %i, %i, Unexpected token: %s" (lexbuf.EndPos.pos_lnum+ 1) 
                     (lexbuf.EndPos.pos_cnum - lexbuf.EndPos.pos_bol) (LexBuffer<_>.LexemeString lexbuf)
     with err ->printfn "%s" err.Message
 
@@ -98,7 +98,7 @@ let memoryAlloc(edges, typ) =
     | "user" ->
                 printfn "Insert input values for your Guarded Commands program:"
                 //Read console input
-                let input = chooseInput("INInput.txt")
+                let input = chooseInput("./FilesIN/Input.txt")
                 //Create the lexical buffer
                 let lexbufInp = LexBuffer<char>.FromString input
                 try 
@@ -110,7 +110,7 @@ let memoryAlloc(edges, typ) =
                     printfn "User variable initialization is applied"
                     (boolMap,arithMap,arrayMap)
                 with e -> 
-                    let mes = (sprintf "Parse error at : Line %i, %i, Unexpected char: %s" (lexbufInp.EndPos.pos_lnum+ 1) 
+                    let mes = (sprintf "Parse error at : Line %i, %i, Unexpected token: %s" (lexbufInp.EndPos.pos_lnum+ 1) 
                         (lexbufInp.EndPos.pos_cnum - lexbufInp.EndPos.pos_bol) (LexBuffer<_>.LexemeString lexbufInp))
                     failwith mes
                     (Map.empty, Map.empty, Map.empty)
@@ -130,8 +130,8 @@ let rec runProgram edgeList domainP predMemory =
                 printfn "Input maximal number of steps"
                 let (x,steps) = getInput()
                 let execStr = executeGraph edgeList (boolMap, arithMap, arrayMap) 0 steps
-                File.WriteAllText("OUTexecution.txt",execStr)
-                printfn "Check step-wise execution logs in 'OUTexecution.txt'!"
+                File.WriteAllText("./FilesOUT/StepExecution.txt",execStr)
+                printfn "Check step-wise execution logs in 'StepExecution.txt'!"
 
     | true, 2 -> 
                 let (boolMap, arithMap, arrayMap) = memoryAlloc( edgeList, "user")     
@@ -141,23 +141,23 @@ let rec runProgram edgeList domainP predMemory =
                 printfn "Input maximal number of steps"
                 let (x,steps) = getInput()
                 let execStr = executeGraph edgeList (boolMap, arithMap, arrayMap) 0 steps
-                File.WriteAllText("OUTexecution.txt",execStr)
-                printfn "Check step-wise execution logs in 'OUTexecution.txt'!"
+                File.WriteAllText("./FilesOUT/StepExecution.txt",execStr)
+                printfn "Check step-wise execution logs in 'StepExecution.txt'!"
 
     | true, 3 ->
                 let SPF = buildSPF domainP edgeList
-                File.WriteAllText("OUTspfrag.txt", printSPF SPF)
-                printfn "Short Path Fragments are printed in the file 'OUTspfrag.txt'!"
+                File.WriteAllText("./FilesOUT/ShortPathFragments.txt", printSPF SPF)
+                printfn "Short Path Fragments are printed in the file 'ShortPathFragments.txt'!"
                 Console.WriteLine("SPF: --> \n"+printSPF SPF)
 
                 let PO = extractPO SPF predMemory
-                File.WriteAllText("OUTproofOb.txt", printPO PO)
-                printfn "Proof Obligations are printed in the file 'OUTproofOb.txt'!"
+                File.WriteAllText("./FilesOUT/ProofObligations.txt", printPO PO)
+                printfn "Proof Obligations are printed in the file 'ProofObligations.txt'!"
                 Console.WriteLine("Proof Obligations: --> \n"+printPO PO)
 
                 let VC = constrVC PO
-                File.WriteAllText("OUTverifCond.txt", printVC VC)
-                printfn "Verification Conditions are printed in the file 'OUTverifCond.txt'!"
+                File.WriteAllText("./FilesOUT/VerificationConditions.txt", printVC VC)
+                printfn "Verification Conditions are printed in the file 'VerificationConditions.txt'!"
                 Console.WriteLine("Verification: --> \n"+printVC VC)
     | true, 4 -> ()
     | _ -> runProgram edgeList domainP predMemory
@@ -168,7 +168,7 @@ let determ ()=
         printfn "Insert your Guarded Commands program to be
                 converted to a deterministic program graph:"
         //Read console input
-        let input = chooseInput("INProgram.txt")
+        let input = chooseInput("./FilesIN/Program.txt")
         //Create the lexical buffer
         let lexbuf = LexBuffer<char>.FromString input
         try 
@@ -183,13 +183,13 @@ let determ ()=
                             listGraph edgeList
                             + "}\n"
 
-            File.WriteAllText("graph.dot",graphstr)
-            printfn "The GCL program graph is printed in file 'graph.dot' and can be visualized!"
+            File.WriteAllText("./FilesOUT/Graph.dot",graphstr)
+            printfn "The GCL program graph is printed in file 'Graph.dot' and can be visualized!"
 
             runProgram edgeList domainP predMemory
 
         //Undefined string encountered   
-        with e -> printfn "Parse error at : Line %i, %i, Unexpected char: %s" (lexbuf.EndPos.pos_lnum+ 1) 
+        with e -> printfn "Parse error at : Line %i, %i, Unexpected token: %s" (lexbuf.EndPos.pos_lnum+ 1) 
                         (lexbuf.EndPos.pos_cnum - lexbuf.EndPos.pos_bol) (LexBuffer<_>.LexemeString lexbuf)
     
     with e -> printfn "ERROR: %s" e.Message;;
@@ -200,7 +200,7 @@ let nondeter()=
         printfn "Insert your Guarded Commands program to be 
                 converted to a non-deterministic program graph:"
         //Read console input
-        let program = chooseInput("INProgram.txt")
+        let program = chooseInput("./FilesIN/Program.txt")
         //Create the lexical buffer
         let lexbuf = LexBuffer<char>.FromString program
         try 
@@ -214,13 +214,13 @@ let nondeter()=
                             listGraph edgeList
                             + "}\n"
             
-            printfn "The GCL program graph is printed in file 'graph.dot' and can be visualized!"
-            File.WriteAllText("graph.dot",graphstr)
+            printfn "The GCL program graph is printed in file 'Graph.dot' and can be visualized!"
+            File.WriteAllText("./FilesOUT/Graph.dot",graphstr)
 
             runProgram edgeList domainP predMemory
 
         //Undefined string encountered   
-        with e -> printfn "Parse error at : Line %i, %i, Unexpected char: %s" (lexbuf.EndPos.pos_lnum+ 1) 
+        with e -> printfn "Parse error at : Line %i, %i, Unexpected token: %s" (lexbuf.EndPos.pos_lnum+ 1) 
                         (lexbuf.EndPos.pos_cnum - lexbuf.EndPos.pos_bol) (LexBuffer<_>.LexemeString lexbuf)
 
     with e -> printfn "ERROR: %s" e.Message;;
