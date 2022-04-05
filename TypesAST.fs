@@ -73,7 +73,7 @@ type Edge =
   | Ebool of (int * boolExpr * int)
   | Ecomm of (int * command * int)
 
-// Input types
+// Input types 
 type seqInput = 
   | Seq of (arithExpr * seqInput)
   | Singl of (arithExpr)
@@ -84,7 +84,28 @@ type inputVal =
   | SetArray of (string * seqInput) 
   | SetDelim of (inputVal * inputVal)
 
+// Fragment actions
 type fragAct = 
   | B of boolExpr
   | C of command
 
+// Sign types
+type sign = 
+  | ZORO
+  | PIKA
+  | NARUTO
+
+type signSeq = 
+  | SSeq of (sign * signSeq)
+  | SSingl of (sign)
+
+type signValue =
+  | SignVariable of (string * sign)
+  | SignArray of (string * signSeq)
+  | SignDelim of (signValue * signValue)
+
+// Cheat codes right there
+type cheat =
+  | I of (inputVal)
+  | S of (signValue)
+  

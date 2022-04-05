@@ -1,17 +1,11 @@
 Action: assignment
  Node q▷
- Memory->(map [], map [("i", 0.0); ("n", 0.0); ("x", 0.0)], map [])
+ Memory->(map [], map [("x", 0.0); ("y", 2.0)], map [])
 
 Action: assignment
  Node q1
- Memory->(map [], map [("i", 1.0); ("n", 0.0); ("x", 0.0)], map [])
+ Memory->(map [], map [("i", 1.0); ("x", 0.0); ("y", 2.0)], map [])
 
-Action: boolean test
- Node q2
- Memory-> (map [], map [("i", 1.0); ("n", 0.0); ("x", 0.0)], map []) 
-
-Action: assignment
- Node q◀
- Memory->(map [], map [("i", 1.0); ("n", 0.0); ("x", 0.0)], map [])
-
-#TERMINATED Program has reached final node.
+ERROR: Unknown arithmetic variable n in expression.
+#STUCK No further edge can be taken. Program is stuck in node q2 with 8 steps left.
+ (map [], map [("i", 1.0); ("x", 0.0); ("y", 2.0)], map [])

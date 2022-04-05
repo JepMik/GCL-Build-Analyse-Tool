@@ -16,6 +16,8 @@ type token =
   | DELIM
   | LBRAK
   | RBRAK
+  | LCURL
+  | RCURL
   | TIMES
   | DIV
   | PLUS
@@ -45,6 +47,8 @@ type tokenId =
     | TOKEN_DELIM
     | TOKEN_LBRAK
     | TOKEN_RBRAK
+    | TOKEN_LCURL
+    | TOKEN_RCURL
     | TOKEN_TIMES
     | TOKEN_DIV
     | TOKEN_PLUS
@@ -63,12 +67,15 @@ type tokenId =
 type nonTerminalId = 
     | NONTERM__startstart
     | NONTERM_start
+    | NONTERM_cheat
     | NONTERM_expression
     | NONTERM_expression1
     | NONTERM_str
     | NONTERM_boolexpression
     | NONTERM_inputvalues
     | NONTERM_seqinput
+    | NONTERM_signvalues
+    | NONTERM_seqsign
 /// This function maps tokens to integer indexes
 val tagOfToken: token -> int
 
@@ -80,4 +87,4 @@ val prodIdxToNonTerminal: int -> nonTerminalId
 
 /// This function gets the name of a token as a string
 val token_to_string: token -> string
-val start : (FSharp.Text.Lexing.LexBuffer<'cty> -> token) -> FSharp.Text.Lexing.LexBuffer<'cty> -> (inputVal) 
+val start : (FSharp.Text.Lexing.LexBuffer<'cty> -> token) -> FSharp.Text.Lexing.LexBuffer<'cty> -> (cheat) 

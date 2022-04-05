@@ -8,7 +8,7 @@
 %token <string> VARIABLE
 %token <bool> BOOL
 %token TIMES DIV PLUS MINUS POW LPAR RPAR EOF LN LOG 
-%token LBRAK RBRAK
+%token LBRAK RBRAK LCURL RCURL
 %token SETR DELIM
 %token SAND SOR AND OR NEG EQUAL NOTEQ GREATER LESS GREATEREQ LESSEQ
 //the actual formats of these tokens are defined in the lexer file as regular expressions
@@ -33,20 +33,27 @@
 %start start
 
 // We specify the return type of each of then non-terminal symbols
-%type <inputVal> start
+%type <cheat> start
 %type <arithExpr> expression
 %type <arithExpr> expression1
 %type <boolExpr> boolexpression
 %type <seqInput> seqinput
 %type <inputVal> inputvalues
-
+%type <signSeq> seqsign
+%type <signValue> signvalues
+%type <cheat> cheat
 // Grammar productions
 %%
 
 // The first production in "formal" notation is
 // start -> expression
 // here written:
-start: inputvalues EOF             { $1 }
+start: cheat EOF                {$1}
+
+cheat:
+  | inputvalues             { I($1) }
+  | signvalues              { S($1) }
+
 
 // Note that we need to insert an End-Of-File (EOF)
 // The code annotation { $1 } specifies that parsing with this production
@@ -101,9 +108,6 @@ boolexpression:
   | LPAR boolexpression RPAR                { $2 }
 
 
-
-
-
 // Assignments productions
 // c ::= x=a | x=b | A=[sv] | c,c 
 // sv ::= a, sv | a
@@ -118,4 +122,19 @@ seqinput:
   | expression                              { Singl($1) }
 // Above productions used for parsing input in executions
 
+signvalues: 
+  | str SETR PLUS                           { SignVariable($1, PIKA) }
+  | str SETR MINUS                          { SignVariable($1, ZORO) }
+  | str SETR NUM                            { SignVariable($1, NARUTO) }
+  | str SETR LCURL seqsign RCURL            { SignArray($1, $4) }
+  | signvalues DELIM signvalues             { SignDelim($1,$3) }
+
+seqsign:
+  | PLUS                                    { SSingl(PIKA) }
+  | NUM                                     { SSingl(ZORO) }
+  | MINUS                                   { SSingl(NARUTO) }
+  | PLUS DELIM seqsign                      { SSeq(PIKA,$3) }
+  | NUM DELIM seqsign                       { SSeq(ZORO,$3) }
+  | MINUS DELIM seqsign                     { SSeq(NARUTO,$3) }
+// Above productions used for parsing sign memory in analysis
 %% 

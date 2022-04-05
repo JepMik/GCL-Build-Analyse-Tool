@@ -25,6 +25,8 @@ open InputLexer
 open Interpreter
 #load "Verification.fs"
 open Verification
+#load "SignAnalysis.fsx" 
+open SignAnalysis
 
 // Function that parses a given input
 let parse input =
@@ -80,8 +82,8 @@ let printInnerMenu () =
     printfn "1. Step-wise Execution with Automatic Input"
     printfn "2. Step-wise Execution with User Input"
     printfn "3. Program Verification"
-    // printfn "4. Program Analysis"
-    printfn "4. Return to main menu"
+    printfn "4. Program Analysis"
+    printfn "5. Return to main menu"
     printf "Enter your choice: "
 
 
@@ -103,8 +105,11 @@ let memoryAlloc(edges, typ) =
                 let lexbufInp = LexBuffer<char>.FromString input
                 try 
                     // Parsed input result
-                    let resInp = InputParser.start InputLexer.tokenize lexbufInp
-
+                    let resInpRaw = InputParser.start InputLexer.tokenize lexbufInp
+                    let resInp = Option.get( 
+                        match resInpRaw with
+                        | I (x) -> Some x
+                        | S (x) -> None)
                     let (arithMap, arrayMap) = inputAMemory resInp Map.empty Map.empty
                     let boolMap = inputBMemory resInp Map.empty arithMap arrayMap
                     printfn "User variable initialization is applied"
@@ -159,7 +164,32 @@ let rec runProgram edgeList domainP predMemory =
                 File.WriteAllText("./FilesOUT/VerificationConditions.txt", printVC VC)
                 printfn "Verification Conditions are printed in the file 'VerificationConditions.txt'!"
                 Console.WriteLine("Verification: --> \n"+printVC VC)
-    | true, 4 -> ()
+    | true, 4 -> 
+                printfn "Insert sign memory for your Guarded Commands program analysis:"
+                //Read console input
+                let input = Console.ReadLine()
+                //Create the lexical buffer
+                let lexbufInp = LexBuffer<char>.FromString input
+                try 
+                    // Parsed sign memory
+                    let resSignRaw = InputParser.start InputLexer.tokenize lexbufInp
+                    let resSign = Option.get( 
+                        match resSignRaw with
+                        | S (x) -> Some x
+                        | I (x) -> None)
+                    #if DEBUG 
+                    printfn "%A" resSign
+                    #endif
+                    let AMem0 = signMemory resSign Map.empty Map.empty
+                    // Run analysis algorithm
+                    printfn "User variable initialization is applied"
+                    
+                with e -> 
+                    let mes = (sprintf "Parse error at : Line %i, %i, Unexpected token: %s" (lexbufInp.EndPos.pos_lnum+ 1) 
+                        (lexbufInp.EndPos.pos_cnum - lexbufInp.EndPos.pos_bol) (LexBuffer<_>.LexemeString lexbufInp))
+                    failwith mes
+
+    | true, 5 -> ()
     | _ -> runProgram edgeList domainP predMemory
 
 

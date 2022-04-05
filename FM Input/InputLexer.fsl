@@ -42,6 +42,8 @@ rule tokenize = parse
 | eof               { EOF }
 | '['               { LBRAK }
 | ']'               { RBRAK }
+| '{'               { LCURL }
+| '}'               { RCURL }
 | "log"whitespace   { LOG }
 | "ln"whitespace    { LN } 
 
