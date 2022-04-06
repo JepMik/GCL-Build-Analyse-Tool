@@ -25,7 +25,9 @@ open InputLexer
 open Interpreter
 #load "Verification.fs"
 open Verification
-#load "SignAnalysis.fsx" 
+#load "AbstractOperators.fs"
+open AbstractOperators
+#load "SignAnalysis.fs" 
 open SignAnalysis
 
 // Function that parses a given input
@@ -123,7 +125,7 @@ let memoryAlloc(edges, typ) =
 
     | _ -> (Map.empty, Map.empty, Map.empty)
 
-let rec runProgram edgeList domainP predMemory = 
+let rec runProgram edgeList domainP predMemory nodef = 
         
     printInnerMenu()
     match getInput() with
@@ -181,8 +183,17 @@ let rec runProgram edgeList domainP predMemory =
                     printfn "%A" resSign
                     #endif
                     let AMem0 = signMemory resSign Map.empty Map.empty
+                    #if DEBUG
+                    printfn "%A" (analBool (Neg (LogOr (LessEqual (StrA "i", StrA "n"), Bool false))) AMem0)
+                    printfn "%A" (analBool (LogOr (LessEqual (StrA "i", StrA "n"), Bool false)) AMem0)
+                    printfn "%A" (analBool (LessEqual (StrA "i", StrA "n")) AMem0)
+                    #endif
                     // Run analysis algorithm
-                    printfn "User variable initialization is applied"
+                    let solution = solveAnalysis 0 nodef (Set.add AMem0 Set.empty) edgeList
+                    let (analSol, w) = solution
+                    File.WriteAllText("./FilesOUT/SignAnalysis.txt", (printAnalysis analSol))
+                    printfn "Sign Analysis Solution is printed in the file 'SignAnalysis.txt'!"
+                    Console.WriteLine("Analysis solution --> \n" + (printAnalysis analSol))
                     
                 with e -> 
                     let mes = (sprintf "Parse error at : Line %i, %i, Unexpected token: %s" (lexbufInp.EndPos.pos_lnum+ 1) 
@@ -190,7 +201,7 @@ let rec runProgram edgeList domainP predMemory =
                     failwith mes
 
     | true, 5 -> ()
-    | _ -> runProgram edgeList domainP predMemory
+    | _ -> runProgram edgeList domainP predMemory nodef
 
 
 let determ ()=
@@ -216,7 +227,7 @@ let determ ()=
             File.WriteAllText("./FilesOUT/Graph.dot",graphstr)
             printfn "The GCL program graph is printed in file 'Graph.dot' and can be visualized!"
 
-            runProgram edgeList domainP predMemory
+            runProgram edgeList domainP predMemory x
 
         //Undefined string encountered   
         with e -> printfn "Parse error at : Line %i, %i, Unexpected token: %s" (lexbuf.EndPos.pos_lnum+ 1) 
@@ -247,7 +258,7 @@ let nondeter()=
             printfn "The GCL program graph is printed in file 'Graph.dot' and can be visualized!"
             File.WriteAllText("./FilesOUT/Graph.dot",graphstr)
 
-            runProgram edgeList domainP predMemory
+            runProgram edgeList domainP predMemory x
 
         //Undefined string encountered   
         with e -> printfn "Parse error at : Line %i, %i, Unexpected token: %s" (lexbuf.EndPos.pos_lnum+ 1) 

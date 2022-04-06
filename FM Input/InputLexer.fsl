@@ -27,6 +27,7 @@ rule tokenize = parse
 
 // Input value setter
 | '='               { SETR }
+| '~'               { ZER }
 
 // Value delimiter(in arrays, between variables)
 | ','               { DELIM }

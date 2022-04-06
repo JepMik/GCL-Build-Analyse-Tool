@@ -1,5 +1,4 @@
 module AbstractOperators
-
 // ¬
 let absNot set1 = 
     Set.fold (
@@ -83,10 +82,10 @@ let absAND set1 set2 =
             Set.fold (
                 fun set el1 ->
                 match el1, el2 with
-                | true, true -> Set.add true Set.empty
-                | true, false -> Set.add false Set.empty
-                | false, true -> Set.add false Set.empty
-                | false, false-> Set.add false Set.empty
+                | true, true -> Set.add true set
+                | true, false -> Set.add false set
+                | false, true -> Set.add false set
+                | false, false-> Set.add false set
             ) set set1
     ) Set.empty set2
 
@@ -97,17 +96,15 @@ let absOR set1 set2 =
             Set.fold (
                 fun set el1 ->
                 match el1, el2 with
-                | true, true -> Set.add true Set.empty
-                | true, false -> Set.add true Set.empty
-                | false, true -> Set.add true Set.empty
-                | false, false-> Set.add false Set.empty
+                | true, true -> Set.add true set
+                | true, false -> Set.add true set
+                | false, true -> Set.add true set
+                | false, false-> Set.add false set
             ) set set1
     ) Set.empty set2
 
 // && operator
-let absSAND set1 set2 = Set.union 
-                        (Set.intersect set1 (Set.add false Set.empty))
-                        (absAND set1 set2)
+let absSAND set1 set2 = Set.union (Set.intersect set1 (Set.add false Set.empty)) (absAND set1 set2)
 
 // || operator
 let absSOR set1 set2 = Set.union 
@@ -145,8 +142,8 @@ let absDiv set1 set2 =
                 | NARUTO, PIKA -> Set.add NARUTO set
                 | NARUTO, NARUTO -> Set.add PIKA set 
                 | _ , ZORO -> 
+                            failwith "Invalid division by 0!"
                             set
-                            failwith "ERROR: Division by 0 undefined"
             ) set set1
     ) Set.empty set2
 
@@ -172,7 +169,7 @@ let absMinus (set1:Set<sign>) (set2:Set<sign>) =
     Set.fold (
         fun set el2 ->
             Set.fold (
-                fun set el1 ->
+                fun (set:Set<sign>) el1 ->
                 match el1, el2 with
                 | PIKA, PIKA -> set.Add(NARUTO).Add(ZORO).Add(PIKA)
                 | PIKA, ZORO -> Set.add PIKA set
@@ -190,7 +187,7 @@ let absPow set1 set2 =
     Set.fold (
         fun set el2 ->
             Set.fold (
-                fun set el1 ->
+                fun (set:Set<sign>) el1 ->
                 match el1, el2 with
                 | PIKA, _ -> set.Add(PIKA)
                 | ZORO, _ -> set.Add(ZORO)
@@ -200,16 +197,16 @@ let absPow set1 set2 =
 
 let absUPlus set1 = 
     Set.fold (
-                fun set el1 ->
-                match el1, el2 with
-                | PIKA, _ -> set.Add(PIKA)
-                | ZORO, _ -> set.Add(ZORO)
-                | NARUTO, _ -> set.Add(NARUTO).Add(PIKA)
+                fun (set:Set<sign>) el1 ->
+                match el1 with
+                | PIKA -> set.Add(PIKA)
+                | ZORO -> set.Add(ZORO)
+                | NARUTO -> set.Add(NARUTO).Add(PIKA)
             ) Set.empty set1
 
 let absUMinus set1 = 
     Set.fold (
-                fun set el1 ->
+                fun (set:Set<sign>) el1 ->
                 match el1 with
                 | PIKA -> set.Add(NARUTO)
                 | ZORO -> set.Add(ZORO)

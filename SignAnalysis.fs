@@ -1,7 +1,8 @@
 module SignAnalysis
-#load "TypesAST.fs"
+
+//#load "TypesAST.fs"
 open TypesAST
-#load "AbstractOperators.fs"
+//#load "AbstractOperators.fs"
 open AbstractOperators
 
 // Sign of a number, PIKA(+), NARUTO(-), ZORO(0)
@@ -77,16 +78,16 @@ let rec analBool bolAct memory =
     
 
 // Specification analysis function
-let rec analSpec edge (powerMem:Set<Map<string,sign> * Map<string, Set<sign>> >) =
-    match edge with
-    | Ebool( _, bol, _ ) -> 
+let rec analSpec action (powerMem:Set<Map<string,sign> * Map<string, Set<sign>> >) =
+    match action with
+    | B (bol) -> 
             Set.fold (
                 fun set memory ->
                     if Set.contains true (analBool bol memory) 
                         then Set.add memory set
                         else set
             ) Set.empty powerMem
-    | Ecomm(_,com,_) ->
+    | C (com) ->
             match com with
             | Assign(idf, value) ->
                 Set.fold (
@@ -109,7 +110,86 @@ let rec analSpec edge (powerMem:Set<Map<string,sign> * Map<string, Set<sign>> >)
             | _ -> powerMem 
     
 
+// Initialize analysis for all nodes
+let initAnal first last mem0 = 
+    let mutable analysis = Map.add first mem0 Map.empty
+    for k in first+1..last do
+        analysis <- Map.add k Set.empty analysis
+    analysis <- Map.add (-1) Set.empty analysis
+    analysis
 
+// Recursive call for analysis solution
+let rec homeWork work edgeList analysis= 
+    match (Set.isEmpty work) with
+    | false -> 
+            let node = Set.minElement work
+            let rWork = Set.remove node work
+            let edges = List.filter (
+                            fun edge ->
+                                match edge with
+                                | Ebool(ni,_,_) -> ni=node
+                                | Ecomm(ni,_,_) -> ni=node
+                            ) edgeList
+            let (upAnalysis, upWork) = List.fold (
+                                            fun (anals,w) edge ->
+                #if DEBUG
+                printfn "%A" edge
+                #endif
+                match edge with 
+                | Ecomm(ni,com,nf) ->
+                    if not (Set.isSubset (analSpec (C (com)) (Map.find ni anals)) (Map.find nf anals))
+                        then (Map.add nf (Set.union (Map.find nf anals) (analSpec (C (com)) (Map.find ni anals))) anals, Set.add nf w)
+                        else (anals, w)
+                | Ebool(ni,bol,nf) ->
+                    if not (Set.isSubset (analSpec (B (bol)) (Map.find ni anals)) (Map.find nf anals))
+                        then (Map.add nf (Set.union (Map.find nf anals) (analSpec (B (bol)) (Map.find ni anals))) anals, Set.add nf w)
+                        else (anals, w)
+                                            ) (analysis,rWork) edges
+            homeWork upWork edgeList upAnalysis
+    | true -> (analysis, work)
 
+// Worklist algorithm for analysis solution
+let solveAnalysis first last mem0 edgeList =
+    let analysis = initAnal first (last-1) mem0
+    let work = Set.empty.Add(0)
+    homeWork work edgeList analysis
 
+let convNod x =
+    match x with
+    | 0 -> "▷" 
+    | -1 -> "◀"
+    | d -> d.ToString()
+
+let printSign sign = 
+    match sign with
+    | PIKA -> "+"
+    | ZORO -> "0"
+    | NARUTO -> "-"
+
+let printSignSet set = 
+    Set.fold (fun str sign -> str+(printSign sign)+" ") "" set
+
+// Print a memory
+let printMemory memory = 
+    let (mapV, mapA) = memory
+    let strV = Map.fold(
+                fun str var sign ->
+                    let mes = sprintf " %s <=> %s |" (var) (printSign sign)
+                    str+mes
+                ) "" mapV
+    let strA = Map.fold(
+                fun str var signSet ->
+                    let mes = sprintf " %s <=> %s |" (var) (printSignSet signSet)
+                    str+mes
+                ) "" mapA
+    let final = sprintf "  Variables: %s \n  Arrays: %s\n\n" strV strA
+    final
+        
+// Printer for the analysis solution
+let printAnalysis solution = 
+    Map.fold (
+        fun str node powerMem ->
+            let newMes = sprintf "Node --> q%s \n%s \n \n" (convNod node) (Set.fold (fun str mem -> str+" Sign Analysis -> \n"+(printMemory mem)) "" powerMem) 
+            str+newMes
+        ) "" solution
 

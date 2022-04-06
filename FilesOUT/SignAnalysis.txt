@@ -1,0 +1,39 @@
+Node --> q◀ 
+ Sign Analysis -> 
+  Variables:  i <=> + | n <=> + | x <=> 0 | 
+  Arrays: 
+ Sign Analysis -> 
+  Variables:  i <=> + | n <=> + | x <=> + | 
+  Arrays: 
+ 
+ 
+Node --> q▷ 
+ Sign Analysis -> 
+  Variables:  i <=> + | n <=> + | x <=> 0 | 
+  Arrays: 
+ 
+ 
+Node --> q1 
+ Sign Analysis -> 
+  Variables:  i <=> + | n <=> + | x <=> 0 | 
+  Arrays: 
+ 
+ 
+Node --> q2 
+ Sign Analysis -> 
+  Variables:  i <=> + | n <=> + | x <=> 0 | 
+  Arrays: 
+ Sign Analysis -> 
+  Variables:  i <=> + | n <=> + | x <=> + | 
+  Arrays: 
+ 
+ 
+Node --> q3 
+ Sign Analysis -> 
+  Variables:  i <=> + | n <=> + | x <=> 0 | 
+  Arrays: 
+ Sign Analysis -> 
+  Variables:  i <=> + | n <=> + | x <=> + | 
+  Arrays: 
+ 
+ 

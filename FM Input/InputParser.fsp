@@ -7,7 +7,7 @@
 %token <int> NUM
 %token <string> VARIABLE
 %token <bool> BOOL
-%token TIMES DIV PLUS MINUS POW LPAR RPAR EOF LN LOG 
+%token TIMES DIV PLUS MINUS POW LPAR RPAR EOF LN LOG ZER
 %token LBRAK RBRAK LCURL RCURL
 %token SETR DELIM
 %token SAND SOR AND OR NEG EQUAL NOTEQ GREATER LESS GREATEREQ LESSEQ
@@ -124,8 +124,8 @@ seqinput:
 
 signvalues: 
   | str SETR PLUS                           { SignVariable($1, PIKA) }
-  | str SETR MINUS                          { SignVariable($1, ZORO) }
-  | str SETR NUM                            { SignVariable($1, NARUTO) }
+  | str SETR MINUS                          { SignVariable($1, NARUTO) }
+  | str SETR NUM                            { SignVariable($1, ZORO) }
   | str SETR LCURL seqsign RCURL            { SignArray($1, $4) }
   | signvalues DELIM signvalues             { SignDelim($1,$3) }
 
