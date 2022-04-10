@@ -1,3 +1,5 @@
-(x=0)∧(n>0) => (1<n)∧(0>=1)
-(i<n)∧(x>=i) => ((i<n)∧((x+i)>=i))∧(i<=n)
-(i<n)∧(x>=i) => (i>=n)∧(¬(i<=n))
+True => True
+True => (True)∧(((j-1)>0)∧(A[((j-1)-1)]>A[(j-1)]))
+True => (True)∧(¬((j>0)∧(A[(j-1)]>A[j])))
+True => (True)∧(¬(i<n))
+True => (True)∧(i<n)

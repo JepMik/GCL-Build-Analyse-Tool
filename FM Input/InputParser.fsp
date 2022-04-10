@@ -7,7 +7,7 @@
 %token <int> NUM
 %token <string> VARIABLE
 %token <bool> BOOL
-%token TIMES DIV PLUS MINUS POW LPAR RPAR EOF LN LOG ZER
+%token TIMES DIV PLUS MINUS POW LPAR RPAR EOF LN LOG TKNI TKNS
 %token LBRAK RBRAK LCURL RCURL
 %token SETR DELIM
 %token SAND SOR AND OR NEG EQUAL NOTEQ GREATER LESS GREATEREQ LESSEQ
@@ -51,9 +51,8 @@
 start: cheat EOF                {$1}
 
 cheat:
-  | inputvalues             { I($1) }
-  | signvalues              { S($1) }
-
+  | TKNS signvalues              { S($2) }
+  | TKNI inputvalues             { I($2) }
 
 // Note that we need to insert an End-Of-File (EOF)
 // The code annotation { $1 } specifies that parsing with this production

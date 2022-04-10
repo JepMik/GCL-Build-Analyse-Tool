@@ -93,20 +93,30 @@ let rec analSpec action (powerMem:Set<Map<string,sign> * Map<string, Set<sign>> 
                 Set.fold (
                     fun pwrmem memory ->
                         let result = analArith value memory
-                        let newMem = Set.fold (
+                        let newPMem = Set.fold (
                                         fun mem sign ->
                                             let (mapV:Map<string, sign>, mapA) = memory
                                             Set.add (mapV.Add(idf, sign),mapA) mem
                                         ) Set.empty result
-                        Set.union newMem pwrmem
+                        Set.union newPMem pwrmem
                 ) Set.empty powerMem
-            // | ArrayAssign(idf, index, value) ->
-            //     Set.fold (
-            //         fun pwrmem memory ->
-            //             let indexS = analArith index memory
-            //             let result = analArith value memory
-            //             Set.fold()
-            //     ) Set.empty powerMem
+            | ArrayAssign(idf, index, value) ->
+                Set.fold (
+                    fun pwrmem memory ->
+                        let resInd = analArith index memory
+                        match (Set.intersect resInd (Set.empty.Add(PIKA).Add(ZORO)))=Set.empty with
+                        | false -> 
+                                    let resVal = analArith value memory
+                                    let newPMem = Set.fold (
+                                                    fun mem sign ->
+                                                        let (mapV:Map<string, sign>, mapA) = memory
+                                                        let setSigns = Map.find idf mapA
+                                                        Set.add (mapV,mapA.Add(idf, setSigns.Add(sign))) mem
+                                                    ) Set.empty resVal
+                                    Set.union newPMem pwrmem
+                        | true ->
+                                Set.add memory pwrmem
+                ) Set.empty powerMem
             | _ -> powerMem 
     
 

@@ -28,7 +28,8 @@ type token =
   | EOF
   | LN
   | LOG
-  | ZER
+  | TKNI
+  | TKNS
   | BOOL of (bool)
   | VARIABLE of (string)
   | NUM of (int)
@@ -60,7 +61,8 @@ type tokenId =
     | TOKEN_EOF
     | TOKEN_LN
     | TOKEN_LOG
-    | TOKEN_ZER
+    | TOKEN_TKNI
+    | TOKEN_TKNS
     | TOKEN_BOOL
     | TOKEN_VARIABLE
     | TOKEN_NUM

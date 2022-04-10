@@ -1,39 +1,122 @@
 Node --> q◀ 
  Sign Analysis -> 
-  Variables:  i <=> + | n <=> + | x <=> 0 | 
-  Arrays: 
+  Variables:  i <=> + | j <=> + | n <=> + | t <=> + | 
+  Arrays:  A <=> + -  |
+
  Sign Analysis -> 
-  Variables:  i <=> + | n <=> + | x <=> + | 
-  Arrays: 
+  Variables:  i <=> + | j <=> + | n <=> + | t <=> - | 
+  Arrays:  A <=> + -  |
+
  
  
 Node --> q▷ 
  Sign Analysis -> 
-  Variables:  i <=> + | n <=> + | x <=> 0 | 
-  Arrays: 
+  Variables:  i <=> + | j <=> + | n <=> + | t <=> + | 
+  Arrays:  A <=> + -  |
+
  
  
 Node --> q1 
  Sign Analysis -> 
-  Variables:  i <=> + | n <=> + | x <=> 0 | 
-  Arrays: 
+  Variables:  i <=> + | j <=> + | n <=> + | t <=> + | 
+  Arrays:  A <=> + -  |
+
+ Sign Analysis -> 
+  Variables:  i <=> + | j <=> + | n <=> + | t <=> - | 
+  Arrays:  A <=> + -  |
+
  
  
 Node --> q2 
  Sign Analysis -> 
-  Variables:  i <=> + | n <=> + | x <=> 0 | 
-  Arrays: 
+  Variables:  i <=> + | j <=> + | n <=> + | t <=> + | 
+  Arrays:  A <=> + -  |
+
  Sign Analysis -> 
-  Variables:  i <=> + | n <=> + | x <=> + | 
-  Arrays: 
+  Variables:  i <=> + | j <=> + | n <=> + | t <=> - | 
+  Arrays:  A <=> + -  |
+
  
  
 Node --> q3 
  Sign Analysis -> 
-  Variables:  i <=> + | n <=> + | x <=> 0 | 
-  Arrays: 
+  Variables:  i <=> + | j <=> 0 | n <=> + | t <=> + | 
+  Arrays:  A <=> + -  |
+
  Sign Analysis -> 
-  Variables:  i <=> + | n <=> + | x <=> + | 
-  Arrays: 
+  Variables:  i <=> + | j <=> 0 | n <=> + | t <=> - | 
+  Arrays:  A <=> + -  |
+
+ Sign Analysis -> 
+  Variables:  i <=> + | j <=> + | n <=> + | t <=> + | 
+  Arrays:  A <=> + -  |
+
+ Sign Analysis -> 
+  Variables:  i <=> + | j <=> + | n <=> + | t <=> - | 
+  Arrays:  A <=> + -  |
+
+ Sign Analysis -> 
+  Variables:  i <=> + | j <=> - | n <=> + | t <=> + | 
+  Arrays:  A <=> + -  |
+
+ Sign Analysis -> 
+  Variables:  i <=> + | j <=> - | n <=> + | t <=> - | 
+  Arrays:  A <=> + -  |
+
+ 
+ 
+Node --> q4 
+ Sign Analysis -> 
+  Variables:  i <=> + | j <=> + | n <=> + | t <=> + | 
+  Arrays:  A <=> + -  |
+
+ Sign Analysis -> 
+  Variables:  i <=> + | j <=> + | n <=> + | t <=> - | 
+  Arrays:  A <=> + -  |
+
+ 
+ 
+Node --> q5 
+ Sign Analysis -> 
+  Variables:  i <=> + | j <=> + | n <=> + | t <=> + | 
+  Arrays:  A <=> + -  |
+
+ Sign Analysis -> 
+  Variables:  i <=> + | j <=> + | n <=> + | t <=> - | 
+  Arrays:  A <=> + -  |
+
+ 
+ 
+Node --> q6 
+ Sign Analysis -> 
+  Variables:  i <=> + | j <=> + | n <=> + | t <=> + | 
+  Arrays:  A <=> + -  |
+
+ Sign Analysis -> 
+  Variables:  i <=> + | j <=> + | n <=> + | t <=> - | 
+  Arrays:  A <=> + -  |
+
+ 
+ 
+Node --> q7 
+ Sign Analysis -> 
+  Variables:  i <=> + | j <=> + | n <=> + | t <=> + | 
+  Arrays:  A <=> + -  |
+
+ Sign Analysis -> 
+  Variables:  i <=> + | j <=> + | n <=> + | t <=> - | 
+  Arrays:  A <=> + -  |
+
+ 
+ 
+Node --> q8 
+ Sign Analysis -> 
+  Variables:  i <=> + | j <=> + | n <=> + | t <=> + | 
+  Arrays:  A <=> + -  |
+
+ Sign Analysis -> 
+  Variables:  i <=> + | j <=> + | n <=> + | t <=> - | 
+  Arrays:  A <=> + -  |
+
  
  

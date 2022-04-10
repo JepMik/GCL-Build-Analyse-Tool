@@ -58,7 +58,7 @@ let prettify ()=
     try
         printfn "Insert your Guarded Commands program to be parsed:"
         //Read console input
-        let input = chooseInput("INProgram.txt")
+        let input = chooseInput("./FilesIN/Program.txt")
         //Create the lexical buffer
         let lexbuf = LexBuffer<char>.FromString input
         
@@ -69,7 +69,7 @@ let prettify ()=
             printfn "<----Pretty print:---->"
             printfn "%s" (printC prog 0)
             printfn "Prettified program is also available in 'OUTPretty.txt'!"
-            File.WriteAllLines("OUTPretty.txt",[(printC prog 0)])
+            File.WriteAllLines("./FilesOUT/Pretty.txt",[(printC prog 0)])
 
         with e -> printfn "Parse error at : Line %i, %i, Unexpected token: %s" (lexbuf.EndPos.pos_lnum+ 1) 
                     (lexbuf.EndPos.pos_cnum - lexbuf.EndPos.pos_bol) (LexBuffer<_>.LexemeString lexbuf)
@@ -102,7 +102,7 @@ let memoryAlloc(edges, typ) =
     | "user" ->
                 printfn "Insert input values for your Guarded Commands program:"
                 //Read console input
-                let input = chooseInput("./FilesIN/Input.txt")
+                let input = "ChuggyChug! "+chooseInput("./FilesIN/Input.txt")
                 //Create the lexical buffer
                 let lexbufInp = LexBuffer<char>.FromString input
                 try 
@@ -168,8 +168,8 @@ let rec runProgram edgeList domainP predMemory nodef =
                 Console.WriteLine("Verification: --> \n"+printVC VC)
     | true, 4 -> 
                 printfn "Insert sign memory for your Guarded Commands program analysis:"
-                //Read console input
-                let input = Console.ReadLine()
+                //Read sign input
+                let input = "ChickenNuggets! "+Console.ReadLine()
                 //Create the lexical buffer
                 let lexbufInp = LexBuffer<char>.FromString input
                 try 

@@ -26,8 +26,9 @@ rule tokenize = parse
 | variable          { let str = LexBuffer<_>.LexemeString lexbuf in VARIABLE(str) }
 
 // Input value setter
-| '='               { SETR }
-| '~'               { ZER }
+| '='                           { SETR }
+| "ChuggyChug!"                 { TKNI }
+| "ChickenNuggets!"             { TKNS }
 
 // Value delimiter(in arrays, between variables)
 | ','               { DELIM }
