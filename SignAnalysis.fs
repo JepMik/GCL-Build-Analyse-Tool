@@ -76,9 +76,65 @@ let rec analBool bolAct memory =
     | _ -> Set.empty 
 
     
+// powerMem > Mem 
+
+// Iterates through the output of the arithmetic analysis 
+// function and updates memory with signs - #small powerMemory
+let updateAllSignsMem setSigns memory x = 
+    Set.fold (
+        fun mem sign ->
+            let (mapV:Map<string, sign>, mapA) = memory
+            Set.add (mapV.Add(x, sign),mapA) mem
+        ) Set.empty setSigns
+
+// let mexxx = (Map [("x", PIKA)],Map [("A",(Set.singleton PIKA))])
+// updateAllSignsMem (analArith (MinusExpr(StrA("x"), Num 1)) mexxx) mexxx "x"
+let updateAllMemAllSigns powerMem x a= 
+    Set.fold (
+                    fun pwrmem memory ->
+                        let setSigns = analArith a memory
+                        let newPMem = updateAllSignsMem setSigns memory x
+                        Set.union newPMem pwrmem
+                ) Set.empty powerMem
+
+// Same for ArrayAssign
+let updateSignMemAllInitSigns A memory sign = 
+    let (mapV, mapA) = memory
+    let sigmaA = Map.find A mapA
+    Set.fold (
+        fun pmem sp ->
+            let setelim = Set.difference sigmaA (Set.add sp Set.empty)
+            let setlow = Set.add sign setelim
+            let sethigh = Set.add sign sigmaA
+            
+            Set.add (mapV,Map.add A setlow mapA) (Set.singleton (mapV,Map.add A sethigh mapA))
+    ) Set.empty sigmaA
+
+//updateSignMemAllInitSigns "A" (Map [("x", PIKA)],Map [("A",(Set.singleton PIKA))]) NARUTO
+let updateAllSignsMemAllInitSigns A memory signSet = 
+    Set.fold (
+        fun pwrmem spp ->
+            let pwrMemSign = updateSignMemAllInitSigns A memory spp
+            Set.union pwrmem pwrMemSign
+    ) Set.empty signSet
+//updateAllSignsMemAllInitSigns "A" (Map [("x", PIKA)],Map [("A",(Set.singleton PIKA))]) (Set.add ZORO (Set.singleton NARUTO))
+
+let updateEverything M A a1 a2 = 
+    Set.fold (
+        fun pwrmem memory ->
+            let resInd = analArith a1 memory
+            match (Set.intersect resInd (Set.empty.Add(PIKA).Add(ZORO)))=Set.empty with
+            | false -> 
+                        let signsSet = analArith a2 memory
+                        let newPMem = updateAllSignsMemAllInitSigns A memory signsSet
+                        Set.union newPMem pwrmem
+            | true ->
+                    Set.add memory pwrmem
+    ) Set.empty M
+
 
 // Specification analysis function
-let rec analSpec action (powerMem:Set<Map<string,sign> * Map<string, Set<sign>> >) =
+let rec analSpec action (M:Set<Map<string,sign> * Map<string, Set<sign>> >) =
     match action with
     | B (bol) -> 
             Set.fold (
@@ -86,38 +142,12 @@ let rec analSpec action (powerMem:Set<Map<string,sign> * Map<string, Set<sign>> 
                     if Set.contains true (analBool bol memory) 
                         then Set.add memory set
                         else set
-            ) Set.empty powerMem
+            ) Set.empty M
     | C (com) ->
             match com with
-            | Assign(idf, value) ->
-                Set.fold (
-                    fun pwrmem memory ->
-                        let result = analArith value memory
-                        let newPMem = Set.fold (
-                                        fun mem sign ->
-                                            let (mapV:Map<string, sign>, mapA) = memory
-                                            Set.add (mapV.Add(idf, sign),mapA) mem
-                                        ) Set.empty result
-                        Set.union newPMem pwrmem
-                ) Set.empty powerMem
-            | ArrayAssign(idf, index, value) ->
-                Set.fold (
-                    fun pwrmem memory ->
-                        let resInd = analArith index memory
-                        match (Set.intersect resInd (Set.empty.Add(PIKA).Add(ZORO)))=Set.empty with
-                        | false -> 
-                                    let resVal = analArith value memory
-                                    let newPMem = Set.fold (
-                                                    fun mem sign ->
-                                                        let (mapV:Map<string, sign>, mapA) = memory
-                                                        let setSigns = Map.find idf mapA
-                                                        Set.add (mapV,mapA.Add(idf, setSigns.Add(sign))) mem
-                                                    ) Set.empty resVal
-                                    Set.union newPMem pwrmem
-                        | true ->
-                                Set.add memory pwrmem
-                ) Set.empty powerMem
-            | _ -> powerMem 
+            | Assign(idf, value) -> updateAllMemAllSigns M idf value
+            | ArrayAssign(idf, index, value) -> updateEverything M idf index value
+            | _ -> M 
     
 
 // Initialize analysis for all nodes
@@ -128,12 +158,12 @@ let initAnal first last mem0 =
     analysis <- Map.add (-1) Set.empty analysis
     analysis
 
-// Recursive call for analysis solution
+// Recursive algorithms for analysis solution
 let rec homeWork work edgeList analysis= 
-    match (Set.isEmpty work) with
+    match (List.isEmpty work) with
     | false -> 
-            let node = Set.minElement work
-            let rWork = Set.remove node work
+            let node = List.head work
+            let rWork = List.tail work
             let edges = List.filter (
                             fun edge ->
                                 match edge with
@@ -148,20 +178,21 @@ let rec homeWork work edgeList analysis=
                 match edge with 
                 | Ecomm(ni,com,nf) ->
                     if not (Set.isSubset (analSpec (C (com)) (Map.find ni anals)) (Map.find nf anals))
-                        then (Map.add nf (Set.union (Map.find nf anals) (analSpec (C (com)) (Map.find ni anals))) anals, Set.add nf w)
+                        then (Map.add nf (Set.union (Map.find nf anals) (analSpec (C (com)) (Map.find ni anals))) anals, w@[nf])
                         else (anals, w)
                 | Ebool(ni,bol,nf) ->
                     if not (Set.isSubset (analSpec (B (bol)) (Map.find ni anals)) (Map.find nf anals))
-                        then (Map.add nf (Set.union (Map.find nf anals) (analSpec (B (bol)) (Map.find ni anals))) anals, Set.add nf w)
+                        then (Map.add nf (Set.union (Map.find nf anals) (analSpec (B (bol)) (Map.find ni anals))) anals, w@[nf])
                         else (anals, w)
                                             ) (analysis,rWork) edges
+            printfn "New Step:\n %A %A" upAnalysis upWork
             homeWork upWork edgeList upAnalysis
     | true -> (analysis, work)
 
 // Worklist algorithm for analysis solution
 let solveAnalysis first last mem0 edgeList =
     let analysis = initAnal first (last-1) mem0
-    let work = Set.empty.Add(0)
+    let work = List.singleton 0
     homeWork work edgeList analysis
 
 let convNod x =

@@ -174,31 +174,35 @@ let rec runProgram edgeList domainP predMemory nodef =
                 let lexbufInp = LexBuffer<char>.FromString input
                 try 
                     // Parsed sign memory
-                    let resSignRaw = InputParser.start InputLexer.tokenize lexbufInp
-                    let resSign = Option.get( 
-                        match resSignRaw with
-                        | S (x) -> Some x
-                        | I (x) -> None)
+                    let resSign =
+                        try
+                            let resSignRaw = InputParser.start InputLexer.tokenize lexbufInp
+                            let resSign = Option.get( 
+                                match resSignRaw with
+                                | S (x) -> Some x
+                                | I (x) -> None)
+                            resSign
+                        with e -> 
+                            let mes = (sprintf "Parse error at : Line %i, %i, Unexpected token: %s" (lexbufInp.EndPos.pos_lnum+ 1) 
+                                (lexbufInp.EndPos.pos_cnum - lexbufInp.EndPos.pos_bol) (LexBuffer<_>.LexemeString lexbufInp))
+                            failwith mes
+                    
                     #if DEBUG 
                     printfn "%A" resSign
                     #endif
+
                     let AMem0 = signMemory resSign Map.empty Map.empty
-                    #if DEBUG
-                    printfn "%A" (analBool (Neg (LogOr (LessEqual (StrA "i", StrA "n"), Bool false))) AMem0)
-                    printfn "%A" (analBool (LogOr (LessEqual (StrA "i", StrA "n"), Bool false)) AMem0)
-                    printfn "%A" (analBool (LessEqual (StrA "i", StrA "n")) AMem0)
-                    #endif
+                    
                     // Run analysis algorithm
+                    
                     let solution = solveAnalysis 0 nodef (Set.add AMem0 Set.empty) edgeList
                     let (analSol, w) = solution
                     File.WriteAllText("./FilesOUT/SignAnalysis.txt", (printAnalysis analSol))
                     printfn "Sign Analysis Solution is printed in the file 'SignAnalysis.txt'!"
                     Console.WriteLine("Analysis solution --> \n" + (printAnalysis analSol))
-                    
-                with e -> 
-                    let mes = (sprintf "Parse error at : Line %i, %i, Unexpected token: %s" (lexbufInp.EndPos.pos_lnum+ 1) 
-                        (lexbufInp.EndPos.pos_cnum - lexbufInp.EndPos.pos_bol) (LexBuffer<_>.LexemeString lexbufInp))
-                    failwith mes
+                
+
+                with e -> printfn "%s" e.Message
 
     | true, 5 -> ()
     | _ -> runProgram edgeList domainP predMemory nodef
@@ -258,7 +262,9 @@ let nondeter()=
             printfn "The GCL program graph is printed in file 'Graph.dot' and can be visualized!"
             File.WriteAllText("./FilesOUT/Graph.dot",graphstr)
 
-            runProgram edgeList domainP predMemory x
+            try 
+                runProgram edgeList domainP predMemory x
+            with e -> printfn "%s" e.Message
 
         //Undefined string encountered   
         with e -> printfn "Parse error at : Line %i, %i, Unexpected token: %s" (lexbuf.EndPos.pos_lnum+ 1) 
