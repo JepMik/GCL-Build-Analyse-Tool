@@ -6,80 +6,131 @@ open ProgramGraph
 open TypesAST
 open System
 
-//Function that looks into arithmetic and generates a set of variables.
+//Function that looks into arithmetic and generates a set of variables/set of array names.
 let rec peekArith expr =
     match expr with
-    | StrA(x) -> Set.empty.Add(x)
-    | Num(x) -> Set.empty
-    | TimesExpr(x,y) -> Set.union (peekArith x) (peekArith y)
-    | DivExpr(x,y) -> Set.union (peekArith x) (peekArith y)
-    | PlusExpr(x,y) -> Set.union (peekArith x) (peekArith y)
-    | MinusExpr(x,y) -> Set.union (peekArith x) (peekArith y)
-    | PowExpr(x,y) -> Set.union (peekArith x) (peekArith y)
-    | UPlusExpr(x) -> peekArith x
-    | UMinusExpr(x) -> peekArith x
-    | LogExpr(x) -> peekArith x
-    | LnExpr(x) -> peekArith x
-    | IndexExpr(A,x) ->  (peekArith x).Add(A)
+    | StrA(x) -> (Set.empty.Add(x), Set.empty)
+    | Num(x) -> (Set.empty, Set.empty)
+    | TimesExpr(x,y) -> 
+                    let (setVx,setAx) = peekArith x
+                    let (setVy,setAy) = peekArith y
+                    (Set.union setVx setVy, Set.union setAx setAy)
+    | DivExpr(x,y) -> 
+                    let (setVx,setAx) = peekArith x
+                    let (setVy,setAy) = peekArith y
+                    (Set.union setVx setVy, Set.union setAx setAy)
+    | PlusExpr(x,y) -> 
+                    let (setVx,setAx) = peekArith x
+                    let (setVy,setAy) = peekArith y
+                    (Set.union setVx setVy, Set.union setAx setAy)
+    | MinusExpr(x,y) -> 
+                    let (setVx,setAx) = peekArith x
+                    let (setVy,setAy) = peekArith y
+                    (Set.union setVx setVy, Set.union setAx setAy)
+    | PowExpr(x,y) -> 
+                    let (setVx,setAx) = peekArith x
+                    let (setVy,setAy) = peekArith y
+                    (Set.union setVx setVy, Set.union setAx setAy)
+    | UPlusExpr(x) -> (peekArith x)
+    | UMinusExpr(x) -> (peekArith x)
+    | LogExpr(x) -> (peekArith x)
+    | LnExpr(x) -> (peekArith x)
+    | IndexExpr(A,x) ->  
+                let (setV, setA) = peekArith x    
+                (setV, Set.add A setA)
 
 //Function looks into bool and generates a set of variables
 let rec peekBool expr =
     match expr with
-    | StrB(x) -> (Set.empty.Add(x), Set.empty)
-    | Bool(x) -> (Set.empty, Set.empty)
+    | StrB(x) -> (Set.empty.Add(x), Set.empty, Set.empty)
+    | Bool(x) -> (Set.empty, Set.empty, Set.empty)
     | ShortCircuitAnd(x,y) -> 
-                        let (b1,a1) = peekBool x
-                        let (b2,a2) = peekBool y
-                        (Set.union b1 b2 , Set.union a1 a2)
+                        let (b1,a1,arr1) = peekBool x
+                        let (b2,a2,arr2) = peekBool y
+                        (Set.union b1 b2 , Set.union a1 a2, Set.union arr1 arr2)
     | ShortCircuitOr(x,y) -> 
-                        let (b1,a1) = peekBool x
-                        let (b2,a2) = peekBool y
-                        (Set.union b1 b2 , Set.union a1 a2)
+                        let (b1,a1,arr1) = peekBool x
+                        let (b2,a2,arr2) = peekBool y
+                        (Set.union b1 b2 , Set.union a1 a2, Set.union arr1 arr2)
     | LogAnd(x,y) -> 
-                        let (b1,a1) = peekBool x
-                        let (b2,a2) = peekBool y
-                        (Set.union b1 b2 , Set.union a1 a2)
+                        let (b1,a1,arr1) = peekBool x
+                        let (b2,a2,arr2) = peekBool y
+                        (Set.union b1 b2 , Set.union a1 a2, Set.union arr1 arr2)
     | LogOr(x,y) -> 
-                        let (b1,a1) = peekBool x
-                        let (b2,a2) = peekBool y
-                        (Set.union b1 b2 , Set.union a1 a2)
+                        let (b1,a1,arr1) = peekBool x
+                        let (b2,a2,arr2) = peekBool y
+                        (Set.union b1 b2 , Set.union a1 a2, Set.union arr1 arr2)
     
     | Neg(x) -> (peekBool x)
-    | Equal(x,y) -> (Set.empty, Set.union (peekArith x) (peekArith y))
-    | NotEqual(x,y) -> (Set.empty, Set.union (peekArith x) (peekArith y))
-    | Greater(x,y) -> (Set.empty, Set.union (peekArith x) (peekArith y))
-    | GreaterEqual(x,y) -> (Set.empty, Set.union (peekArith x) (peekArith y))
-    | Less(x,y) -> (Set.empty, Set.union (peekArith x) (peekArith y))
-    | LessEqual(x,y) -> (Set.empty, Set.union (peekArith x) (peekArith y))
+    | Equal(x,y) -> 
+                let (setAx, setArrx) = peekArith x
+                let (setAy, setArry) = peekArith y
+                (Set.empty, Set.union setAx setAy, Set.union setArrx setArry)
+    | NotEqual(x,y) -> 
+                let (setAx, setArrx) = peekArith x
+                let (setAy, setArry) = peekArith y
+                (Set.empty, Set.union setAx setAy, Set.union setArrx setArry)
+    | Greater(x,y) -> 
+                let (setAx, setArrx) = peekArith x
+                let (setAy, setArry) = peekArith y
+                (Set.empty, Set.union setAx setAy, Set.union setArrx setArry)
+    | GreaterEqual(x,y) -> 
+                let (setAx, setArrx) = peekArith x
+                let (setAy, setArry) = peekArith y
+                (Set.empty, Set.union setAx setAy, Set.union setArrx setArry)
+    | Less(x,y) -> 
+                let (setAx, setArrx) = peekArith x
+                let (setAy, setArry) = peekArith y
+                (Set.empty, Set.union setAx setAy, Set.union setArrx setArry)
+    | LessEqual(x,y) -> 
+                let (setAx, setArrx) = peekArith x
+                let (setAy, setArry) = peekArith y
+                (Set.empty, Set.union setAx setAy, Set.union setArrx setArry)
     
 
 let rec peekCommand com = 
     match com with
-        | ArrayAssign(arr,index,value) -> Set.union ((peekArith index).Add(arr)) (peekArith value)
-        | Assign(var,value) -> (peekArith value).Add(var) //Maybe var not needed to be included
-        | _ -> Set.empty ;
+        | ArrayAssign(arr,index,value) -> 
+                            let (setA, setArr) = peekArith index
+                            let (setA2, setArr2) = peekArith value
+                            (Set.union setA setA2, Set.add arr (Set.union setArr setArr2)) 
+        | Assign(var,value) -> 
+                            let (setA, setArr) = peekArith value
+                            (Set.add var setA, setArr) //Maybe var not needed to be included
+        | _ -> (Set.empty, Set.empty) ;
 
 //Function that takes list of edges, and scans for variables that need value. Output is set of variables
 let rec varAFinder edges =
     match edges with
-    | Ecomm(_,com,_)::tail -> Set.union (peekCommand com) (varAFinder tail)
+    | Ecomm(_,com,_)::tail -> 
+                    let (setA, setAr) = peekCommand com
+                    let (setAx, setArx) = varAFinder tail
+                    (Set.union setA setAx, Set.union setAr setArx)
     | _::tail -> varAFinder tail
-    | [] -> Set.empty
+    | [] -> (Set.empty, Set.empty)
         
 let rec varBFinder edges = 
     match edges with 
     | Ebool(_,bool,_)::tail -> 
-                            let (setB, setA) = peekBool bool
-                            let (setB', setA') = varBFinder tail
-                            (Set.union setB setB', Set.union setA setA')
+                            let (setB, setA, setArr) = peekBool bool
+                            let (setB', setA', setArr') = varBFinder tail
+                            (Set.union setB setB', Set.union setA setA', Set.union setArr setArr')
     | _::tail -> varBFinder tail 
-    | [] -> (Set.empty, Set.empty)
+    | [] -> (Set.empty, Set.empty, Set.empty)
+
+let varAllFinder edges = 
+    let (setB1, setA1, setArr) = varBFinder edges 
+    let (setA2, setArr2) = varAFinder edges
+    (setB1, Set.union setA1 setA2,Set.union setArr setArr2)
 
 // Initialize one arithmetic variable name to value 0 - helper for folding
 let varAInit item (map:Map<string,float>) = map.Add(item, 0.0)
 // Initialize the mapping of all arithmetic variables in given set to 0
 let initAllAVar (set:Set<string>) = Set.foldBack (fun item map ->  varAInit item map) set Map.empty
 // initAllAVar (varAFinder edges)
+
+let varArrInit item (map:Map<string, List<float>>) = Map.add item [0.0] map
+let initAllArrVar (set:Set<string>) = Set.foldBack (fun item map -> varArrInit item map) set Map.empty
 
 // Initialize one boolean variable name to value false - helper for folding
 let varBInit item (map:Map<string,bool>) = map.Add(item, false)

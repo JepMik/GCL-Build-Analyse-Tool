@@ -18,6 +18,16 @@ let rec signList expr =
     | SSingl(x) -> [x]
     | SSeq(x,next) -> x::signList next
 
+// Automatic sign initialization of found variables
+let rec initSigns varSet arrSet = 
+    (Set.fold (
+        fun mem var ->
+            Map.add var PIKA mem
+    ) Map.empty varSet, Set.fold(
+        fun mem arr -> 
+            Map.add arr (Set.singleton PIKA) mem
+    ) Map.empty arrSet)
+
 // Creates the initial memory based on parsed sign memory
 let rec signMemory expr mapV mapA = 
     match expr with
@@ -148,7 +158,9 @@ let rec analSpec action (M:Set<Map<string,sign> * Map<string, Set<sign>> >) =
             | Assign(idf, value) -> updateAllMemAllSigns M idf value
             | ArrayAssign(idf, index, value) -> updateEverything M idf index value
             | _ -> M 
-    
+
+// analSpec (B(LogAnd (Less (StrA "i", StrA "n"), Neg (Bool false)))) (Set.singleton (Map [("i", PIKA);("n",PIKA)],Map [("A",(Set.singleton PIKA))]))
+// analBool (LogAnd (Less (StrA "i", StrA "n"), Neg (Bool false))) (Map [("i", PIKA);("n",PIKA)],Map [("A",(Set.singleton PIKA))])
 
 // Initialize analysis for all nodes
 let initAnal first last mem0 = 
@@ -156,6 +168,7 @@ let initAnal first last mem0 =
     for k in first+1..last do
         analysis <- Map.add k Set.empty analysis
     analysis <- Map.add (-1) Set.empty analysis
+    printfn "%A" analysis
     analysis
 
 // Recursive algorithms for analysis solution
@@ -171,20 +184,19 @@ let rec homeWork work edgeList analysis=
                                 | Ecomm(ni,_,_) -> ni=node
                             ) edgeList
             let (upAnalysis, upWork) = List.fold (
-                                            fun (anals,w) edge ->
-                #if DEBUG
-                printfn "%A" edge
-                #endif
-                match edge with 
-                | Ecomm(ni,com,nf) ->
-                    if not (Set.isSubset (analSpec (C (com)) (Map.find ni anals)) (Map.find nf anals))
-                        then (Map.add nf (Set.union (Map.find nf anals) (analSpec (C (com)) (Map.find ni anals))) anals, w@[nf])
-                        else (anals, w)
-                | Ebool(ni,bol,nf) ->
-                    if not (Set.isSubset (analSpec (B (bol)) (Map.find ni anals)) (Map.find nf anals))
-                        then (Map.add nf (Set.union (Map.find nf anals) (analSpec (B (bol)) (Map.find ni anals))) anals, w@[nf])
-                        else (anals, w)
-                                            ) (analysis,rWork) edges
+                fun (anals,w) edge ->
+                    #if DEBUG
+                    printfn "%A" edge
+                    #endif
+                    match edge with 
+                    | Ecomm(ni,com,nf) ->
+                        if not (Set.isSubset (analSpec (C (com)) (Map.find ni anals)) (Map.find nf anals))
+                            then (Map.add nf (Set.union (Map.find nf anals) (analSpec (C (com)) (Map.find ni anals))) anals, w@[nf])
+                            else (anals, w)
+                    | Ebool(ni,bol,nf) ->
+                        if not (Set.isSubset (analSpec (B (bol)) (Map.find ni anals)) (Map.find nf anals))
+                            then (Map.add nf (Set.union (Map.find nf anals) (analSpec (B (bol)) (Map.find ni anals))) anals, w@[nf])
+                            else (anals, w)) (analysis,rWork) edges
             printfn "New Step:\n %A %A" upAnalysis upWork
             homeWork upWork edgeList upAnalysis
     | true -> (analysis, work)

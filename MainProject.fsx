@@ -92,10 +92,9 @@ let printInnerMenu () =
 let memoryAlloc(edges, typ) =
     match typ with
     | "auto" -> 
-                let (setB', setA') = varBFinder edges
-                let (setB, setA) = (setB', Set.union setA' (varAFinder edges))
-                let arithMap = initAllAVar setA
-                let arrayMap = Map.empty
+                let (setB, setA, setArr) = varAllFinder edges
+                let arithMap = initAllAVar setA 
+                let arrayMap = initAllArrVar setArr
                 let boolMap = initAllBVar setB
                 printfn "Automatic variable initialization is applied"
                 (boolMap,arithMap,arrayMap)
@@ -167,9 +166,9 @@ let rec runProgram edgeList domainP predMemory nodef =
                 printfn "Verification Conditions are printed in the file 'VerificationConditions.txt'!"
                 Console.WriteLine("Verification: --> \n"+printVC VC)
     | true, 4 -> 
-                printfn "Insert sign memory for your Guarded Commands program analysis:"
+                printfn "Insert sign memory for your Guarded Commands program analysis (automatic signs for all missing variables):"
                 //Read sign input
-                let input = "ChickenNuggets! "+Console.ReadLine()
+                let input = "ChickenNuggets! " + Console.ReadLine() //chooseInput("./FilesIN/InitialSigns.txt")
                 //Create the lexical buffer
                 let lexbufInp = LexBuffer<char>.FromString input
                 try 
@@ -190,8 +189,11 @@ let rec runProgram edgeList domainP predMemory nodef =
                     #if DEBUG 
                     printfn "%A" resSign
                     #endif
+                    // Automatic sign initialization
+                    let (setB, setA, setArr) = varAllFinder edgeList
+                    let (mapV, mapAr) = initSigns setA setArr
 
-                    let AMem0 = signMemory resSign Map.empty Map.empty
+                    let AMem0 = signMemory resSign mapV mapAr
                     
                     // Run analysis algorithm
                     
