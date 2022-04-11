@@ -1,82 +1,78 @@
 Node --> q◀ 
  Sign Analysis -> 
-  Variables:  i <=> + | n <=> + | x <=> + | y <=> + | 
+  Variables:  i <=> + | j <=> + | n <=> + | t <=> + | x <=> + | 
   Arrays:  A <=> +  |
 
  
  
 Node --> q▷ 
  Sign Analysis -> 
-  Variables:  i <=> + | n <=> + | x <=> + | y <=> + | 
+  Variables:  i <=> + | j <=> + | n <=> + | t <=> + | x <=> + | 
   Arrays:  A <=> +  |
 
  
  
 Node --> q1 
  Sign Analysis -> 
-  Variables:  i <=> 0 | n <=> + | x <=> + | y <=> + | 
+  Variables:  i <=> + | j <=> + | n <=> + | t <=> + | x <=> + | 
   Arrays:  A <=> +  |
 
  
  
 Node --> q2 
  Sign Analysis -> 
-  Variables:  i <=> 0 | n <=> + | x <=> 0 | y <=> + | 
+  Variables:  i <=> + | j <=> + | n <=> + | t <=> + | x <=> + | 
   Arrays:  A <=> +  |
 
  
  
 Node --> q3 
  Sign Analysis -> 
-  Variables:  i <=> 0 | n <=> + | x <=> 0 | y <=> 0 | 
+  Variables:  i <=> + | j <=> 0 | n <=> + | t <=> + | x <=> + | 
   Arrays:  A <=> +  |
 
  Sign Analysis -> 
-  Variables:  i <=> + | n <=> + | x <=> + | y <=> + | 
+  Variables:  i <=> + | j <=> + | n <=> + | t <=> + | x <=> + | 
+  Arrays:  A <=> +  |
+
+ Sign Analysis -> 
+  Variables:  i <=> + | j <=> - | n <=> + | t <=> + | x <=> + | 
   Arrays:  A <=> +  |
 
  
  
 Node --> q4 
  Sign Analysis -> 
-  Variables:  i <=> + | n <=> + | x <=> + | y <=> + | 
+  Variables:  i <=> + | j <=> + | n <=> + | t <=> + | x <=> + | 
   Arrays:  A <=> +  |
 
  
  
 Node --> q5 
  Sign Analysis -> 
-  Variables:  i <=> 0 | n <=> + | x <=> 0 | y <=> 0 | 
-  Arrays:  A <=> +  |
-
- Sign Analysis -> 
-  Variables:  i <=> + | n <=> + | x <=> + | y <=> + | 
+  Variables:  i <=> + | j <=> + | n <=> + | t <=> + | x <=> + | 
   Arrays:  A <=> +  |
 
  
  
 Node --> q6 
  Sign Analysis -> 
-  Variables:  i <=> 0 | n <=> + | x <=> + | y <=> 0 | 
-  Arrays:  A <=> +  |
-
- Sign Analysis -> 
-  Variables:  i <=> + | n <=> + | x <=> + | y <=> + | 
+  Variables:  i <=> + | j <=> + | n <=> + | t <=> + | x <=> + | 
   Arrays:  A <=> +  |
 
  
  
 Node --> q7 
  Sign Analysis -> 
-  Variables:  i <=> 0 | n <=> + | x <=> + | y <=> + | 
-  Arrays:  A <=> +  |
-
- Sign Analysis -> 
-  Variables:  i <=> + | n <=> + | x <=> + | y <=> + | 
+  Variables:  i <=> + | j <=> + | n <=> + | t <=> + | x <=> + | 
   Arrays:  A <=> +  |
 
  
  
 Node --> q8 
+ Sign Analysis -> 
+  Variables:  i <=> + | j <=> + | n <=> + | t <=> + | x <=> + | 
+  Arrays:  A <=> +  |
+
  
  

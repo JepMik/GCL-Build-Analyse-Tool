@@ -5,7 +5,7 @@
 // We need to import a couple of modules, including the generated lexer and parser
 
 #r "FsLexYacc.Runtime.10.0.0/lib/net46/FsLexYacc.Runtime.dll"
-//#r "~/fsharp/FsLexYacc.Runtime.dll"
+
 open FSharp.Text.Lexing
 open System
 open System.IO
@@ -84,7 +84,7 @@ let printInnerMenu () =
     printfn "1. Step-wise Execution with Automatic Input"
     printfn "2. Step-wise Execution with User Input"
     printfn "3. Program Verification"
-    printfn "4. Program Analysis"
+    printfn "4. Program Sign Analysis"
     printfn "5. Return to main menu"
     printf "Enter your choice: "
 
@@ -166,7 +166,8 @@ let rec runProgram edgeList domainP predMemory nodef =
                 printfn "Verification Conditions are printed in the file 'VerificationConditions.txt'!"
                 Console.WriteLine("Verification: --> \n"+printVC VC)
     | true, 4 -> 
-                printfn "Insert sign memory for your Guarded Commands program analysis (automatic signs for all missing variables):"
+                printfn "Insert sign memory for your Guarded Commands program
+                        analysis (automatic signs for all missing variables):"
                 //Read sign input
                 let input = "ChickenNuggets! " + Console.ReadLine() //chooseInput("./FilesIN/InitialSigns.txt")
                 //Create the lexical buffer
@@ -200,7 +201,7 @@ let rec runProgram edgeList domainP predMemory nodef =
                     let solution = solveAnalysis 0 nodef (Set.add AMem0 Set.empty) edgeList
                     let (analSol, w) = solution
                     File.WriteAllText("./FilesOUT/SignAnalysis.txt", (printAnalysis analSol))
-                    printfn "Sign Analysis Solution is printed in the file 'SignAnalysis.txt'!"
+                    printfn "Sign Analysis Solution is printed in the file 'SignAnalysis.txt'!\n"
                     Console.WriteLine("Analysis solution --> \n" + (printAnalysis analSol))
                 
 

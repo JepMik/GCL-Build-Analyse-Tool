@@ -85,7 +85,37 @@ let rec analBool bolAct memory =
     | LessEqual(a1,a2) -> absLessEqual (analArith a1 memory) (analArith a2 memory)
     | _ -> Set.empty 
 
+
+
+
+//--> Proof that the tool has a bug on FM4Fun and our solutions is indeed correct
+
+// let mex1= (Map [("j", PIKA)],Map [("A",(Set.singleton PIKA))])
+// let mex2= (Map [("j", ZORO)],Map [("A",(Set.singleton PIKA))])
+// let mex3= (Map [("j", NARUTO)],Map [("A",(Set.singleton PIKA))])
+
+// analBool (Neg
+//      (LogAnd
+//         (Greater (StrA "j", Num 0),
+//          Greater
+//            (IndexExpr ("A", MinusExpr (StrA "j", Num 1)),
+//             IndexExpr ("A", StrA "j"))))) mex3 //should contain true
+
+// analBool (LogAnd
+//         (Greater (StrA "j", Num 0),
+//          Greater
+//            (IndexExpr ("A", MinusExpr (StrA "j", Num 1)),
+//             IndexExpr ("A", StrA "j")))) mex3 //should contain false
+
+// analBool (Greater (StrA "j", Num 0),
+//          Greater
+//            (IndexExpr ("A", MinusExpr (StrA "j", Num 1)),
+//             IndexExpr ("A", StrA "j"))) mex1
     
+
+
+
+
 // powerMem > Mem 
 
 // Iterates through the output of the arithmetic analysis 
@@ -168,7 +198,9 @@ let initAnal first last mem0 =
     for k in first+1..last do
         analysis <- Map.add k Set.empty analysis
     analysis <- Map.add (-1) Set.empty analysis
+    #if DEBUG
     printfn "%A" analysis
+    #endif
     analysis
 
 // Recursive algorithms for analysis solution
@@ -197,7 +229,9 @@ let rec homeWork work edgeList analysis=
                         if not (Set.isSubset (analSpec (B (bol)) (Map.find ni anals)) (Map.find nf anals))
                             then (Map.add nf (Set.union (Map.find nf anals) (analSpec (B (bol)) (Map.find ni anals))) anals, w@[nf])
                             else (anals, w)) (analysis,rWork) edges
+            #if DEBUG
             printfn "New Step:\n %A %A" upAnalysis upWork
+            #endif
             homeWork upWork edgeList upAnalysis
     | true -> (analysis, work)
 

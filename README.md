@@ -14,7 +14,7 @@
 
 ### **Input to run code**
 *Inputs to terminal:* 
-1. dotnet fsi FMProject.fsx
+1. dotnet fsi MainProject.fsx
 2. Menu of options appear
 
 When running the code a menu should pop-up with the options specified below.
@@ -178,5 +178,43 @@ Along the proof tree of each fragment some inference rules are applied from the 
     (x=0)∧(n>0) => (1<n)∧(0>=1)
     (i<n)∧(x>=i) => ((i<n)∧((x+i)>=i))∧(i<=n)
     (i<n)∧(x>=i) => (i>=n)∧(¬(i<=n))
+
+## **How to Interpret Sign Analysis Solution**
+**Sign Analysis:**
+
+Sign Analysis is an interpretation of a given program, where initial signs defining the values of the variables and array contents are evaluated dynamically based on programs nodes/edges. 
+
+The sign analysis is not a concrete analyzing tool, since it utilizes abstract memories and operators such as: 
+
+
+
+| ⨣ |      -    |   0   |     +     |
+|---|:---------:|------:|----------:|
+| - | {−}       |  {−}  | {−, 0, +} |
+| 0 | {−}       |  {0}  |    {+}    |
+| + | {−, 0, +} |  {+}  |    {+}    |
+
+**The outcome:** 
+
+When running the Program Sign Analysis in the menu, the user will be asked to provide some initial sign information.
+The signs available are the set `{-,0,+}`. The information for each field should be delimited by comma `','`.To enforce the sign for a variable use `a=+` and for an array use `A={+,-}`. If a variable or array is missing in declaration of signs, it would be automatically assigned to `+`.
+ 
+
+The output will be sent to the file called `SignAnalysis.txt`. 
+Here the user will be able to see the solutions for the final node(`q◀`) and initial node(`q▷`) (pay attention to the order in the file), and the other nodes (numbered) with their respective sign analysis. 
+
+    Node --> q3 
+    Sign Analysis -> 
+    Variables:  i <=> + | j <=> 0 | n <=> + | t <=> + | x <=> + | 
+    Arrays:  A <=> +  |
+
+    Sign Analysis -> 
+    Variables:  i <=> + | j <=> + | n <=> + | t <=> + | x <=> + | 
+    Arrays:  A <=> +  |
+
+    Sign Analysis -> 
+    Variables:  i <=> + | j <=> - | n <=> + | t <=> + | x <=> + | 
+    Arrays:  A <=> +  |
+
 
 *Project completed within DTU course 02141 - Computer Science Modelling*
