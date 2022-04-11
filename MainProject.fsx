@@ -196,8 +196,8 @@ let rec runProgram edgeList domainP predMemory nodef =
 
                     let AMem0 = signMemory resSign mapV mapAr
                     
+                    try 
                     // Run analysis algorithm
-                    
                     let solution = solveAnalysis 0 nodef (Set.add AMem0 Set.empty) edgeList
                     let (analSol, w) = solution
                     File.WriteAllText("./FilesOUT/SignAnalysis.txt", (printAnalysis analSol))

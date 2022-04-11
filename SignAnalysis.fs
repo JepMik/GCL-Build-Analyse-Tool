@@ -88,7 +88,7 @@ let rec analBool bolAct memory =
 
 
 
-//--> Proof that the tool has a bug on FM4Fun and our solutions is indeed correct
+//--> Proof that the tool has a bug on FM4Fun and our solution is indeed correct
 
 // let mex1= (Map [("j", PIKA)],Map [("A",(Set.singleton PIKA))])
 // let mex2= (Map [("j", ZORO)],Map [("A",(Set.singleton PIKA))])
@@ -169,6 +169,7 @@ let updateEverything M A a1 a2 =
                         let newPMem = updateAllSignsMemAllInitSigns A memory signsSet
                         Set.union newPMem pwrmem
             | true ->
+                    // Negative index a1 found
                     Set.add memory pwrmem
     ) Set.empty M
 

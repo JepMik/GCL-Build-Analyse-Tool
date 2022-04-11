@@ -201,19 +201,19 @@ The signs available are the set `{-,0,+}`. The information for each field should
  
 
 The output will be sent to the file called `SignAnalysis.txt`. 
-Here the user will be able to see the solutions for the final node(`q◀`) and initial node(`q▷`) (pay attention to the order in the file), and the other nodes (numbered) with their respective sign analysis. 
+Here the user will be able to see the solutions for the final node(`q◀`) and initial node(`q▷`) (pay attention to the order in the file), and the other nodes (numbered) with their respective sign analysis assignment, in the following format: 
 
-    Node --> q3 
+    Node --> q5 
     Sign Analysis -> 
-    Variables:  i <=> + | j <=> 0 | n <=> + | t <=> + | x <=> + | 
+    Variables:  i <=> + | j <=> 0 | n <=> + | t <=> + | x <=> - | 
     Arrays:  A <=> +  |
 
     Sign Analysis -> 
-    Variables:  i <=> + | j <=> + | n <=> + | t <=> + | x <=> + | 
-    Arrays:  A <=> +  |
+    Variables:  i <=> - | j <=> + | n <=> + | t <=> + | x <=> + | 
+    Arrays:  A <=> + - 0 |
 
     Sign Analysis -> 
-    Variables:  i <=> + | j <=> - | n <=> + | t <=> + | x <=> + | 
+    Variables:  i <=> + | j <=> - | n <=> + | t <=> 0 | x <=> + | 
     Arrays:  A <=> +  |
 
 
