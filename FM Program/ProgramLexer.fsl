@@ -67,10 +67,10 @@ rule tokenize = parse
 | "[]"          { FATBAR }
 
 // Boolean expression to TOKENs
-| '&'           { SAND }
-| '|'           { SOR }
-| "&&"          { AND }
-| "||"          { OR }
+| '&'           { AND }
+| '|'           { OR }
+| "&&"          { SAND }
+| "||"          { SOR }
 | '!'           { NEG }
 | '='           { EQUAL }
 | "!="          { NOTEQ }

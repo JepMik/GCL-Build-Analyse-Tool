@@ -302,22 +302,22 @@ and tokenize  lexbuf =
           )
   | 26 -> ( 
 # 70 "ProgramLexer.fsl"
-                                 SAND 
+                                 AND 
 # 306 "ProgramLexer.fs"
           )
   | 27 -> ( 
 # 71 "ProgramLexer.fsl"
-                                 SOR 
+                                 OR 
 # 311 "ProgramLexer.fs"
           )
   | 28 -> ( 
 # 72 "ProgramLexer.fsl"
-                                 AND 
+                                 SAND 
 # 316 "ProgramLexer.fs"
           )
   | 29 -> ( 
 # 73 "ProgramLexer.fsl"
-                                 OR 
+                                 SOR 
 # 321 "ProgramLexer.fs"
           )
   | 30 -> ( 

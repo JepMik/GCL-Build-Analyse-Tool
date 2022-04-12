@@ -78,30 +78,28 @@ let absLessEqual set1 set2 = absNot(absGreater set1 set2)
 // /\ operator 
 let absAND set1 set2 = 
     Set.fold (
-        fun set el2 ->
+        fun set el1 ->
             Set.fold (
-                fun set el1 ->
+                fun set el2 ->
                 match el1, el2 with
                 | true, true -> Set.add true set
                 | true, false -> Set.add false set
-                | false, true -> Set.add false set
-                | false, false-> Set.add false set
-            ) set set1
-    ) Set.empty set2
+                | false, _ -> Set.add false set
+            ) set set2
+    ) Set.empty set1
 
 // \/ operator
 let absOR set1 set2 = 
     Set.fold (
-        fun set el2 ->
+        fun set el1 ->
             Set.fold (
-                fun set el1 ->
+                fun set el2 ->
                 match el1, el2 with
-                | true, true -> Set.add true set
-                | true, false -> Set.add true set
+                | true, _ -> Set.add true set
                 | false, true -> Set.add true set
                 | false, false-> Set.add false set
-            ) set set1
-    ) Set.empty set2
+            ) set set2
+    ) Set.empty set1
 
 // && operator
 let absSAND set1 set2 = Set.union (Set.intersect set1 (Set.add false Set.empty)) (absAND set1 set2)

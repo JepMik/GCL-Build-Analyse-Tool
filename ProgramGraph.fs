@@ -12,7 +12,7 @@ open TypesAST
 let rec doneGC egc = 
     match egc with
     | IfThen(b,_) -> Neg(b)
-    | FatBar(gc1,gc2) -> LogOr(doneGC gc1, doneGC gc2)
+    | FatBar(gc1,gc2) -> ShortCircuitOr(doneGC gc1, doneGC gc2)
 
 // Compiler that takes GCL AST and converts to list of edges consisting 
 // of (node(int), expression(command), node(int))
@@ -57,7 +57,7 @@ let rec detGenenC e init final next=
 and detGenenGC e init final next d =
     match e with 
     | IfThen(b,com) -> let (E,last,domP,predMap) = (detGenenC com next final (next+1))
-                       ([Ebool(init,LogAnd(b,Neg(d)),next)] @ E, last, (LogOr(b,d)), domP, predMap)
+                       ([Ebool(init,ShortCircuitAnd(b,Neg(d)),next)] @ E, last, (ShortCircuitOr(b,d)), domP, predMap)
     | FatBar(gc1,gc2) -> let (E1,last1,d1,domP, predMap) = detGenenGC gc1 init final next d
                          let (E2,last2,d2,domP, predMap2) = detGenenGC gc2 init final last1 d1
                          (E1 @ E2, last2, d2, domP, newMap predMap predMap2)
@@ -83,10 +83,10 @@ let rec printB e =
     match e with 
     | Bool(x) -> x.ToString()
     | StrB(x) -> x
-    | ShortCircuitAnd(x,y) -> "("+(printB x)+")&("+(printB y)+")"
-    | ShortCircuitOr(x,y) -> "("+(printB x)+")|("+(printB y)+")"
-    | LogAnd(x,y) -> "("+(printB x)+")&&("+(printB y)+")"
-    | LogOr(x,y) -> "("+(printB x)+")||("+(printB y)+")"
+    | ShortCircuitAnd(x,y) -> "("+(printB x)+")&&("+(printB y)+")"
+    | ShortCircuitOr(x,y) -> "("+(printB x)+")||("+(printB y)+")"
+    | LogAnd(x,y) -> "("+(printB x)+")&("+(printB y)+")"
+    | LogOr(x,y) -> "("+(printB x)+")|("+(printB y)+")"
     | Neg(x) -> "!("+(printB x)+")"
     | Equal(x,y) -> (printA x)+"="+(printA y)
     | NotEqual(x,y) -> (printA x)+"!="+(printA y)
