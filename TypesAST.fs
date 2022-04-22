@@ -100,6 +100,7 @@ type signSeq =
   | SSingl of (sign)
 
 type signValue =
+  | AUTO
   | SignVariable of (string * sign)
   | SignArray of (string * signSeq)
   | SignDelim of (signValue * signValue)
