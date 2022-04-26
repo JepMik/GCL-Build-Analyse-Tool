@@ -1,11 +1,16 @@
 // This file implements a module where we define multiple data types
-// to store represent boolean, arithmetic, commands and guarded commands from Parser and Lexer.
+// -> to store, represent boolean, arithmetic, commands and guarded commands from Parser and Lexer.
+// -> to store, represent predicates for program verification (parsed and further computed)
+// -> to store programs with possible annotations
+// -> to store edges, fragment actions
+// -> to store inputs to interpreter, sign assignments to sign analysis
+// -> to store security lattices, classifications and flows
 module TypesAST
 
 
-// type arithExpr does basic arithmetric operations
+// ---- Type arithExpr holds basic arithmetric operations
 type arithExpr =
-  | Num of int        //be aware later, since taking int, store as float
+  | Num of int
   | StrA of (string)
   | TimesExpr of (arithExpr * arithExpr)
   | DivExpr of (arithExpr * arithExpr)
@@ -18,7 +23,7 @@ type arithExpr =
   | LnExpr of (arithExpr)
   | IndexExpr of (string * arithExpr)
 
-// type boolExpr does basic bool operations
+// ---- Type boolExpr holds basic boolean operations
 type boolExpr = 
   | Bool of (bool)
   | StrB of (string)
@@ -34,8 +39,8 @@ type boolExpr =
   | Less of (arithExpr * arithExpr)
   | LessEqual of (arithExpr * arithExpr)
 
-// type guardCommand and type command are declared together as they are 
-// mutually recursive types, and they do basic guarded commands and commands
+// ---- Type guardCommand and type command are declared together as they are 
+//mutually recursive types, and they hold basic guarded commands and commands
 type guardCommand = 
   | IfThen of (boolExpr * command)
   | FatBar of (guardCommand * guardCommand)
@@ -47,7 +52,8 @@ and command =
   | If of (guardCommand)
   | Do of (pred * guardCommand)
 
-//Predicate types
+// ---- Type predicate holds predicates input by the user and then built 
+//according to program statements (proof obligations & ShortPathFragments)
 and pred = 
   | Pbool of (bool)
   | Pand of (pred * pred)
@@ -64,49 +70,55 @@ and pred =
   | PlessEqual of (arithExpr * arithExpr)
   | StrP of (string)
 
-// Annotated program
+// ---- Annotated program (begin[pred] program end[pred])
 and annot = Annot of (pred * command * pred)
 
-// Edge types
-// This could be changed to Action type, page 139 in book.
+// ---- Edge types
 type Edge = 
-  | Ebool of (int * boolExpr * int)
-  | Ecomm of (int * command * int)
+  | Ebool of (int * boolExpr * int) // boolean test edge
+  | Ecomm of (int * command * int) // assignment edge
 
-// Input types 
+// ---- Input types:  
+// AST for sequence of initial values for arrays
 type seqInput = 
-  | Seq of (arithExpr * seqInput)
-  | Singl of (arithExpr)
-  
+  | Seq of (arithExpr * seqInput) // [4, ...]
+  | Singl of (arithExpr) // [4]
+
+// AST for sequence of input assignments
 type inputVal = 
-  | SetArith of (string * arithExpr)
-  | SetBool of (string * boolExpr)
-  | SetArray of (string * seqInput) 
-  | SetDelim of (inputVal * inputVal)
+  | SetArith of (string * arithExpr) // x=2
+  | SetBool of (string * boolExpr) // b=true
+  | SetArray of (string * seqInput) // A=[0,1,2]
+  | SetDelim of (inputVal * inputVal) // x=3, y=0, A=[3,4]
 
-// Fragment actions
+// ---- Fragment actions:
 type fragAct = 
-  | B of boolExpr
-  | C of command
+  | B of boolExpr // boolean test
+  | C of command // assignment
 
-// Sign types
+// ---- Sign types:
 type sign = 
-  | ZORO
-  | PIKA
-  | NARUTO
+  | ZORO //0
+  | PIKA //+
+  | NARUTO //-
 
+// AST for parsing a sequence of signs used for arrays
 type signSeq = 
-  | SSeq of (sign * signSeq)
-  | SSingl of (sign)
+  | SSeq of (sign * signSeq) // {sign,...}
+  | SSingl of (sign) //one single sign
 
+//AST for parsing sequence of sign assignments x=+, y=-, ...
 type signValue =
-  | AUTO
-  | SignVariable of (string * sign)
-  | SignArray of (string * signSeq)
-  | SignDelim of (signValue * signValue)
+  | AUTO // no signs provided
+  | SignVariable of (string * sign) // x=+
+  | SignArray of (string * signSeq) // A={+,-}
+  | SignDelim of (signValue * signValue) // x=+,...,y=0
 
 // Cheat codes right there
 type cheat =
   | I of (inputVal)
   | S of (signValue)
+
+// ---- Abstract syntax tree for information flows
+type Flow = (string * string) Set
   

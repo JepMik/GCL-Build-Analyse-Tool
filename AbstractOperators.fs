@@ -1,5 +1,10 @@
 module AbstractOperators
-// ¬
+
+// ---- Functions implementing the tables of abstract 
+//operators used in sign analysis
+
+
+// ¬ operator
 let absNot set1 = 
     Set.fold (
             fun set el1 ->
@@ -8,7 +13,7 @@ let absNot set1 =
             | false -> Set.add true set 
     ) Set.empty set1
 
-// =
+// = operator
 let absEqual set1 set2 = 
     Set.fold (
         fun set el2 ->
@@ -27,7 +32,7 @@ let absEqual set1 set2 =
             ) set set1
     ) Set.empty set2
 
-//>
+// > operator
 let absGreater set1 set2 =
     Set.fold (
         fun set el2 ->
@@ -46,7 +51,7 @@ let absGreater set1 set2 =
             ) set set1
     ) Set.empty set2
     
-//>=
+// >= operator
 let absGreaterEqual set1 set2 =
     Set.fold (
         fun set el2 ->
@@ -65,13 +70,13 @@ let absGreaterEqual set1 set2 =
             ) set set1
     ) Set.empty set2
 
-// !=
+// != operator
 let absNotEqual set1 set2 = absNot(absEqual set1 set2)
 
-// <
+// < operator
 let absLess set1 set2 = absNot(absGreaterEqual set1 set2)
 
-//<=
+// <= operator
 let absLessEqual set1 set2 = absNot(absGreater set1 set2)
 
 
@@ -109,6 +114,7 @@ let absSOR set1 set2 = Set.union
                         (Set.intersect set1 (Set.add true Set.empty))
                         (absOR set1 set2)
 
+// * operator
 let absTimes set1 set2 = 
     Set.fold (
         fun set el2 ->
@@ -126,7 +132,7 @@ let absTimes set1 set2 =
                 | NARUTO, NARUTO -> Set.add PIKA set 
             ) set set1
     ) Set.empty set2
-
+// / operator
 let absDiv set1 set2 = 
     Set.fold (
         fun set el2 ->
@@ -145,6 +151,7 @@ let absDiv set1 set2 =
             ) set set1
     ) Set.empty set2
 
+// + operator
 let absPlus set1 set2 = 
     Set.fold (
         fun set el2 ->
@@ -163,6 +170,7 @@ let absPlus set1 set2 =
             ) set set1
     ) Set.empty set2
 
+// - operator
 let absMinus (set1:Set<sign>) (set2:Set<sign>) = 
     Set.fold (
         fun set el2 ->
@@ -181,6 +189,7 @@ let absMinus (set1:Set<sign>) (set2:Set<sign>) =
             ) set set1
     ) Set.empty set2
 
+// ^ operator
 let absPow set1 set2 = 
     Set.fold (
         fun set el2 ->
@@ -193,6 +202,7 @@ let absPow set1 set2 =
             ) set set1
     ) Set.empty set2
 
+// +() operator
 let absUPlus set1 = 
     Set.fold (
                 fun (set:Set<sign>) el1 ->
@@ -202,6 +212,7 @@ let absUPlus set1 =
                 | NARUTO -> set.Add(NARUTO).Add(PIKA)
             ) Set.empty set1
 
+// -() operator
 let absUMinus set1 = 
     Set.fold (
                 fun (set:Set<sign>) el1 ->

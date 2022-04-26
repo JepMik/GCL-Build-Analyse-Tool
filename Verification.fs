@@ -14,7 +14,7 @@ let entryEdge init edge =
     | Ebool(q,_,qf) when qf=init -> true
     | _ -> false
 
-// Procedure used in computing the set of short path fragments
+// Helper procedure used in computing the set of Short Path Fragments
 let rec build init action final domP edgeList spf =
     let entries = List.filter (entryEdge init) edgeList
     List.fold (helper action final domP edgeList) spf entries
@@ -31,7 +31,7 @@ and helper action final domP edgeList spf edge =
             then Set.add (q,lst,final) spf
             else build q lst final domP edgeList spf
 
-// Algorithm that builds the set of short path fragments covering a program's graph
+// Algorithm that builds the set of Short Path Fragments covering a program's graph
 let rec buildSPF domP edgeList =
     Set.fold (fun spf node -> build node [] node domP edgeList spf) Set.empty domP
 // Output -> set of short path fragments
@@ -87,6 +87,7 @@ let rec extractPO spf predMemory =
                     | (None,None) -> (Pbool true, frag,Pbool true)
 
         ) spf
+// Output -> Set of proof obligations
 
 // Convert a boolean expression to predicate
 let rec boolToPred bol = 
@@ -105,7 +106,7 @@ let rec boolToPred bol =
     | Less(x,y) -> Pless(x,y)
     | LessEqual(x,y) -> PlessEqual(x,y)
 
-
+// Perform substitution of a variable by a value in predicate formula
 let rec substituteP pred id value =
     match pred with 
     | Pbool(x) -> pred
@@ -149,7 +150,7 @@ let bottomUp postPred action =
         | _ -> postPred
 
 
-// Function to construct the verification conditions throughout
+// Function to construct the verification conditions throughout the program
 let constrVC poset = 
     Set.map ( 
         fun (init, frag, final) -> 

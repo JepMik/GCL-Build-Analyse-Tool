@@ -87,7 +87,7 @@ let rec peekBool expr =
                 let (setAy, setArry) = peekArith y
                 (Set.empty, Set.union setAx setAy, Set.union setArrx setArry)
     
-
+// Function to look into commands and find variables
 let rec peekCommand com = 
     match com with
         | ArrayAssign(arr,index,value) -> 
@@ -99,7 +99,6 @@ let rec peekCommand com =
                             (Set.add var setA, setArr) //Maybe var not needed to be included
         | _ -> (Set.empty, Set.empty) ;
 
-//Function that takes list of edges, and scans for variables that need value. Output is set of variables
 let rec varAFinder edges =
     match edges with
     | Ecomm(_,com,_)::tail -> 
@@ -118,23 +117,23 @@ let rec varBFinder edges =
     | _::tail -> varBFinder tail 
     | [] -> (Set.empty, Set.empty, Set.empty)
 
+//Function that takes list of edges, and scans for variables that need value. Output is set of variables
 let varAllFinder edges = 
     let (setB1, setA1, setArr) = varBFinder edges 
     let (setA2, setArr2) = varAFinder edges
     (setB1, Set.union setA1 setA2,Set.union setArr setArr2)
 
-// Initialize one arithmetic variable name to value 0 - helper for folding
-let varAInit item (map:Map<string,float>) = map.Add(item, 0.0)
 // Initialize the mapping of all arithmetic variables in given set to 0
+let varAInit item (map:Map<string,float>) = map.Add(item, 0.0)
 let initAllAVar (set:Set<string>) = Set.foldBack (fun item map ->  varAInit item map) set Map.empty
 // initAllAVar (varAFinder edges)
 
+// Initialize the mapping of all array variables in given set to 0
 let varArrInit item (map:Map<string, List<float>>) = Map.add item [0.0] map
 let initAllArrVar (set:Set<string>) = Set.foldBack (fun item map -> varArrInit item map) set Map.empty
 
-// Initialize one boolean variable name to value false - helper for folding
-let varBInit item (map:Map<string,bool>) = map.Add(item, false)
 // Initialize the mapping of all boolean variables in given set to false
+let varBInit item (map:Map<string,bool>) = map.Add(item, false)
 let initAllBVar (set:Set<string> ) = Set.foldBack (fun item map ->  varBInit item map) set Map.empty
 // initAllBVar (varBFinder edges)
 
@@ -187,8 +186,6 @@ let rec evalB e mapB mapA arr =
                     let mes = sprintf "ERROR: Unknown boolean variable %s in expression." str
                     failwith mes
                         
-
-//# Update insertAt function with overwriting
 // Evaluation of commands
 let rec evalC e mapB (mapA:Map<string,float>) arr =
     match e with
@@ -200,11 +197,13 @@ let rec evalC e mapB (mapA:Map<string,float>) arr =
                         (mapB, mapA, arr.Add(str, strArr))
     | _ -> (mapB, mapA, arr)
 
+// Print sequence of values in arrays
 let rec printSeq expr =
     match expr with
     | Singl(x) -> printA x
     | Seq(x, rest) -> (printA x) + ";"+ (printSeq rest)
 
+// Print the parsed user input 
 let rec printInp expr = 
     match expr with 
     | SetArith(str, ari) -> "SetArith(" + str + "=" + (printA ari) + ")"

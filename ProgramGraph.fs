@@ -2,13 +2,9 @@ module ProgramGraph
 
 open System
 open System.IO
-
-// This file implements a module where we define multiple data types
-// to store represent boolean, arithmetic, commands and guarded commands from Parser and Lexer.
-
 open TypesAST
 
-// Function to compute done of a guarded command
+// Function to compute done of a guarded command according to definition
 let rec doneGC egc = 
     match egc with
     | IfThen(b,_) -> Neg(b)
@@ -17,7 +13,7 @@ let rec doneGC egc =
 // Compiler that takes GCL AST and converts to list of edges consisting 
 // of (node(int), expression(command), node(int))
 
-// newMap works as a map union
+// Map union function
 let newMap map1 map2 = Map.fold (fun acc key value -> Map.add key value acc) map1 map2
 
 //Non-deterministic graphs generator
@@ -115,6 +111,7 @@ and printC e n=
     | If(x) -> "if "+(printGC x (n+1))+"\n"+"fi"
     | Do(_, x) -> "do "+(printGC x (n+1))+"\n"+"od"
 
+// Conversion of node number to characters
 let convert x y =
     match (x,y) with
     | (0,-1) ->("▷", "◀")

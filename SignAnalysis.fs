@@ -40,7 +40,7 @@ let rec signMemory expr mapV mapA =
 //let aMem = signMemory (SignDelim(SignVariable("x",ZORO),SignArray("A",SSeq(ZORO,SSingl(PIKA))))) Map.empty Map.empty;;
 
 
-// Arithmetic analysis function
+// Arithmetic analysis function according to definition in book
 let rec analArith arithAct memory = 
     match arithAct with
     | Num(x) -> Set.add (signN x) Set.empty
@@ -69,7 +69,7 @@ let rec analArith arithAct memory =
     | UMinusExpr(x) -> absUMinus (analArith x memory) 
     | _ -> Set.empty
 
-// Boolean analysis function
+// Boolean analysis function according to definition
 let rec analBool bolAct memory = 
     match bolAct with 
     | Bool(x) -> Set.add x Set.empty
@@ -86,41 +86,8 @@ let rec analBool bolAct memory =
     | LessEqual(a1,a2) -> absLessEqual (analArith a1 memory) (analArith a2 memory)
     | _ -> Set.empty 
 
-
-
-
-//--> Proof that the tool has a bug on FM4Fun and our solution is indeed correct
-
-// let mex1= (Map [("j", PIKA)],Map [("A",(Set.singleton PIKA))])
-// let mex2= (Map [("j", ZORO)],Map [("A",(Set.singleton PIKA))])
-// let mex3= (Map [("j", NARUTO)],Map [("A",(Set.singleton PIKA))])
-
-// analBool (Neg
-//      (LogAnd
-//         (Greater (StrA "j", Num 0),
-//          Greater
-//            (IndexExpr ("A", MinusExpr (StrA "j", Num 1)),
-//             IndexExpr ("A", StrA "j"))))) mex3 //should contain true
-
-// analBool (LogAnd
-//         (Greater (StrA "j", Num 0),
-//          Greater
-//            (IndexExpr ("A", MinusExpr (StrA "j", Num 1)),
-//             IndexExpr ("A", StrA "j")))) mex3 //should contain false
-
-// analBool (Greater (StrA "j", Num 0),
-//          Greater
-//            (IndexExpr ("A", MinusExpr (StrA "j", Num 1)),
-//             IndexExpr ("A", StrA "j"))) mex1
-    
-
-
-
-
-// powerMem > Mem 
-
 // Iterates through the output of the arithmetic analysis 
-// function and updates memory with signs - #small powerMemory
+//function and updates memory with according signs - #small powerMemory
 let updateAllSignsMem setSigns memory x = 
     Set.fold (
         fun mem sign ->
@@ -130,6 +97,9 @@ let updateAllSignsMem setSigns memory x =
 
 // let mexxx = (Map [("x", PIKA)],Map [("A",(Set.singleton PIKA))])
 // updateAllSignsMem (analArith (MinusExpr(StrA("x"), Num 1)) mexxx) mexxx "x"
+
+// Iterates through the powerMemory defined updates memory with 
+//according signs obtained from arithmetic analysis - # powerMemory
 let updateAllMemAllSigns powerMem x a= 
     Set.fold (
                     fun pwrmem memory ->
@@ -150,8 +120,8 @@ let updateSignMemAllInitSigns A memory sign =
             
             Set.add (mapV,Map.add A setlow mapA) (Set.singleton (mapV,Map.add A sethigh mapA))
     ) Set.empty sigmaA
-
 //updateSignMemAllInitSigns "A" (Map [("x", PIKA)],Map [("A",(Set.singleton PIKA))]) NARUTO
+
 let updateAllSignsMemAllInitSigns A memory signSet = 
     Set.fold (
         fun pwrmem spp ->
@@ -160,6 +130,7 @@ let updateAllSignsMemAllInitSigns A memory signSet =
     ) Set.empty signSet
 //updateAllSignsMemAllInitSigns "A" (Map [("x", PIKA)],Map [("A",(Set.singleton PIKA))]) (Set.add ZORO (Set.singleton NARUTO))
 
+// Function to update all signs in memory according to analysis functions
 let updateEverything M A a1 a2 = 
     Set.fold (
         fun pwrmem memory ->
@@ -175,7 +146,7 @@ let updateEverything M A a1 a2 =
     ) Set.empty M
 
 
-// Specification analysis function
+// Specification analysis function according to definition
 let rec analSpec action (M:Set<Map<string,sign> * Map<string, Set<sign>> >) =
     match action with
     | B (bol) -> 
@@ -190,7 +161,6 @@ let rec analSpec action (M:Set<Map<string,sign> * Map<string, Set<sign>> >) =
             | Assign(idf, value) -> updateAllMemAllSigns M idf value
             | ArrayAssign(idf, index, value) -> updateEverything M idf index value
             | _ -> M 
-
 // analSpec (B(LogAnd (Less (StrA "i", StrA "n"), Neg (Bool false)))) (Set.singleton (Map [("i", PIKA);("n",PIKA)],Map [("A",(Set.singleton PIKA))]))
 // analBool (LogAnd (Less (StrA "i", StrA "n"), Neg (Bool false))) (Map [("i", PIKA);("n",PIKA)],Map [("A",(Set.singleton PIKA))])
 
@@ -205,7 +175,7 @@ let initAnal first last mem0 =
     #endif
     analysis
 
-// Recursive algorithms for analysis solution
+// Recursive algorithm for obtaining analysis solution
 let rec homeWork work edgeList analysis= 
     match (List.isEmpty work) with
     | false -> 
@@ -243,22 +213,25 @@ let solveAnalysis first last mem0 edgeList =
     let work = List.singleton 0
     homeWork work edgeList analysis
 
+// Conversion of node number to character
 let convNod x =
     match x with
     | 0 -> "▷" 
     | -1 -> "◀"
     | d -> d.ToString()
 
+// Printer for signs
 let printSign sign = 
     match sign with
     | PIKA -> "+"
     | ZORO -> "0"
     | NARUTO -> "-"
 
+// Printer for set of signs
 let printSignSet set = 
     Set.fold (fun str sign -> str+(printSign sign)+" ") "" set
 
-// Print a memory
+// Printer for memories
 let printMemory memory = 
     let (mapV, mapA) = memory
     let strV = Map.fold(

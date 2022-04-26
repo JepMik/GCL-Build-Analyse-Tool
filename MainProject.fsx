@@ -1,4 +1,4 @@
-//VERSION: 4.5
+//VERSION: 5.2
 
 
 // This script implements our interactive GCL compiler & interpreter
@@ -42,6 +42,7 @@ let parse input =
 
 let getInput () = Int32.TryParse(Console.ReadLine())
 
+// Get input either from file or console
 let rec chooseInput(file) = 
     printfn "Choose input source: "
     printfn "1. Text file ('%s')" file
@@ -53,7 +54,7 @@ let rec chooseInput(file) =
     | true, 2 -> Console.ReadLine()
     | _ -> chooseInput(file)
 
-
+// Apply the prettifier
 let prettify ()=
     try
         printfn "Insert your Guarded Commands program to be parsed:"
@@ -88,7 +89,7 @@ let printInnerMenu () =
     printfn "5. Return to main menu"
     printf "Enter your choice: "
 
-
+// Allocate and initialize the interpreter memory with values
 let memoryAlloc(edges, typ) =
     match typ with
     | "auto" -> 
@@ -120,12 +121,10 @@ let memoryAlloc(edges, typ) =
                         (lexbufInp.EndPos.pos_cnum - lexbufInp.EndPos.pos_bol) (LexBuffer<_>.LexemeString lexbufInp))
                     failwith mes
                     (Map.empty, Map.empty, Map.empty)
-
-
     | _ -> (Map.empty, Map.empty, Map.empty)
 
-let rec runProgram edgeList domainP predMemory nodef = 
-        
+// Main function of the tool
+let rec runProgram edgeList domainP predMemory nodef =         
     printInnerMenu()
     match getInput() with
     | true, 1 ->  
@@ -207,7 +206,7 @@ let rec runProgram edgeList domainP predMemory nodef =
     | true, 5 -> ()
     | _ -> runProgram edgeList domainP predMemory nodef
 
-
+// Deterministic program handling
 let determ ()=
     try
         printfn "Insert your Guarded Commands program to be
@@ -239,7 +238,7 @@ let determ ()=
     
     with e -> printfn "ERROR: %s" e.Message;;
 
-
+// Non-deterministic program handling
 let nondeter()=
     try
         printfn "Insert your Guarded Commands program to be 

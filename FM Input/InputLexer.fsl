@@ -25,7 +25,7 @@ rule tokenize = parse
 | bool              { BOOL(Boolean.Parse(LexBuffer<_>.LexemeString lexbuf)) }
 | variable          { let str = LexBuffer<_>.LexemeString lexbuf in VARIABLE(str) }
 
-// Input value setter
+// Input value setter, tokens for different ASTs
 | '='                           { SETR }
 | "ChuggyChug!"                 { TKNI }
 | "ChickenNuggets!"             { TKNS }
