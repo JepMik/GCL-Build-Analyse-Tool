@@ -53,7 +53,7 @@ start: cheat EOF                {$1}
 cheat:
   | TKNS signvalues              { S($2) }
   | TKNI inputvalues             { I($2) }
-  | TKNS                         { S(AUTO) }
+  | TKNS                         { S(AUTOS) }
 
 // Note that we need to insert an End-Of-File (EOF)
 // The code annotation { $1 } specifies that parsing with this production

@@ -97,7 +97,25 @@ let rec peekCommand com =
         | Assign(var,value) -> 
                             let (setA, setArr) = peekArith value
                             (Set.add var setA, setArr) //Maybe var not needed to be included
-        | _ -> (Set.empty, Set.empty) ;
+        | If (gc) -> peekGuardCom gc
+        | Do (_, gc) -> peekGuardCom gc
+        | Order(c1, c2) ->
+                    let (setA, setArr) = peekCommand c1
+                    let (setA', setArr') = peekCommand c2
+                    (Set.union setA setA', Set.union setArr setArr')
+        | _ -> (Set.empty, Set.empty) 
+// Function to look into commands and find variables
+and peekGuardCom guardcom = 
+    match guardcom with
+    | IfThen(b, com) -> 
+                    let (setB, setA, setArr) = peekBool b
+                    let (setA', setArr') = peekCommand com
+                    (Set.union setA setA', Set.union setArr setArr')
+    | FatBar(gc1, gc2) ->
+                    let (setA, setArr) = peekGuardCom gc1
+                    let (setA', setArr') = peekGuardCom gc2
+                    (Set.union setA setA', Set.union setArr setArr')
+
 
 let rec varAFinder edges =
     match edges with

@@ -29,6 +29,12 @@ open Verification
 open AbstractOperators
 #load "SignAnalysis.fs" 
 open SignAnalysis
+#load "./FM Secure/SecureParser.fs"
+open SecureParser
+#load "./FM Secure/SecureLexer.fs"
+open SecureLexer
+#load "SecurityAnalysis.fs"
+open SecurityAnalysis
 
 // Function that parses a given input
 let parse input =
@@ -55,7 +61,7 @@ let rec chooseInput(file) =
     | _ -> chooseInput(file)
 
 // Apply the prettifier
-let prettify ()=
+let prettify () = 
     try
         printfn "Insert your Guarded Commands program to be parsed:"
         //Read console input
@@ -168,7 +174,7 @@ let rec runProgram edgeList domainP predMemory nodef =
                 printfn "Insert sign memory for your Guarded Commands program
                         analysis (automatic signs for all missing variables):"
                 //Read sign input
-                let input = "ChickenNuggets! " + Console.ReadLine() //chooseInput("./FilesIN/InitialSigns.txt")
+                let input = "ChickenNuggets! " + chooseInput("./FilesIN/InitialSigns.txt")
                 //Create the lexical buffer
                 let lexbufInp = LexBuffer<char>.FromString input
                 try 
@@ -182,7 +188,7 @@ let rec runProgram edgeList domainP predMemory nodef =
                                 | I (x) -> None)
                             resSign
                         with e -> 
-                            let mes = (sprintf "Parse error at : Line %i, %i, Unexpected token: %s" (lexbufInp.EndPos.pos_lnum+ 1) 
+                            let mes = (sprintf "Parse error in sign assignment at : Line %i, %i, Unexpected token: %s" (lexbufInp.EndPos.pos_lnum+ 1) 
                                 (lexbufInp.EndPos.pos_cnum - lexbufInp.EndPos.pos_bol) (LexBuffer<_>.LexemeString lexbufInp))
                             failwith mes
                     
@@ -207,7 +213,7 @@ let rec runProgram edgeList domainP predMemory nodef =
     | _ -> runProgram edgeList domainP predMemory nodef
 
 // Deterministic program handling
-let determ ()=
+let determ () =
     try
         printfn "Insert your Guarded Commands program to be
                 converted to a deterministic program graph:"
@@ -216,7 +222,6 @@ let determ ()=
         //Create the lexical buffer
         let lexbuf = LexBuffer<char>.FromString input
         try 
-
             //Parsed result
             let (Annot(begpr, prog, endpr)) = ProgramParser.start ProgramLexer.tokenize lexbuf  
             let (edgeList, x, domP, predMap) = detGenenC prog 0 -1 1  
@@ -229,17 +234,144 @@ let determ ()=
 
             File.WriteAllText("./FilesOUT/Graph.dot",graphstr)
             printfn "The GCL program graph is printed in file 'Graph.dot' and can be visualized!"
-
-            runProgram edgeList domainP predMemory x
+            
+            try
+                runProgram edgeList domainP predMemory x
+            with e -> printfn "%s" e.Message
 
         //Undefined string encountered   
-        with e -> printfn "Parse error at : Line %i, %i, Unexpected token: %s" (lexbuf.EndPos.pos_lnum+ 1) 
+        with e -> printfn "Parse error in program at : Line %i, %i, Unexpected token: %s" (lexbuf.EndPos.pos_lnum+ 1) 
                         (lexbuf.EndPos.pos_cnum - lexbuf.EndPos.pos_bol) (LexBuffer<_>.LexemeString lexbuf)
     
     with e -> printfn "ERROR: %s" e.Message;;
 
+let latticeMenu () = 
+    printfn "The provided security lattice is empty.\n Select one of the predefined lattices: "
+    printfn "1. Confidentiality Lattice"
+    printfn "2. Integrity Lattice"
+    printfn "3. Classical Lattice"
+    printf "Enter your choice: "
+
+// Assign predefined security lattice 
+let autoLattice raw =
+    if raw = AUTOL then 
+        latticeMenu ()
+        match getInput() with 
+        | true, 1 -> 
+            printfn "Confidentiality selected!"
+            confidentiality
+        | true, 2 -> 
+            printfn "Confidentiality selected!"
+            integrity
+        | true, 3 -> 
+            printfn "Classical selected!"
+            classical
+        | _ -> 
+            printfn "Error"
+            Set.empty
+        else 
+            let result = buildLattice raw Set.empty
+            result
+
+// Deterministic security analysis
+let secur () =
+
+    try 
+        printfn "Insert your Guarded Commands program to be
+                converted to a deterministic program graph:"
+        //Read console input
+        let program = chooseInput("./FilesIN/Program.txt")
+        //Create the lexical buffer
+        let lexbuf = LexBuffer<char>.FromString program
+
+        try 
+            //Parsed program string
+            let (Annot(begpr, prog, endpr)) = ProgramParser.start ProgramLexer.tokenize lexbuf
+
+            printfn "Insert your desired security lattice:"
+            // Read console input for lattice
+            let lattice = "FailedAgile!ButCSMPower!" + chooseInput("./FilesIN/Lattice.txt")
+            // Create the lexical buffer
+            let lexbuf = LexBuffer<char>.FromString lattice
+
+            try 
+                // Parse the security lattice string/input
+                let latticeRaw = Option.get( 
+                        match SecureParser.start SecureLexer.tokenize lexbuf with
+                        | LAT (x) -> Some x
+                        | CLS (x) -> None)
+
+                #if DEBUG
+                printfn "%A" latticeRaw
+                #endif
+                
+                // Setup the security lattice
+                let lattice = autoLattice latticeRaw
+                    
+                printfn "Insert your desired security classification:"
+                // Read console input for classification
+                let classif = "DefinitelyNotSecure!" + chooseInput("./FilesIN/Classification.txt")
+                // Create the lexical buffer
+                let lexbuf = LexBuffer<char>.FromString classif
+
+                try
+                    let classifRaw = Option.get( 
+                        match SecureParser.start SecureLexer.tokenize lexbuf with
+                        | CLS (x) -> Some x
+                        | LAT (x) -> None)
+                    
+                    #if DEBUG 
+                    printfn "%A" classifRaw
+                    #endif
+                    
+                    // // Assign automatic classification of variables
+                    // if classifRaw = AUTOC then
+                    //     printfn "The provided security classification is empty.\n Automatic classification will be applied."
+                    //     let (setA, setArr) = peekCommand prog
+                    //     let setVariables = Set.union setA setArr
+                    //     let (lvlx, lvly) = Set.minElement lattice
+                    //     let preClassification = autoClassify setVariables (lvlx, lvly)
+                    //     printfn "All variables have been set as %s" lvlx
+                    //     else 
+                    //         let preClassification = Map.empty
+                    //         printf ""
+
+                    // // Setup the classification memory
+                    // let classification = Map.fold (
+                    //                         fun acc key value -> Map.add key value acc
+                    //                         ) preClassification (buildClassification classifRaw Map.empty)
+                    // // Compute the actual flows in the program
+                    // let actualFlows = secC prog Set.empty
+                    printfn "%A" lattice
+                    
+                    #if DEBUG
+                    printfn "%A" classification
+                    printfn "%A" actualFlows
+                    #endif
+
+                    // try 
+                    //     let allowedFlows = allowFlows (lattice, classification) actualFlows
+                    //     printfn "%A" allowedFlows
+                    // with e -> printfn "%s" e.Message
+                    
+                // Undefined string encountered in classification
+                with e -> printfn "Parse error in security classification at : Line %i, %i, Unexpected token: %s" (lexbuf.EndPos.pos_lnum+ 1) 
+                            (lexbuf.EndPos.pos_cnum - lexbuf.EndPos.pos_bol) (LexBuffer<_>.LexemeString lexbuf)
+            
+            // Undefined string encountered in security lattice
+            with e -> printfn "Parse error in security lattice at : Line %i, %i, Unexpected token: %s" (lexbuf.EndPos.pos_lnum+ 1) 
+                        (lexbuf.EndPos.pos_cnum - lexbuf.EndPos.pos_bol) (LexBuffer<_>.LexemeString lexbuf)
+
+        //Undefined string encountered in program
+        with e -> printfn "Parse error in program at : Line %i, %i, Unexpected token: %s" (lexbuf.EndPos.pos_lnum + 1) 
+                        (lexbuf.EndPos.pos_cnum - lexbuf.EndPos.pos_bol) (LexBuffer<_>.LexemeString lexbuf)
+
+    with e -> printfn "ERROR: %s" e.Message;;
+
+
+
 // Non-deterministic program handling
-let nondeter()=
+let nondeter () =
     try
         printfn "Insert your Guarded Commands program to be 
                 converted to a non-deterministic program graph:"
@@ -266,7 +398,7 @@ let nondeter()=
             with e -> printfn "%s" e.Message
 
         //Undefined string encountered   
-        with e -> printfn "Parse error at : Line %i, %i, Unexpected token: %s" (lexbuf.EndPos.pos_lnum+ 1) 
+        with e -> printfn "Parse error in program at : Line %i, %i, Unexpected token: %s" (lexbuf.EndPos.pos_lnum+ 1) 
                         (lexbuf.EndPos.pos_cnum - lexbuf.EndPos.pos_bol) (LexBuffer<_>.LexemeString lexbuf)
 
     with e -> printfn "ERROR: %s" e.Message;;
@@ -277,10 +409,11 @@ let printMenu () =
     printfn "1. Pretty printer"
     printfn "2. Non-Deterministic Program Environments"
     printfn "3. Deterministic Program Environments"
-    printfn "4. Exit menu"
+    printfn "4. Security Analysis"
+    printfn "5. Exit menu"
     printf "Enter your choice: "
 
-let rec menu() =     
+let rec menu () =     
     printMenu()
     match getInput() with
     | true, 1 -> 
@@ -292,7 +425,10 @@ let rec menu() =
     | true, 3 -> 
                 determ()
                 menu()
-    | true, 4 -> ()
+    | true, 4 -> 
+                secur()
+                menu()
+    | true, 5 -> ()
     | _ -> menu()
     
 

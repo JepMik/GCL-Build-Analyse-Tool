@@ -109,7 +109,7 @@ type signSeq =
 
 //AST for parsing sequence of sign assignments x=+, y=-, ...
 type signValue =
-  | AUTO // no signs provided
+  | AUTOS // no signs provided
   | SignVariable of (string * sign) // x=+
   | SignArray of (string * signSeq) // A={+,-}
   | SignDelim of (signValue * signValue) // x=+,...,y=0
@@ -119,6 +119,26 @@ type cheat =
   | I of (inputVal)
   | S of (signValue)
 
-// ---- Abstract syntax tree for information flows
-type Flow = (string * string) Set
-  
+// ---- Abstract syntax tree for security flows & classifications
+
+type flow = (string * string)
+
+type latticeVal =
+  | AUTOL
+  | LatFlow of (flow)
+  | LatDelim of (latticeVal * latticeVal)
+
+type classifVal =
+  | AUTOC
+  | ClassFlow of (flow)
+  | ClassDelim of (classifVal * classifVal)
+
+// type class = 
+//   | Lvl of string
+// [Lvl("public")]
+
+
+type cheatSecure = 
+  | CLS of (classifVal)
+  | LAT of (latticeVal)
+

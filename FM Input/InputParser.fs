@@ -356,7 +356,7 @@ let _fsyacc_reductions ()  =    [|
                 (
                    (
 # 56 "InputParser.fsp"
-                                                        S(AUTO) 
+                                                        S(AUTOS) 
                    )
 # 56 "InputParser.fsp"
                  : cheat));

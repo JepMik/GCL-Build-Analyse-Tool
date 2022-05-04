@@ -31,7 +31,7 @@ let rec initSigns varSet arrSet =
 // Creates the initial memory based on parsed sign memory
 let rec signMemory expr mapV mapA = 
     match expr with
-    | AUTO -> (mapV, mapA)    
+    | AUTOS -> (mapV, mapA)    
     | SignVariable(idf, sign) -> (Map.add idf sign mapV, mapA)
     | SignArray(idf, signs) -> (mapV,Map.add idf (Set.ofList(signList signs)) mapA)
     | SignDelim(x, y) -> 
