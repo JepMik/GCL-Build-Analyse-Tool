@@ -83,6 +83,7 @@ let rec allowFlows (lattice, classif) actual =
         fun set (x, y) ->
             let levelx = Map.find x classif
             let levely = Map.find y classif
+            // THIS NOT WORKING!
             match Set.contains (levelx, levely) lattice with
             | true -> Set.add (x,y) set
             | false -> set
@@ -91,8 +92,7 @@ let rec allowFlows (lattice, classif) actual =
 let tryAllow  = allowFlows (confidentiality, Map.ofList [("x","public");("y","private")]) (Set.ofList [("x","y");("y","x")]);;
 
 // Check if flows in program are a subset of the allowed flows 
-let rec secureProgram program allowedFlows =
-    let actualFlows = secC program Set.empty
+let rec secureProgram program allowedFlows actualFlows =
     Set.difference actualFlows allowedFlows
 
 //secureProgram (Assign(StrA("x"), StrA("y"))) tryAllow;;

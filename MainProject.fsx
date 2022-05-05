@@ -324,35 +324,34 @@ let secur () =
                     printfn "%A" classifRaw
                     #endif
                     
-                    // // Assign automatic classification of variables
-                    // if classifRaw = AUTOC then
-                    //     printfn "The provided security classification is empty.\n Automatic classification will be applied."
-                    //     let (setA, setArr) = peekCommand prog
-                    //     let setVariables = Set.union setA setArr
-                    //     let (lvlx, lvly) = Set.minElement lattice
-                    //     let preClassification = autoClassify setVariables (lvlx, lvly)
-                    //     printfn "All variables have been set as %s" lvlx
-                    //     else 
-                    //         let preClassification = Map.empty
-                    //         printf ""
+                    // Assign automatic classification of variables
+                    let (setA, setArr) = peekCommand prog
+                    let setVariables = Set.union setA setArr
+                    let (lvlx, lvly) = Set.minElement lattice
+                    let preClassification = autoClassify setVariables (lvlx, lvly)
 
-                    // // Setup the classification memory
-                    // let classification = Map.fold (
-                    //                         fun acc key value -> Map.add key value acc
-                    //                         ) preClassification (buildClassification classifRaw Map.empty)
-                    // // Compute the actual flows in the program
-                    // let actualFlows = secC prog Set.empty
-                    printfn "%A" lattice
-                    
+                    if classifRaw = AUTOC then
+                        printfn "The provided security classification is empty.\n Automatic classification will be applied."
+                        printfn "All variables have been set as %s" lvlx
+
+                    // Setup the classification memory
+                    let classification = Map.fold (
+                                            fun acc key value -> Map.add key value acc
+                                            ) (buildClassification classifRaw Map.empty) preClassification
+                    // Compute the actual flows in the program
+                    let actualFlows = secC prog Set.empty
+                    let allowedFlows = allowFlows (lattice, classification) actualFlows
+                    let result = secureProgram prog allowedFlows actualFlows
+
                     #if DEBUG
+                    printfn "%A" lattice
                     printfn "%A" classification
                     printfn "%A" actualFlows
+                    printfn "%A" tryAllow // must be only x -> y
+                    printfn "%A" allowedFlows
                     #endif
 
-                    // try 
-                    //     let allowedFlows = allowFlows (lattice, classification) actualFlows
-                    //     printfn "%A" allowedFlows
-                    // with e -> printfn "%s" e.Message
+                    printfn "%A" result
                     
                 // Undefined string encountered in classification
                 with e -> printfn "Parse error in security classification at : Line %i, %i, Unexpected token: %s" (lexbuf.EndPos.pos_lnum+ 1) 
