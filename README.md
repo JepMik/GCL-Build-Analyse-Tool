@@ -1,7 +1,7 @@
 # 🅖🅒🅛 🅟🅐🅡🅢🅔🅡                                 
 
 ![Up to Date](https://github.com/ikatyang/emoji-cheat-sheet/workflows/Up%20to%20Date/badge.svg)
-<img src="https://img.shields.io/badge/Version-5.2-red"/>
+<img src="https://img.shields.io/badge/Version-6.3-red"/>
 <img src="https://img.shields.io/badge/Powered%20By-CheckMate-%23ffc933"/>
 # **This parser for Guarded Commands Language was created by:**
 
@@ -11,7 +11,7 @@
 
 *s204708 Jeppe Moeller Mikkelsen*
 
-## **How to run the code**
+## **How to Run the Code**
 **It is absolutely necessary to have fsyacc and fslexx installed to run the GCL-parser**
 [If not installed follow the instructions](https://gitlab.gbar.dtu.dk/02141/mandatory-assignment/blob/master/getting-started-fs.md)
 
@@ -48,7 +48,7 @@ When choosing either a Non-Deterministic Program Graph or a Deterministic Progra
 This extended menu gives the user the option of seeing a step-wise execution with either automated-input or with user-input for variables and arrays, perform a program verification or simply return to the main menu as given above.
 
 
-## **Syntax of our code**
+## **Syntax of our Code**
 **These commands represent an extended set of Dijkstra's Guarded Commands Language syntactics**
 | Expressions | Description |
 | --- | --- | 
@@ -69,16 +69,16 @@ If one doesn't annotate the program, but chooses to perform a program verificati
 
 After each of the annotating tags (begin | end) there is a whitespace to delimit the predicate in brackets.
 
-### **Program graphs:**
+### **Program Graphs:**
 The Program Graphs are developed by two main functions:
 1. Generate Deterministic Program Graphs
 2. Generate Non-Deterministic Program Graphs
 
 These function takes the expressions and turn them into a list of edges containing `(node(int), expression(command), node(int))`.
 
- These lists are of course different, depending on the choice of the desired Program Graph. The differences in syntax for the Non- and Deterministic Program Graphs can be seen in book Formal Methods chap. 2 from *Course 02141 - Computer Science Modelling on DTU*.
+ These lists are of course different, depending on the choice of the desired Program Graph. The differences in syntax for the Non- and Deterministic Program Graphs can be seen in the book Formal Methods chap. 2 from *Course 02141 - Computer Science Modelling on DTU*.
 
-In order to generate the Program Graphs, it is then processed by a function that translates the list of edges into the syntax for graphviz, and generate a file called `graph.dot`. This file contains the program graph, consider reading *How to interpret program graph results*.
+In order to generate the Program Graphs, it is then processed by a function that translates the list of edges into the syntax for graphviz, and generate a file called `graph.dot`. This file contains the program graph (consider reading *How to interpret program graph results*).
 
 
 ## **Step-Wise Execution**
@@ -87,7 +87,7 @@ The step-wise execution shows how the memory changes throughout the execution of
 From the Extended Menu Options, the user can choose to either input variables and arrays themselves or get automated input generated. Afterwards the user chooses how many execution steps they want shown. This will then initialize the Step-Wise Execution and generate a file called `StepExecution.txt`. This file contains the step-wise execution of the program, consider reading *How to interpret the Step-wise Execution*.
 
 
-## **How to interpret the outcome of the prettifier**
+## **How to Interpret the Outcome of the Prettifier**
 **The outcome:** 
 
 Is a *"Pretty Printed"* AST, that shows how the arithmetic, boolean or other commands are being treated by the Parser and Lexer.
@@ -108,10 +108,10 @@ Parse errors are implemented in our GCL-parser, and should yield an error messag
 
 If for some reason an error occurs while running an already defined syntax, then please contact the creators.
 
-## **How to interpret program graph results:**
+## **How to Interpret Program Graph Results:**
 **The outcome:**
 
-When running option `2. Non-Deterministic Program Graph` or `3. Deterministic Program Graph` from the Main Menu. A file named `graph.dot` will be generated, where the syntax of the [graphziz text language](https://graphviz.org/doc/info/lang.html) will be inside. The syntax will change each time the program is run, depending on the input of the Guarded Command Language.
+When running option `2. Non-Deterministic Program Graph` or `3. Deterministic Program Graph` from the Main Menu. A file named `graph.dot` will be generated, where the syntax of the [graphviz text language](https://graphviz.org/doc/info/lang.html) will be inside. The syntax will change each time the program is run, depending on the input of the Guarded Command Language.
 
 If using VS-code, and [extension](https://marketplace.visualstudio.com/items?itemName=joaompinto.vscode-graphviz) has been downloaded. The graph can be seen directly in the program, utilizing the extension.
 
@@ -176,7 +176,7 @@ Eventually, having predicate assignments for each of these nodes, the tool compu
     [(i<n)∧(x>=i)]  !(i<=n)   [i>=n]
     [(i<n)∧(x>=i)]  i<=n  x:=(x+i)   [(i<n)∧(x>=i)]
 
-Along the proof tree of each fragment some inference rules are applied from the ending predicate P(q⬤) (bottom-up). Thus, a predicate B to be implied from the start predicate is obtained and the verification condition P(q○) => B is formed. All of them are printed in the file `VerificationConditions.txt`:
+Along the proof tree of each fragment some inference rules are applied from the ending predicate `P(q◀)` (bottom-up). Thus, a predicate B to be implied from the start predicate is obtained and the verification condition `P(q▷) => B` is formed. All of them are printed in the file `VerificationConditions.txt`:
 
     (x=0)∧(n>0) => (1<n)∧(0>=1)
     (i<n)∧(x>=i) => ((i<n)∧((x+i)>=i))∧(i<=n)
@@ -197,13 +197,12 @@ The sign analysis is not a concrete analyzing tool, since it utilizes abstract m
 | 0 | {−}       |  {0}  |    {+}    |
 | + | {−, 0, +} |  {+}  |    {+}    |
 
-**The outcome:** 
-
 When running the Program Sign Analysis in the menu, the user will be asked to provide some initial sign information.
 The signs available are the set `{-,0,+}`. The information for each field should be delimited by comma `','`.To enforce the sign for a variable use `a=+` and for an array use `A={+,-}`. If a variable or array is missing in declaration of signs, it would be automatically assigned to `+`.
  
+**The outcome:** 
 
-The output will be sent to the file called `SignAnalysis.txt`. 
+The output of the tool will be sent to the file `SignAnalysis.txt`. 
 Here the user will be able to see the solutions for the final node(`q◀`) and initial node(`q▷`) (pay attention to the order in the file), and the other nodes (numbered) with their respective sign analysis assignment, in the following format: 
 
     Node --> q5 
@@ -218,6 +217,47 @@ Here the user will be able to see the solutions for the final node(`q◀`) and i
     Sign Analysis -> 
     Variables:  i <=> + | j <=> - | n <=> + | t <=> 0 | x <=> + | 
     Arrays:  A <=> +  |
+
+## **How to Interpret Security Analysis**
+**Security Analysis:**
+Security Analysis is a form of verification of a program's information flows. Based on a security lattice and a classification of variables, selected by the user, the tool can compute if any violations of information flows are present in the program or if the program is secure in that aspect. This analyzing tool can only be applied on deterministic program graphs.
+
+The security lattice can be defined by specifying information flows from one security level to another `public -> private, trusted -> dubious`, delimited by commas `,` . The security lattice is considered valid, if it is a partially ordered set and can be illustrated in a Hasse diagram. 
+
+If no security lattice is provided, the user can choose from 4 predefined security lattices in the respective menu: 
+1. Confidentiality: public ⊑ private
+2. Integrity: trusted ⊑ dubious
+3. Classical: low ⊑ high 
+4. Isolation: clean ⊑ Facebook, clean ⊑ Google, clean ⊑ Microsoft
+
+The security classification can be defined by providing a security level for each variable appearing in the program `x = public, y = private`, delimited by commas `,` . Any missing variable classifications will be assigned automatically.
+
+The user has to provide all the information either from the console or from a specified file.
+
+**The Outcome:**
+
+The output of the analyzing tool is redirected to the file `SecurityAnalysis.txt`. 
+In the first rows, the security lattice and security classification chosen are presented for context: 
+
+    Security lattice configuration:
+    classified ⊑ top_secret; private ⊑ classified; public ⊑ private;
+
+    Security classification memory:
+    A ∈ classified; i ∈ public; j ∈ private; n ∈ top_secret; t ∈ classified;  
+
+
+Following, the user will be able to analyze the set of flows actually happening in the program and the set of flows allowed to happen in the program according to the lattice rules:
+
+    Set of actual information flows in the program:
+        A->A; A->j; A->t; i->A; i->i; i->j; i->t; j->A; j->j; j->t;  n->A; n->i; n->j; n->t; t->A;
+
+    Set of allowed information flows in the program:
+        A->A; A->t; i->i; i->j; j->A; j->j; j->t; t->A;  
+
+Finally, based on the above sets, the tools finds all the violations of information flow in the program and outputs them. If the set of violations is empty, the program is considered `SECURE` and `INSECURE`, otherwise:
+
+    Program is not secure! 
+    Violations of information flow: A->j; i->A; i->t; n->A; n->i; n->j; n->t;  
 
 
 *Project completed within DTU course 02141 - Computer Science Modelling*

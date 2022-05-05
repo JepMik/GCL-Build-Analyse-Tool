@@ -23,6 +23,10 @@ let rec buildLattice rawexpr set =
     | LatDelim(x,y) -> buildLattice x (buildLattice y set)
     | _ -> set
 
+// Function to build a lattice that's a partially ordered set
+let rec checkPOS lattice = lattice //#TODO
+
+
 // Function to transform the parsed classifications into a map classification
 let rec buildClassification rawexpr map = 
     match rawexpr with 
@@ -30,6 +34,7 @@ let rec buildClassification rawexpr map =
     | ClassDelim(x,y) -> buildClassification x (buildClassification y map)
     | _ -> map
 
+// Function to automatically classify all variables in programs
 let rec autoClassify setVar (lvlx, lvly) = 
     Set.fold (
         fun map var -> Map.add var lvlx map
@@ -75,6 +80,7 @@ and secGC guardcom (d, setX) =
 let confidentiality = Set.singleton ("public", "private")
 let integrity = Set.singleton ("trusted", "dubious")
 let classical = Set.singleton ("low", "high")
+let isolation = Set.ofList [("clean","Facebook");("clean","Google");("clean","Microsoft")]
 
 // Permited (allowed) flows computed based on lattice, 
 //classification and actual flows in program
@@ -83,13 +89,13 @@ let rec allowFlows (lattice, classif) actual =
         fun set (x, y) ->
             let levelx = Map.find x classif
             let levely = Map.find y classif
-            // THIS NOT WORKING!
             match Set.contains (levelx, levely) lattice with
             | true -> Set.add (x,y) set
+            | false when levelx=levely -> Set.add (x,y) set
             | false -> set
     ) Set.empty actual
 
-let tryAllow  = allowFlows (confidentiality, Map.ofList [("x","public");("y","private")]) (Set.ofList [("x","y");("y","x")]);;
+//let tryAllow  = allowFlows (confidentiality, Map.ofList [("x","public");("y","private")]) (Set.ofList [("x","y");("y","x")]);;
 
 // Check if flows in program are a subset of the allowed flows 
 let rec secureProgram program allowedFlows actualFlows =
@@ -97,3 +103,15 @@ let rec secureProgram program allowedFlows actualFlows =
 
 //secureProgram (Assign(StrA("x"), StrA("y"))) tryAllow;;
 
+// Pretty printer for the set of flows
+let printSetFlows set =
+    Set.fold (fun str (x,y) -> str+x+"->"+y+"; ") "" set
+
+// Pretty printer for the security classification
+let printClassification map = 
+    Map.fold (fun str var lvl -> str+var+" ∈ "+lvl+"; ") "" map
+
+// Pretty printer for the security lattice
+let printLattice lattice =
+    Set.fold (fun str (x,y) -> str+x+" ⊑ "+y+"; ") "" lattice
+    

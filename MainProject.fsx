@@ -246,7 +246,7 @@ let determ () =
     with e -> printfn "ERROR: %s" e.Message;;
 
 let latticeMenu () = 
-    printfn "The provided security lattice is empty.\n Select one of the predefined lattices: "
+    printfn "Provided security lattice is empty.\n Select one of the predefined lattices: "
     printfn "1. Confidentiality Lattice"
     printfn "2. Integrity Lattice"
     printfn "3. Classical Lattice"
@@ -258,13 +258,13 @@ let autoLattice raw =
         latticeMenu ()
         match getInput() with 
         | true, 1 -> 
-            printfn "Confidentiality selected!"
+            printfn "Confidentiality lattice selected!"
             confidentiality
         | true, 2 -> 
-            printfn "Confidentiality selected!"
+            printfn "Integrity lattice selected!"
             integrity
         | true, 3 -> 
-            printfn "Classical selected!"
+            printfn "Classical lattice selected!"
             classical
         | _ -> 
             printfn "Error"
@@ -277,7 +277,7 @@ let autoLattice raw =
 let secur () =
 
     try 
-        printfn "Insert your Guarded Commands program to be
+        printfn "Insert Guarded Commands program to be
                 converted to a deterministic program graph:"
         //Read console input
         let program = chooseInput("./FilesIN/Program.txt")
@@ -288,7 +288,7 @@ let secur () =
             //Parsed program string
             let (Annot(begpr, prog, endpr)) = ProgramParser.start ProgramLexer.tokenize lexbuf
 
-            printfn "Insert your desired security lattice:"
+            printfn "Insert desired security lattice (automatic if not provided):"
             // Read console input for lattice
             let lattice = "FailedAgile!ButCSMPower!" + chooseInput("./FilesIN/Lattice.txt")
             // Create the lexical buffer
@@ -306,9 +306,11 @@ let secur () =
                 #endif
                 
                 // Setup the security lattice
-                let lattice = autoLattice latticeRaw
+                let latticeYV = autoLattice latticeRaw
+                // Build a partially ordered set type of lattice
+                let lattice = checkPOS latticeYV
                     
-                printfn "Insert your desired security classification:"
+                printfn "Insert desired security classification (automatic if not provided):"
                 // Read console input for classification
                 let classif = "DefinitelyNotSecure!" + chooseInput("./FilesIN/Classification.txt")
                 // Create the lexical buffer
@@ -331,13 +333,13 @@ let secur () =
                     let preClassification = autoClassify setVariables (lvlx, lvly)
 
                     if classifRaw = AUTOC then
-                        printfn "The provided security classification is empty.\n Automatic classification will be applied."
-                        printfn "All variables have been set as %s" lvlx
+                        printfn "Provided security classification is empty.\n   Automatic classification will be applied."
+                        printfn "All variables have been classified as %s" lvlx
 
                     // Setup the classification memory
                     let classification = Map.fold (
                                             fun acc key value -> Map.add key value acc
-                                            ) (buildClassification classifRaw Map.empty) preClassification
+                                            ) preClassification (buildClassification classifRaw Map.empty) 
                     // Compute the actual flows in the program
                     let actualFlows = secC prog Set.empty
                     let allowedFlows = allowFlows (lattice, classification) actualFlows
@@ -347,11 +349,31 @@ let secur () =
                     printfn "%A" lattice
                     printfn "%A" classification
                     printfn "%A" actualFlows
-                    printfn "%A" tryAllow // must be only x -> y
                     printfn "%A" allowedFlows
                     #endif
 
-                    printfn "%A" result
+                    let fileOutput3 = sprintf "Security lattice configuration:\n   %s \n\n" (printLattice lattice)
+                    File.WriteAllText("./FilesOUT/SecurityAnalysis.txt", fileOutput3)
+
+                    let fileOutput2 = sprintf "Security classification memory:\n   %s \n\n" (printClassification classification)
+                    File.AppendAllText("./FilesOUT/SecurityAnalysis.txt", fileOutput2)
+
+                    let fileOutput = sprintf "Set of actual information flows in the program:\n    %s \n\n" (printSetFlows actualFlows)
+                    File.AppendAllText("./FilesOUT/SecurityAnalysis.txt", fileOutput)
+
+                    let fileOutput1 = sprintf "Set of allowed information flows in the program:\n    %s \n\n" (printSetFlows allowedFlows)
+                    File.AppendAllText("./FilesOUT/SecurityAnalysis.txt", fileOutput1)
+
+                    if Set.isEmpty result 
+                        then 
+                            let fileOutput = "Program is secure! \n" 
+                            File.AppendAllText("./FilesOUT/SecurityAnalysis.txt", fileOutput)
+                            printfn "Program is secure!"
+                        else 
+                            let fileOutput = sprintf "Program is not secure! \nViolations of information flow: %s \n" (printSetFlows result)
+                            File.AppendAllText("./FilesOUT/SecurityAnalysis.txt", fileOutput)
+                            printfn "Program is not secure! \nViolations of information flow: %s" (printSetFlows result)
+
                     
                 // Undefined string encountered in classification
                 with e -> printfn "Parse error in security classification at : Line %i, %i, Unexpected token: %s" (lexbuf.EndPos.pos_lnum+ 1) 
