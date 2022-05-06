@@ -71,12 +71,12 @@ expression:
   | expression POW expression       { PowExpr($1,$3) }
   | LOG expression                  { LogExpr($2) } 
   | LN expression                   { LnExpr($2) }
-  | str                             { StrA($1) }
   | str LBRAK expression RBRAK      { IndexExpr($1,$3) } 
   | expression1                     { $1 }
 
 expression1:
   | NUM                             { Num($1) }
+  | str                             { StrA($1) }
   | MINUS expression1               { UMinusExpr($2) }
   | PLUS expression1                { UPlusExpr($2) }
   | LPAR expression RPAR            { $2 }

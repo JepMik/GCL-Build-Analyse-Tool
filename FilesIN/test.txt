@@ -29,3 +29,5 @@ if x<0 -> y:=(-1*z)*z [] x=0 -> y:=0 [] x>0 -> y:=z*z fi
 // Database
 i:=0; j:=0; do (i<n)&((j=m)|(i<j)) -> A[i]:=A[i]+27; i:=i+1 [] (j<m)&((i=n)|(!(i<j))) -> B[j]:=B[j]+12; j:=j+1 od
 // CHECKS
+
+do x<n -> x:=x+1 [] x>= -n -> x:=x-1 [] true -> x:=x/x od

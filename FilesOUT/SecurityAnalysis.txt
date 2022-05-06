@@ -1,10 +1,13 @@
 Security lattice configuration:
-   classified ⊑ top_secret; private ⊑ classified; public ⊑ private;  
+   public ⊑ private;  
+
 Security classification memory:
-   A ∈ classified; i ∈ public; j ∈ private; n ∈ top_secret; t ∈ classified;  
+   A ∈ public; i ∈ public; j ∈ public; n ∈ public; t ∈ public;  
+
 Set of actual information flows in the program:
     A->A; A->j; A->t; i->A; i->i; i->j; i->t; j->A; j->j; j->t; n->A; n->i; n->j; n->t; t->A;  
+
 Set of allowed information flows in the program:
-    A->A; A->t; i->i; i->j; j->A; j->j; j->t; t->A;  
-Program is not secure! 
-Violations of information flow: A->j; i->A; i->t; n->A; n->i; n->j; n->t;  
+    A->A; A->j; A->t; i->A; i->i; i->j; i->t; j->A; j->j; j->t; n->A; n->i; n->j; n->t; t->A;  
+
+Program is secure! 

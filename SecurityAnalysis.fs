@@ -1,10 +1,7 @@
 module SecurityAnalysis
 
 open Interpreter
-// BIG BRAIN PLAN:
-// --> Fix input Parser/Lexer to handle security assignments
-// --> Security lattice definition
-// --> 
+
 
 // Free variables in arithmetic expressions
 let fvArith expr = 

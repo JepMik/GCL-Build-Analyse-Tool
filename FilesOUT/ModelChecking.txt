@@ -1,0 +1,14 @@
+STUCK Node: 3 Memory:
+    Boolean memory: 
+    Arithmetic memory: i = 3.000000 j = 3.000000 n = 4.000000 t = 1.000000 
+    Array memory: A = [1.0; 2.0; 3.0] 
+
+ERROR: Invalid lookup of index 3 in array A
+
+STUCK Node: 3 Memory:
+    Boolean memory: 
+    Arithmetic memory: i = 3.000000 j = 3.000000 n = 4.000000 t = 1.000000 
+    Array memory: A = [1.0; 2.0; 3.0] 
+
+ERROR: Invalid lookup of index 3 in array A
+

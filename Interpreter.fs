@@ -160,7 +160,11 @@ let rec evalA e mapA arr =
   match e with
     | Num(x) -> x:float
     | TimesExpr(x,y) -> (evalA x mapA arr) * (evalA y mapA arr)
-    | DivExpr(x,y) -> (evalA x mapA arr) / (evalA y mapA arr)
+    | DivExpr(x,y) -> 
+                    let res = evalA y mapA arr 
+                    if res = 0 then 
+                            failwith "ERROR: Invalid division by 0."
+                    else (evalA x mapA arr) / (evalA y mapA arr)
     | PlusExpr(x,y) -> (evalA x mapA arr) + (evalA y mapA arr) 
     | MinusExpr(x,y) -> (evalA x mapA arr) - (evalA y mapA arr)
     | PowExpr(x,y) -> (evalA x mapA arr) ** (evalA y mapA arr)
@@ -229,6 +233,21 @@ let rec printInp expr =
     | SetArray(str, list) -> "SetArray(" + str + "=" + (printSeq list)+"))"
     | SetDelim(inp1, inp2) -> "SetDelim(" + (printInp inp1) + (printInp inp2) + ")"
 
+// Print the boolean memory
+let printBMap map  =
+    Map.fold (fun str key value -> sprintf "%s%s = %b " str key value) "" map
+
+// Print the arithmetic memory
+let printAMap map = 
+    Map.fold (fun str key value -> sprintf "%s%s = %f " str key value) "" map
+
+// Print the array memory
+let printArrMap map = 
+    Map.fold (fun str key value -> sprintf "%s%s = %A " str key value) "" map
+
+let printMemory (mapB, mapA, arr) = 
+    sprintf "    Boolean memory: %s\n    Arithmetic memory: %s\n    Array memory: %s\n" (printBMap mapB) (printAMap mapA) (printArrMap arr)
+
 // Function to take the sequence of values and transform into list of evaluated expressions
 let rec inpList expr mapA arr =
     match expr with 
@@ -269,20 +288,20 @@ let rec executeGraph edgeList memory node steps =
             | Ecomm(node, com, next) -> 
                         let memory1 = evalC com mapB mapA arr 
                         let (sym,syf) = convert node next
-                        let message = sprintf "Action: assignment\n Node q%s\n Memory->%A\n\n" sym memory1
+                        let message = sprintf "Action: assignment\n Node q%s\n Memory->\n%s\n\n" sym (printMemory memory1)
                         if (next = (-1)) then
-                                            let messageN = sprintf "Action: assignment\n Node q%s\n Memory->%A\n\n" syf memory1
+                                            let messageN = sprintf "Action: assignment\n Node q%s\n Memory->\n%s\n\n" syf (printMemory memory1)
                                             let termMes = sprintf "#TERMINATED Program has reached final node with %d steps left." (steps-1)
                                             message + messageN + termMes
                         else message + (executeGraph edgeList memory1 next (steps-1))
             | Ebool(node, bol, next) ->
                         let (sym,syf) = convert node next
-                        let message = sprintf "Action: boolean test\n Node q%s\n Memory-> %A \n\n" sym memory
+                        let message = sprintf "Action: boolean test\n Node q%s\n Memory-> %A \n\n" sym (printMemory memory)
                         if (next = (-1)) then
-                                            let messageN = sprintf "Action: assignment\n Node q%s\n Memory->%A\n\n" syf memory 
+                                            let messageN = sprintf "Action: assignment\n Node q%s\n Memory->\n%s\n\n" syf (printMemory memory)
                                             message + messageN + "#TERMINATED Program has reached final node." 
                         else message + (executeGraph edgeList memory next (steps-1))
         with err -> 
                 let (sym,_) = convert node 0
-                let mes = sprintf "#STUCK No further edge can be taken. Program is stuck in node q%s with %d steps left.\n %A" sym steps memory     
+                let mes = sprintf "#STUCK No further edge can be taken. Program is stuck in node q%s with %d steps left.\n %s" sym steps (printMemory memory)     
                 err.Message + "\n" + mes

@@ -35,6 +35,8 @@ open SecureParser
 open SecureLexer
 #load "SecurityAnalysis.fs"
 open SecurityAnalysis
+#load "ModelChecking.fs"
+open ModelChecking
 
 // Function that parses a given input
 let parse input =
@@ -92,7 +94,8 @@ let printInnerMenu () =
     printfn "2. Step-wise Execution with User Input"
     printfn "3. Program Verification"
     printfn "4. Program Sign Analysis"
-    printfn "5. Return to main menu"
+    printfn "5. Model Checking"
+    printfn "6. Return to main menu"
     printf "Enter your choice: "
 
 // Allocate and initialize the interpreter memory with values
@@ -208,8 +211,18 @@ let rec runProgram edgeList domainP predMemory nodef =
                     printfn "Sign Analysis Solution is printed in the file 'SignAnalysis.txt'!\n"
                     Console.WriteLine("Analysis solution --> \n" + (printAnalysis analSol))
                 with e -> printfn "%s" e.Message
+    | true, 5 -> 
+                let (boolMap, arithMap, arrayMap) = memoryAlloc( edgeList, "user")     
+                printfn "Initial memory configuration is shown below:"
+                printfn "Memory ==> %A %A %A\n" boolMap arithMap arrayMap
 
-    | true, 5 -> ()
+                let initialState = (0, (boolMap, arithMap, arrayMap))
+                let output = transition edgeList (Set.singleton initialState) Set.empty
+                printfn "%s" output
+                printfn "Model Checking Solution is printed in the file 'ModelChecking.txt'!\n"
+                File.WriteAllText("./FilesOUT/ModelChecking.txt", output)
+
+    | true, 6 -> ()
     | _ -> runProgram edgeList domainP predMemory nodef
 
 // Deterministic program handling
@@ -250,6 +263,7 @@ let latticeMenu () =
     printfn "1. Confidentiality Lattice"
     printfn "2. Integrity Lattice"
     printfn "3. Classical Lattice"
+    printfn "4. Isolation Lattice"
     printf "Enter your choice: "
 
 // Assign predefined security lattice 
@@ -266,6 +280,9 @@ let autoLattice raw =
         | true, 3 -> 
             printfn "Classical lattice selected!"
             classical
+        | true, 4 ->
+            printfn "Isolation lattice selected!"
+            isolation
         | _ -> 
             printfn "Error"
             Set.empty
@@ -423,6 +440,7 @@ let nondeter () =
                         (lexbuf.EndPos.pos_cnum - lexbuf.EndPos.pos_bol) (LexBuffer<_>.LexemeString lexbuf)
 
     with e -> printfn "ERROR: %s" e.Message;;
+    
 
 
 let printMenu () = 

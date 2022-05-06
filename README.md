@@ -1,7 +1,7 @@
 # 🅖🅒🅛 🅟🅐🅡🅢🅔🅡                                 
 
 ![Up to Date](https://github.com/ikatyang/emoji-cheat-sheet/workflows/Up%20to%20Date/badge.svg)
-<img src="https://img.shields.io/badge/Version-6.3-red"/>
+<img src="https://img.shields.io/badge/Version-7.1-red"/>
 <img src="https://img.shields.io/badge/Powered%20By-CheckMate-%23ffc933"/>
 # **This parser for Guarded Commands Language was created by:**
 
@@ -26,7 +26,8 @@ The input files potentially used are located in the `FilesIN` folder and can be 
     1. Pretty Printer 
     2. Non-Deterministic Program Environments
     3. Deterministic Program Environments
-    4. Exit Menu
+    4. Security Analysis
+    5. Exit Menu
 After choosing an option, the input should be of Dijkstra's Guarded Command Language (possibly with annotations). The tool provides 2 methods to input 
 the program - one from a txt file (Input.txt or Program.txt) and one from the console:
 
@@ -41,14 +42,21 @@ If the input is not a valid GCL, the parser will acknowledge and send the user a
 #### **Extended Menu Options:**
 When choosing either a Non-Deterministic Program Graph or a Deterministic Program Graph, the program graph will be constructed. Afterwards the following extended menu will be given:
 
+
     1. Step-wise Execution with Automatic Input
     2. Step-wise Execution with User Input
     3. Program Verification
-    4. Return to main menu
+    4. Program Sign Analysis
+    5. Model Checking
+    6. Return to main menu
+
+
+
 This extended menu gives the user the option of seeing a step-wise execution with either automated-input or with user-input for variables and arrays, perform a program verification or simply return to the main menu as given above.
 
 
 ## **Syntax of our Code**
+
 **These commands represent an extended set of Dijkstra's Guarded Commands Language syntactics**
 | Expressions | Description |
 | --- | --- | 
@@ -70,6 +78,7 @@ If one doesn't annotate the program, but chooses to perform a program verificati
 After each of the annotating tags (begin | end) there is a whitespace to delimit the predicate in brackets.
 
 ### **Program Graphs:**
+
 The Program Graphs are developed by two main functions:
 1. Generate Deterministic Program Graphs
 2. Generate Non-Deterministic Program Graphs
@@ -82,6 +91,7 @@ In order to generate the Program Graphs, it is then processed by a function that
 
 
 ## **Step-Wise Execution**
+
 The step-wise execution shows how the memory changes throughout the execution of the code and its actions and which nodes each execution takes place.
 
 From the Extended Menu Options, the user can choose to either input variables and arrays themselves or get automated input generated. Afterwards the user chooses how many execution steps they want shown. This will then initialize the Step-Wise Execution and generate a file called `StepExecution.txt`. This file contains the step-wise execution of the program, consider reading *How to interpret the Step-wise Execution*.
@@ -104,6 +114,7 @@ Is a *"Pretty Printed"* AST, that shows how the arithmetic, boolean or other com
 
 These examples show a clear image of how the AST is formed by the combined work of the Parser and Lexer.
 ## **Error**
+
 Parse errors are implemented in our GCL-parser, and should yield an error message, if the Lexer recognizes strings that are not defined.
 
 If for some reason an error occurs while running an already defined syntax, then please contact the creators.
@@ -125,13 +136,16 @@ When running option `1. Step-wise Execution with Automatic Input` or `2. Step-wi
 
     Action: ____
         Node: ___
-        Memory-> (map [], map [("variable", value)], map [])
+        Memory-> 
+            Boolean memory: ___ = true
+            Arithmetic memory: <variable> = <value> 
+            Array memory: <array> = [<list>]
 
 `Action` denotes the action which has been done, could be assignment of a variable or a boolean check.
 
 `Node` denotes the note where the the program ends up after the action has been done.
 
-`Memory` denotes the memory with the new variables after the action. The first `map []` inside the memory denotes boolean variables, the second `map []` inside the memory denotes arithmetic variables, and the third `map []` inside the memory denotes arrays.
+`Memory` denotes the memory with the new variables after the action has been executed.
 
 ### **Terminated or Stuck**
 
@@ -220,6 +234,7 @@ Here the user will be able to see the solutions for the final node(`q◀`) and i
 
 ## **How to Interpret Security Analysis**
 **Security Analysis:**
+
 Security Analysis is a form of verification of a program's information flows. Based on a security lattice and a classification of variables, selected by the user, the tool can compute if any violations of information flows are present in the program or if the program is secure in that aspect. This analyzing tool can only be applied on deterministic program graphs.
 
 The security lattice can be defined by specifying information flows from one security level to another `public -> private, trusted -> dubious`, delimited by commas `,` . The security lattice is considered valid, if it is a partially ordered set and can be illustrated in a Hasse diagram. 
@@ -259,5 +274,39 @@ Finally, based on the above sets, the tools finds all the violations of informat
     Program is not secure! 
     Violations of information flow: A->j; i->A; i->t; n->A; n->i; n->j; n->t;  
 
+
+## **How to Interpret Model Checking**
+**Model Checking:** 
+
+Model Checking is an analysis that checks whether the programs gets stuck or run smoothly depending on initial memory input from the user.
+The analysis is only available when considering Non-Deterministic graphs.
+
+
+**The Outcome:**
+After choosing the GCL-program and the initial input, the Model Checking analysis will take place.
+The result will be printed into the file `ModelChecking.txt`. 
+
+The result can be displayed in two ways:
+
+1. Successful: if the program runs correctly the output will only be of the final node
+2. Unsuccessful: if the program gets stuck, the current state and an error message are going to be printed:
+
+Example of unsuccessful configuration:   
+        
+        STUCK Node: q3 <=> Memory:
+            Boolean memory: 
+            Arithmetic memory: i = 3.000000 j = 3.000000 n = 4.000000 t = 1.000000 
+            Array memory: A = [1.0; 2.0; 3.0] 
+        
+        ERROR: Invalid lookup of index 3 in array A
+
+Example of successful configuration:
+
+
+
+## **End notes**
+This was the end of Computer Science Modelling, we want to give a big thanks to the TA's and our teachers Alberto and Christoph.
+
+Group name: `CheckMate`
 
 *Project completed within DTU course 02141 - Computer Science Modelling*
