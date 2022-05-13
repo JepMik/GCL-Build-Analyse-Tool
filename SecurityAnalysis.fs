@@ -20,10 +20,6 @@ let rec buildLattice rawexpr set =
     | LatDelim(x,y) -> buildLattice x (buildLattice y set)
     | _ -> set
 
-// Function to build a lattice that's a partially ordered set
-let rec checkPOS lattice = lattice //#TODO
-
-
 // Function to transform the parsed classifications into a map classification
 let rec buildClassification rawexpr map = 
     match rawexpr with 
@@ -111,4 +107,57 @@ let printClassification map =
 // Pretty printer for the security lattice
 let printLattice lattice =
     Set.fold (fun str (x,y) -> str+x+" ⊑ "+y+"; ") "" lattice
-    
+
+   
+// Eliminate reflexive level flows in lattice
+let elimReflexive lattice = 
+    Set.fold (
+        fun set (lvlx, lvly) ->
+            match lvlx=lvly with
+            | true -> set
+            | false -> Set.add (lvlx, lvly) set
+    ) Set.empty lattice
+
+// Eliminate symmetric level flows in lattice
+let elimSymmetric lattice =
+    Set.fold (
+        fun set (lvlx, lvly) ->
+            match Set.exists (fun item -> item=(lvly, lvlx)) set with
+            | true -> set
+            | false -> Set.add (lvlx, lvly) set
+    ) Set.empty lattice
+
+// Eliminate transitive level flows in lattice
+let elimTransitive lattice = 
+    Set.fold (
+        fun set (lvlx, lvly) ->
+            let temp = Set.filter (fun (first, second) -> first=lvly) set
+            let bls = Set.exists (
+                        fun (first, lvlz) -> Set.exists (fun item -> item=(lvlz, lvlx)) set
+                        ) temp
+            match bls with
+            | true -> set
+            | false -> Set.add (lvlx, lvly) set  
+    ) Set.empty lattice
+
+// Partially Ordered Set checker on lattices
+let checkPartOrdered lattice =
+    let noReflexive = elimReflexive lattice
+    let noSymmetric = elimSymmetric noReflexive
+    let noTransitive = elimTransitive noSymmetric
+    noReflexive = noTransitive
+
+
+// Testing utilities
+// let fakeLattice = Set.ofList [
+//     ("public","personA");
+//     ("public","public");
+//     ("personA","private");
+//     ("private","public");
+//     ("public","private");]
+
+// let goodLattice = Set.ofList [
+//     ("public","person");
+//     ("public","company");
+//     ("company","private");
+//     ("person","private");]

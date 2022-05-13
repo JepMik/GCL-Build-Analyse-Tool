@@ -57,7 +57,7 @@ let rec chooseInput(file) =
     printfn "2. Console"
     printf "Enter your choice: "
     match getInput() with
-    | true, 1 -> printfn "Input taken from file '%s'" file
+    | true, 1 -> printfn "Input taken from file '%s'\n" file
                  File.ReadAllText(file)
     | true, 2 -> Console.ReadLine()
     | _ -> chooseInput(file)
@@ -259,16 +259,16 @@ let determ () =
     with e -> printfn "ERROR: %s" e.Message;;
 
 let latticeMenu () = 
-    printfn "Provided security lattice is empty.\n Select one of the predefined lattices: "
-    printfn "1. Confidentiality Lattice"
-    printfn "2. Integrity Lattice"
-    printfn "3. Classical Lattice"
-    printfn "4. Isolation Lattice"
+    printfn "Select one of the predefined lattices: "
+    printfn "1. Confidentiality Lattice (public, private)"
+    printfn "2. Integrity Lattice (trusted, dubious)"
+    printfn "3. Classical Lattice (low, high)"
+    printfn "4. Isolation Lattice (clean, Facebook, Google, Microsoft)"
     printf "Enter your choice: "
 
 // Assign predefined security lattice 
 let autoLattice raw =
-    if raw = AUTOL then 
+    let selectAuto () = 
         latticeMenu ()
         match getInput() with 
         | true, 1 -> 
@@ -286,9 +286,19 @@ let autoLattice raw =
         | _ -> 
             printfn "Error"
             Set.empty
-        else 
-            let result = buildLattice raw Set.empty
+    if raw = AUTOL then 
+        printfn "Provided security lattice is empty.\n"
+        selectAuto ()
+    else 
+        let result = buildLattice raw Set.empty
+        // Check if built security lattice is a partially ordered set
+        if checkPartOrdered result 
+        then
+            printfn "Provided security lattice is a valid partially ordered set.\n" 
             result
+        else
+            printfn "Provided security lattice is not a partially ordered set.\nSelect predefined lattice instead.\n"
+            selectAuto ()
 
 // Deterministic security analysis
 let secur () =
@@ -323,9 +333,7 @@ let secur () =
                 #endif
                 
                 // Setup the security lattice
-                let latticeYV = autoLattice latticeRaw
-                // Build a partially ordered set type of lattice
-                let lattice = checkPOS latticeYV
+                let lattice = autoLattice latticeRaw
                     
                 printfn "Insert desired security classification (automatic if not provided):"
                 // Read console input for classification

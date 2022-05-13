@@ -239,7 +239,7 @@ Security Analysis is a form of verification of a program's information flows. Ba
 
 The security lattice can be defined by specifying information flows from one security level to another `public -> private, trusted -> dubious`, delimited by commas `,` . The security lattice is considered valid, if it is a partially ordered set and can be illustrated in a Hasse diagram. 
 
-If no security lattice is provided, the user can choose from 4 predefined security lattices in the respective menu: 
+If no security lattice is provided or the one provided is not a __poset__ (partially ordered set), the user can choose from 4 predefined security lattices in the respective menu: 
 1. Confidentiality: public ⊑ private
 2. Integrity: trusted ⊑ dubious
 3. Classical: low ⊑ high 
