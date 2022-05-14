@@ -7,7 +7,7 @@
 
 *s196671 Josefine Rosalie Balch Petersen*
 
-*s204683 Adrian Zvizdenco*
+*s204683 Adrian Zvizdenco 𝓩𝓮𝓭𝓻𝓲𝓬𝓱𝓾*
 
 *s204708 Jeppe Moeller Mikkelsen*
 
