@@ -1,7 +1,7 @@
 # 🅖🅒🅛 🅟🅐🅡🅢🅔🅡                                 
 
 ![Up to Date](https://github.com/ikatyang/emoji-cheat-sheet/workflows/Up%20to%20Date/badge.svg)
-<img src="https://img.shields.io/badge/Version-7.1-red"/>
+<img src="https://img.shields.io/badge/Version-7.2-red"/>
 <img src="https://img.shields.io/badge/Powered%20By-CheckMate-%23ffc933"/>
 # **This parser for Guarded Commands Language was created by:**
 

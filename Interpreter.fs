@@ -239,7 +239,7 @@ let printBMap map  =
 
 // Print the arithmetic memory
 let printAMap map = 
-    Map.fold (fun str key value -> sprintf "%s%s = %f " str key value) "" map
+    Map.fold (fun str key value -> sprintf "%s%s = %g " str key value) "" map
 
 // Print the array memory
 let printArrMap map = 
@@ -296,7 +296,7 @@ let rec executeGraph edgeList memory node steps =
                         else message + (executeGraph edgeList memory1 next (steps-1))
             | Ebool(node, bol, next) ->
                         let (sym,syf) = convert node next
-                        let message = sprintf "Action: boolean test\n Node q%s\n Memory-> %A \n\n" sym (printMemory memory)
+                        let message = sprintf "Action: boolean test\n Node q%s\n Memory->\n%s\n\n" sym (printMemory memory)
                         if (next = (-1)) then
                                             let messageN = sprintf "Action: assignment\n Node q%s\n Memory->\n%s\n\n" syf (printMemory memory)
                                             message + messageN + "#TERMINATED Program has reached final node." 

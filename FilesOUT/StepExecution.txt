@@ -1,189 +1,213 @@
 Action: assignment
  Node q▷
- Memory->   
+ Memory->
     Boolean memory: 
-    Arithmetic memory: i = 1.000000 j = 0.000000 n = 4.000000 t = 0.000000 
+    Arithmetic memory: i = 1 j = 0 n = 4 t = 0 
     Array memory: A = [3.0; 2.0; 1.0] 
 
 
 Action: boolean test
  Node q1
- Memory-> "    Boolean memory: 
-    Arithmetic memory: i = 1.000000 j = 0.000000 n = 4.000000 t = 0.000000 
+ Memory->
+    Boolean memory: 
+    Arithmetic memory: i = 1 j = 0 n = 4 t = 0 
     Array memory: A = [3.0; 2.0; 1.0] 
-" 
+
 
 Action: assignment
  Node q2
- Memory->    Boolean memory: 
-    Arithmetic memory: i = 1.000000 j = 1.000000 n = 4.000000 t = 0.000000 
+ Memory->
+    Boolean memory: 
+    Arithmetic memory: i = 1 j = 1 n = 4 t = 0 
     Array memory: A = [3.0; 2.0; 1.0] 
 
 
 Action: boolean test
  Node q3
- Memory-> "    Boolean memory: 
-    Arithmetic memory: i = 1.000000 j = 1.000000 n = 4.000000 t = 0.000000 
+ Memory->
+    Boolean memory: 
+    Arithmetic memory: i = 1 j = 1 n = 4 t = 0 
     Array memory: A = [3.0; 2.0; 1.0] 
-" 
+
 
 Action: assignment
  Node q5
- Memory->    Boolean memory: 
-    Arithmetic memory: i = 1.000000 j = 1.000000 n = 4.000000 t = 2.000000 
+ Memory->
+    Boolean memory: 
+    Arithmetic memory: i = 1 j = 1 n = 4 t = 2 
     Array memory: A = [3.0; 2.0; 1.0] 
 
 
 Action: assignment
  Node q6
- Memory->    Boolean memory: 
-    Arithmetic memory: i = 1.000000 j = 1.000000 n = 4.000000 t = 2.000000 
+ Memory->
+    Boolean memory: 
+    Arithmetic memory: i = 1 j = 1 n = 4 t = 2 
     Array memory: A = [3.0; 3.0; 1.0] 
 
 
 Action: assignment
  Node q7
- Memory->    Boolean memory: 
-    Arithmetic memory: i = 1.000000 j = 1.000000 n = 4.000000 t = 2.000000 
+ Memory->
+    Boolean memory: 
+    Arithmetic memory: i = 1 j = 1 n = 4 t = 2 
     Array memory: A = [2.0; 3.0; 1.0] 
 
 
 Action: assignment
  Node q8
- Memory->    Boolean memory: 
-    Arithmetic memory: i = 1.000000 j = 0.000000 n = 4.000000 t = 2.000000 
+ Memory->
+    Boolean memory: 
+    Arithmetic memory: i = 1 j = 0 n = 4 t = 2 
     Array memory: A = [2.0; 3.0; 1.0] 
 
 
 Action: boolean test
  Node q3
- Memory-> "    Boolean memory: 
-    Arithmetic memory: i = 1.000000 j = 0.000000 n = 4.000000 t = 2.000000 
+ Memory->
+    Boolean memory: 
+    Arithmetic memory: i = 1 j = 0 n = 4 t = 2 
     Array memory: A = [2.0; 3.0; 1.0] 
-" 
+
 
 Action: assignment
  Node q4
- Memory->    Boolean memory: 
-    Arithmetic memory: i = 2.000000 j = 0.000000 n = 4.000000 t = 2.000000 
+ Memory->
+    Boolean memory: 
+    Arithmetic memory: i = 2 j = 0 n = 4 t = 2 
     Array memory: A = [2.0; 3.0; 1.0] 
 
 
 Action: boolean test
  Node q1
- Memory-> "    Boolean memory: 
-    Arithmetic memory: i = 2.000000 j = 0.000000 n = 4.000000 t = 2.000000 
+ Memory->
+    Boolean memory: 
+    Arithmetic memory: i = 2 j = 0 n = 4 t = 2 
     Array memory: A = [2.0; 3.0; 1.0] 
-" 
+
 
 Action: assignment
  Node q2
- Memory->    Boolean memory: 
-    Arithmetic memory: i = 2.000000 j = 2.000000 n = 4.000000 t = 2.000000 
+ Memory->
+    Boolean memory: 
+    Arithmetic memory: i = 2 j = 2 n = 4 t = 2 
     Array memory: A = [2.0; 3.0; 1.0] 
 
 
 Action: boolean test
  Node q3
- Memory-> "    Boolean memory: 
-    Arithmetic memory: i = 2.000000 j = 2.000000 n = 4.000000 t = 2.000000 
+ Memory->
+    Boolean memory: 
+    Arithmetic memory: i = 2 j = 2 n = 4 t = 2 
     Array memory: A = [2.0; 3.0; 1.0] 
-" 
+
 
 Action: assignment
  Node q5
- Memory->    Boolean memory: 
-    Arithmetic memory: i = 2.000000 j = 2.000000 n = 4.000000 t = 1.000000 
+ Memory->
+    Boolean memory: 
+    Arithmetic memory: i = 2 j = 2 n = 4 t = 1 
     Array memory: A = [2.0; 3.0; 1.0] 
 
 
 Action: assignment
  Node q6
- Memory->    Boolean memory: 
-    Arithmetic memory: i = 2.000000 j = 2.000000 n = 4.000000 t = 1.000000 
+ Memory->
+    Boolean memory: 
+    Arithmetic memory: i = 2 j = 2 n = 4 t = 1 
     Array memory: A = [2.0; 3.0; 3.0] 
 
 
 Action: assignment
  Node q7
- Memory->    Boolean memory: 
-    Arithmetic memory: i = 2.000000 j = 2.000000 n = 4.000000 t = 1.000000 
+ Memory->
+    Boolean memory: 
+    Arithmetic memory: i = 2 j = 2 n = 4 t = 1 
     Array memory: A = [2.0; 1.0; 3.0] 
 
 
 Action: assignment
  Node q8
- Memory->    Boolean memory: 
-    Arithmetic memory: i = 2.000000 j = 1.000000 n = 4.000000 t = 1.000000 
+ Memory->
+    Boolean memory: 
+    Arithmetic memory: i = 2 j = 1 n = 4 t = 1 
     Array memory: A = [2.0; 1.0; 3.0] 
 
 
 Action: boolean test
  Node q3
- Memory-> "    Boolean memory: 
-    Arithmetic memory: i = 2.000000 j = 1.000000 n = 4.000000 t = 1.000000 
+ Memory->
+    Boolean memory: 
+    Arithmetic memory: i = 2 j = 1 n = 4 t = 1 
     Array memory: A = [2.0; 1.0; 3.0] 
-" 
+
 
 Action: assignment
  Node q5
- Memory->    Boolean memory: 
-    Arithmetic memory: i = 2.000000 j = 1.000000 n = 4.000000 t = 1.000000 
+ Memory->
+    Boolean memory: 
+    Arithmetic memory: i = 2 j = 1 n = 4 t = 1 
     Array memory: A = [2.0; 1.0; 3.0] 
 
 
 Action: assignment
  Node q6
- Memory->    Boolean memory: 
-    Arithmetic memory: i = 2.000000 j = 1.000000 n = 4.000000 t = 1.000000 
+ Memory->
+    Boolean memory: 
+    Arithmetic memory: i = 2 j = 1 n = 4 t = 1 
     Array memory: A = [2.0; 2.0; 3.0] 
 
 
 Action: assignment
  Node q7
- Memory->    Boolean memory: 
-    Arithmetic memory: i = 2.000000 j = 1.000000 n = 4.000000 t = 1.000000 
+ Memory->
+    Boolean memory: 
+    Arithmetic memory: i = 2 j = 1 n = 4 t = 1 
     Array memory: A = [1.0; 2.0; 3.0] 
 
 
 Action: assignment
  Node q8
- Memory->    Boolean memory: 
-    Arithmetic memory: i = 2.000000 j = 0.000000 n = 4.000000 t = 1.000000 
+ Memory->
+    Boolean memory: 
+    Arithmetic memory: i = 2 j = 0 n = 4 t = 1 
     Array memory: A = [1.0; 2.0; 3.0] 
 
 
 Action: boolean test
  Node q3
- Memory-> "    Boolean memory: 
-    Arithmetic memory: i = 2.000000 j = 0.000000 n = 4.000000 t = 1.000000 
+ Memory->
+    Boolean memory: 
+    Arithmetic memory: i = 2 j = 0 n = 4 t = 1 
     Array memory: A = [1.0; 2.0; 3.0] 
-" 
+
 
 Action: assignment
  Node q4
- Memory->    Boolean memory: 
-    Arithmetic memory: i = 3.000000 j = 0.000000 n = 4.000000 t = 1.000000 
+ Memory->
+    Boolean memory: 
+    Arithmetic memory: i = 3 j = 0 n = 4 t = 1 
     Array memory: A = [1.0; 2.0; 3.0] 
 
 
 Action: boolean test
  Node q1
- Memory-> "    Boolean memory: 
-    Arithmetic memory: i = 3.000000 j = 0.000000 n = 4.000000 t = 1.000000 
+ Memory->
+    Boolean memory: 
+    Arithmetic memory: i = 3 j = 0 n = 4 t = 1 
     Array memory: A = [1.0; 2.0; 3.0] 
-" 
+
 
 Action: assignment
  Node q2
- Memory->    Boolean memory: 
-    Arithmetic memory: i = 3.000000 j = 3.000000 n = 4.000000 t = 1.000000 
+ Memory->
+    Boolean memory: 
+    Arithmetic memory: i = 3 j = 3 n = 4 t = 1 
     Array memory: A = [1.0; 2.0; 3.0] 
 
 
 ERROR: Invalid lookup of index 3 in array A
-#STUCK No further edge can be taken. Program is stuck in node q3 with 14 steps left.
- "    Boolean memory: 
-    Arithmetic memory: i = 3.000000 j = 3.000000 n = 4.000000 t = 1.000000 
+#STUCK No further edge can be taken. Program is stuck in node q3 with 74 steps left.
+     Boolean memory: 
+    Arithmetic memory: i = 3 j = 3 n = 4 t = 1 
     Array memory: A = [1.0; 2.0; 3.0] 
-"
