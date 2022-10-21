@@ -1,6 +1,6 @@
 # 🅖🅒🅛 🅟🅐🅡🅢🅔🅡                                 
-
-<img src="https://img.shields.io/badge/Version-7.2-red"/> <img src="https://img.shields.io/badge/Powered%20By-CheckMate-%2366ff66"/>
+![Up to Date](https://github.com/ikatyang/emoji-cheat-sheet/workflows/Up%20to%20Date/badge.svg)
+<img src="https://img.shields.io/badge/Version-7.2-red"/> <img src="https://img.shields.io/badge/Powered%20By-CheckMate-%23FFBC00"/>
 # **This parser for Guarded Commands Language was created by:**
 
 *s196671 Josefine Rosalie Balch Petersen*
@@ -122,10 +122,7 @@ If for some reason an error occurs while running an already defined syntax, then
 
 When running option `2. Non-Deterministic Program Graph` or `3. Deterministic Program Graph` from the Main Menu. A file named `graph.dot` will be generated, where the syntax of the [graphviz text language](https://graphviz.org/doc/info/lang.html) will be inside. The syntax will change each time the program is run, depending on the input of the Guarded Command Language.
 
-If using VS-code, and [extension](https://marketplace.visualstudio.com/items?itemName=joaompinto.vscode-graphviz) has been downloaded. The graph can be seen directly in the program, utilizing the extension.
-
-Otherwise [this link](https://edotor.net/). The syntax of the `graph.dot` can be dragged and dropped, and hereby shown in graph format.
-
+If using VS-code and [extension](https://marketplace.visualstudio.com/items?itemName=joaompinto.vscode-graphviz) has been downloaded, the graph can be previewed directly in the same window. Otherwise [this link](https://edotor.net/) might help. The syntax of the `graph.dot` can be dragged and dropped, and hereby shown in graph format.
 
 ## **How to Interpret the Step-Wise Execution:**
 **The outcome:**
@@ -298,9 +295,9 @@ Example of unsuccessful configuration:
         
         ERROR: Invalid lookup of index 3 in array A
 
-Example of successful configuration:
-
-
+A successful configuration will generate the output line:
+        
+        Model Checker for given inputs is successful!
 
 ## **End notes**
 This was the end of Computer Science Modelling, we want to give a big thanks to the TA's and our teachers Alberto and Christoph.
