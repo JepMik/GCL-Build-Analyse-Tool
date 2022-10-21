@@ -218,7 +218,9 @@ let rec runProgram edgeList domainP predMemory nodef =
 
                 let initialState = (0, (boolMap, arithMap, arrayMap))
                 let output = transition edgeList (Set.singleton initialState) Set.empty
-                printfn "%s" output
+                match output with 
+                | "" -> printfn "Model Checker for given inputs is successful!"
+                | _  -> printfn "%s" output
                 printfn "Model Checking Solution is printed in the file 'ModelChecking.txt'!\n"
                 File.WriteAllText("./FilesOUT/ModelChecking.txt", output)
 
