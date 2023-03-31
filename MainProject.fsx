@@ -4,7 +4,7 @@
 // This script implements our interactive GCL compiler & interpreter
 // We need to import a couple of modules, including the generated lexer and parser
 
-#r "FsLexYacc.Runtime.10.0.0/lib/net46/FsLexYacc.Runtime.dll"
+#r "FsLexYacc.Runtime.dll"
 
 open FSharp.Text.Lexing
 open System
