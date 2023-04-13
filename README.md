@@ -9,6 +9,9 @@
 
 *s204708 Jeppe Moeller Mikkelsen*
 
+## Solution Structure
+<img src="./image.png" alt= “Structure” width="75%"/>
+
 ## **How to Run the Code**
 **It is absolutely necessary to have fsyacc and fslexx installed to run the GCL-parser**
 [If not installed follow the instructions](https://gitlab.gbar.dtu.dk/02141/mandatory-assignment/blob/master/getting-started-fs.md)
