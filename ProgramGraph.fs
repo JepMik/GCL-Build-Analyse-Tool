@@ -8,7 +8,7 @@ open TypesAST
 let rec doneGC egc = 
     match egc with
     | IfThen(b,_) -> Neg(b)
-    | FatBar(gc1,gc2) -> ShortCircuitOr(doneGC gc1, doneGC gc2)
+    | FatBar(gc1,gc2) -> ShortCircuitAnd(doneGC gc1, doneGC gc2)
 
 // Compiler that takes GCL AST and converts to list of edges consisting 
 // of (node(int), expression(command), node(int))
